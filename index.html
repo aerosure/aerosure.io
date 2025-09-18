@@ -215,6 +215,93 @@
             pointer-events: none;
         }
 
+        /* About Section */
+        .about-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+        }
+
+        .about-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .about-text h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .about-text p {
+            color: var(--gray-300);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .credentials-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .credential {
+            background: rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .credential strong {
+            display: block;
+            color: var(--primary-teal);
+            margin-bottom: 0.25rem;
+        }
+
+        .credential span {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        .about-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(14, 165, 233, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
         /* Services Section */
         .services {
             padding: 5rem 2rem;
@@ -532,6 +619,16 @@
                 grid-template-columns: 1fr;
             }
 
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+
             .footer-content {
                 grid-template-columns: 1fr;
                 text-align: center;
@@ -544,12 +641,12 @@
     <nav>
         <div class="nav-container">
             <a href="#" class="logo">
-                <img src="aerosure-logo.png" alt="AeroSure Imaging & Inspection" style="height: 50px; width: auto;">
+                <img src="aerosure-logo.png" alt="aerosure Imaging & Inspection" style="height: 70px; width: auto;">
             </a>
             <ul class="nav-links">
                 <li><a href="#services">Services</a></li>
-                <li><a href="#technology">Technology</a></li>
                 <li><a href="#about">About</a></li>
+                <li><a href="#technology">Technology</a></li>
                 <li><a href="#contact" class="cta-button">Get Quote</a></li>
             </ul>
         </div>
@@ -574,6 +671,65 @@
             <div class="hero-buttons">
                 <a href="#contact" class="btn-primary">Get Free Quote</a>
                 <a href="#services" class="btn-secondary">View Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="section-header">
+            <span class="section-badge">About</span>
+            <h2>Richmond's Insurance-Grade Aerial Intelligence</h2>
+        </div>
+        
+        <div class="about-content">
+            <div class="about-grid">
+                <div class="about-text">
+                    <h3>Precision Meets Protection</h3>
+                    <p>
+                        We bring a unique perspective to aerial inspection—combining FAA Part 107 certified drone operations with deep insurance industry expertise. We understand exactly what insurers, contractors, and property owners need for documentation and risk assessment.
+                    </p>
+                    <p>
+                        Founded as a family business with an eye toward the future, we're building Richmond's most trusted aerial inspection service. While our founder Dustin serves as the certified pilot today, we're developing this company to pass to the next generation. This long-term vision means we're invested in building lasting relationships and a stellar reputation in our community.
+                    </p>
+                    <p>
+                        Our specialized knowledge means faster claims processing, better coverage decisions, and documentation that stands up to scrutiny. When precision matters and stakes are high, Richmond trusts aerosure.
+                    </p>
+                    
+                    <div class="credentials-grid">
+                        <div class="credential">
+                            <strong>FAA Part 107</strong>
+                            <span>Certified Pilot</span>
+                        </div>
+                        <div class="credential">
+                            <strong>Family Business</strong>
+                            <span>Building for Next Generation</span>
+                        </div>
+                        <div class="credential">
+                            <strong>Fully Insured</strong>
+                            <span>Commercial Operations</span>
+                        </div>
+                        <div class="credential">
+                            <strong>24-Hour Delivery</strong>
+                            <span>Rapid Documentation</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Inspections Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">24hr</div>
+                        <div class="stat-label">Standard Turnaround</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Insurance Accepted</div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -730,7 +886,6 @@
             <div class="footer-section">
                 <h4>Company</h4>
                 <ul class="footer-links">
-                    <li><a href="#">About</a></li>
                     <li><a href="#">Portfolio</a></li>
                     <li><a href="#">Insurance</a></li>
                     <li><a href="mailto:dustin@aerosure.io">Contact</a></li>
