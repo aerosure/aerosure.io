@@ -62,53 +62,13 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--white);
             text-decoration: none;
         }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--primary-teal);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .logo-icon::before {
-            content: '';
-            width: 20px;
-            height: 2px;
-            background: var(--primary-teal);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .logo-icon::after {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--primary-teal);
-            border-radius: 50%;
-            position: absolute;
-            top: 35%;
-            left: 30%;
-        }
-
-        .logo-text {
-            color: var(--primary-teal);
-        }
-
-        .logo-text-gray {
-            color: var(--gray-400);
-            font-weight: 400;
+        .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
         }
 
         .nav-links {
@@ -213,6 +173,8 @@
             font-weight: 600;
             transition: transform 0.3s, box-shadow 0.3s;
             display: inline-block;
+            cursor: pointer;
+            border: none;
         }
 
         .btn-primary:hover {
@@ -290,9 +252,9 @@
 
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -300,7 +262,7 @@
             background: var(--gray-900);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 2rem;
+            padding: 1.5rem;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
@@ -327,53 +289,87 @@
             opacity: 1;
         }
 
-        .service-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(14, 165, 233, 0.1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            color: var(--primary-teal);
-        }
-
         .service-title {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--white);
-        }
-
-        .service-price {
-            color: var(--primary-teal);
             font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--white);
         }
 
         .service-description {
             color: var(--gray-400);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .service-output {
+            color: var(--gray-500);
+            font-size: 0.8rem;
+        }
+
+        /* Booking Form */
+        .booking-form {
+            padding: 4rem 2rem;
+            background: var(--dark-bg);
+            display: none;
+        }
+
+        .booking-form.active {
+            display: block;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--gray-900);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-container h3 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-container p {
+            color: var(--gray-400);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
             margin-bottom: 1.5rem;
         }
 
-        .service-features {
-            list-style: none;
-            color: var(--gray-300);
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 1rem;
+            transition: all 0.3s;
         }
 
-        .service-features li {
-            padding: 0.5rem 0;
-            padding-left: 1.5rem;
-            position: relative;
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-teal);
+            background: rgba(14, 165, 233, 0.05);
         }
 
-        .service-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: var(--primary-teal);
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-note {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            margin-top: 2rem;
+            text-align: center;
         }
 
         /* Tech Stack Section */
@@ -516,6 +512,12 @@
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            .services-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -542,9 +544,7 @@
     <nav>
         <div class="nav-container">
             <a href="#" class="logo">
-                <div class="logo-icon"></div>
-                <span class="logo-text">aerosure</span>
-                <span class="logo-text-gray">imaging & inspection</span>
+                <img src="aerosure-logo.png" alt="AeroSure Imaging & Inspection" style="height: 50px; width: auto;">
             </a>
             <ul class="nav-links">
                 <li><a href="#services">Services</a></li>
@@ -584,69 +584,49 @@
             <span class="section-badge">Services</span>
             <h2>Professional Solutions</h2>
             <p class="section-subtitle">
-                Industry-leading drone services with insurance-grade documentation
+                Inspections tailored for speed and accuracy. Core offerings include aerial photo/video capture, annotated imagery, and structured reports for owners, contractors, and insurers.
             </p>
         </div>
 
         <div class="services-grid">
             <div class="service-card">
-                <div class="service-icon">🏠</div>
-                <h3 class="service-title">Roof Inspection</h3>
-                <div class="service-price">$299</div>
+                <h3 class="service-title">RoofWatch™</h3>
                 <p class="service-description">
-                    Complete aerial roof assessment with detailed damage documentation
+                    High-resolution roof inspections with annotated imagery, condition notes, and repair prioritization.
                 </p>
-                <ul class="service-features">
-                    <li>50+ high-resolution images</li>
-                    <li>Insurance-ready reports</li>
-                    <li>24-hour turnaround</li>
-                    <li>Damage assessment included</li>
-                </ul>
+                <p class="service-output">Standard outputs: PDF report, annotated imagery, video clips on request.</p>
             </div>
 
             <div class="service-card">
-                <div class="service-icon">🏗️</div>
-                <h3 class="service-title">Construction Progress</h3>
-                <div class="service-price">$349/month</div>
+                <h3 class="service-title">SiteWatch™</h3>
                 <p class="service-description">
-                    Weekly aerial documentation of your construction project
+                    Progress and condition checks for small construction sites, including safety, staging, and asset documentation.
                 </p>
-                <ul class="service-features">
-                    <li>Weekly site capture</li>
-                    <li>Cloud storage included</li>
-                    <li>Progress comparisons</li>
-                    <li>Shareable reports</li>
-                </ul>
+                <p class="service-output">Standard outputs: PDF report, annotated imagery, video clips on request.</p>
             </div>
 
             <div class="service-card">
-                <div class="service-icon">🏡</div>
-                <h3 class="service-title">Real Estate Showcase</h3>
-                <div class="service-price">$399</div>
+                <h3 class="service-title">StormCheck™</h3>
                 <p class="service-description">
-                    Premium aerial photography and video for property listings
+                    Post-storm documentation for real estate and insurance claims: clear evidence packages for adjusters and carriers.
                 </p>
-                <ul class="service-features">
-                    <li>25+ aerial photos</li>
-                    <li>60-90 second video</li>
-                    <li>MLS-ready content</li>
-                    <li>48-hour delivery</li>
-                </ul>
+                <p class="service-output">Standard outputs: PDF report, annotated imagery, video clips on request.</p>
             </div>
 
             <div class="service-card">
-                <div class="service-icon">⚡</div>
-                <h3 class="service-title">Emergency Response</h3>
-                <div class="service-price">$599</div>
+                <h3 class="service-title">RealEstate360™</h3>
                 <p class="service-description">
-                    Rapid deployment for storm damage and insurance claims
+                    Marketing and inspection imagery for residential and commercial property listings.
                 </p>
-                <ul class="service-features">
-                    <li>Same-day service</li>
-                    <li>Comprehensive documentation</li>
-                    <li>Insurance expertise</li>
-                    <li>Priority scheduling</li>
-                </ul>
+                <p class="service-output">Standard outputs: PDF report, annotated imagery, video clips on request.</p>
+            </div>
+
+            <div class="service-card">
+                <h3 class="service-title">DroneIQ™</h3>
+                <p class="service-description">
+                    Flight planning, compliance, and documentation pipeline for repeatable missions across sites.
+                </p>
+                <p class="service-output">Standard outputs: PDF report, annotated imagery, video clips on request.</p>
             </div>
         </div>
     </section>
@@ -681,7 +661,7 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
+    <!-- CTA Section with Quote Form -->
     <section class="cta-section" id="contact">
         <div class="cta-content">
             <h2>Ready to Elevate Your Project?</h2>
@@ -689,13 +669,38 @@
                 Get professional drone services with insurance-grade documentation 
                 and 24-hour turnaround.
             </p>
-            <div class="hero-buttons">
-                <a href="mailto:dustin@aerosure.io" class="btn-primary" style="background: white; color: var(--dark-teal);">
-                    dustin@aerosure.io
-                </a>
-                <a href="tel:+1234567890" class="btn-secondary" style="border-color: white;">
-                    Call Now
-                </a>
+            
+            <div class="form-container" style="background: rgba(0, 0, 0, 0.3); margin-top: 2rem;">
+                <h3>Get a fast quote</h3>
+                <p>Share the address, property type/size, desired outputs, and timeline. We'll scope the mission and price same-day for most projects.</p>
+                
+                <form action="mailto:dustin@aerosure.io" method="post" enctype="text/plain">
+                    <div class="form-group">
+                        <input type="text" name="Name" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="Email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="Project Address" placeholder="Project address or lat/long" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="Scope" placeholder="Scope (e.g., RoofWatch roof inspection, 20k sq ft commercial, deliver PDF + images)" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; background: white; color: var(--dark-teal);">Send Inquiry</button>
+                </form>
+                
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <p style="margin-bottom: 1rem;">Or contact directly:</p>
+                    <div class="hero-buttons" style="justify-content: center;">
+                        <a href="mailto:dustin@aerosure.io" class="btn-secondary" style="border-color: white;">
+                            dustin@aerosure.io
+                        </a>
+                        <a href="tel:+18049979804" class="btn-secondary" style="border-color: white;">
+                            Call 804-997-9804
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -715,10 +720,11 @@
             <div class="footer-section">
                 <h4>Services</h4>
                 <ul class="footer-links">
-                    <li><a href="#">Roof Inspection</a></li>
-                    <li><a href="#">Construction</a></li>
-                    <li><a href="#">Real Estate</a></li>
-                    <li><a href="#">Emergency Response</a></li>
+                    <li><a href="#">RoofWatch™</a></li>
+                    <li><a href="#">SiteWatch™</a></li>
+                    <li><a href="#">StormCheck™</a></li>
+                    <li><a href="#">RealEstate360™</a></li>
+                    <li><a href="#">DroneIQ™</a></li>
                 </ul>
             </div>
             <div class="footer-section">
