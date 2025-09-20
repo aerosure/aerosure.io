@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>aerosure | Professional Drone Imaging & Inspection</title>
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -269,6 +270,7 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            text-align: center;
         }
 
         .service-card::before {
@@ -290,6 +292,17 @@
 
         .service-card:hover::before {
             opacity: 1;
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary-teal);
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1);
         }
 
         .service-title {
@@ -780,6 +793,9 @@
 
         <div class="services-grid">
             <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-home"></i>
+                </div>
                 <h3 class="service-title">RoofWatch™</h3>
                 <p class="service-price">From $299</p>
                 <p class="service-description">
@@ -789,6 +805,9 @@
             </div>
 
             <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-hard-hat"></i>
+                </div>
                 <h3 class="service-title">SiteWatch™</h3>
                 <p class="service-price">From $399/visit</p>
                 <p class="service-description">
@@ -798,6 +817,9 @@
             </div>
 
             <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-cloud-bolt"></i>
+                </div>
                 <h3 class="service-title">StormCheck™</h3>
                 <p class="service-price">From $399</p>
                 <p class="service-description">
@@ -807,6 +829,9 @@
             </div>
 
             <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-building"></i>
+                </div>
                 <h3 class="service-title">RealEstate360™</h3>
                 <p class="service-price">From $349</p>
                 <p class="service-description">
@@ -816,6 +841,9 @@
             </div>
 
             <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
                 <h3 class="service-title">DroneIQ™</h3>
                 <p class="service-price">Custom Quote</p>
                 <p class="service-description">
@@ -849,8 +877,8 @@
                     
                     <div class="credentials-grid">
                         <div class="credential">
-                            <strong>FAA Part 107</strong>
-                            <span>Certified Pilot</span>
+                            <strong>Insurance Industry Professional</strong>
+                            <span>Risk Assessment Specialist</span>
                         </div>
                         <div class="credential">
                             <strong>Family Business</strong>
