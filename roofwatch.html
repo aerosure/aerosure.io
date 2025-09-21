@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoofWatch™ | Professional Roof Risk Assessment | AeroSure</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-teal: #00B4D8;
+            --dark-teal: #0082A8;
+            --light-teal: #5FD4EC;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-teal);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 6rem 2rem 4rem;
+            background: radial-gradient(ellipse at center top, rgba(14, 165, 233, 0.15), transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            color: var(--light-teal);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--white), var(--primary-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-400);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--primary-teal);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--gray-400);
+            font-size: 1.125rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid var(--primary-teal);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--primary-teal);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .pricing-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price span {
+            font-size: 1rem;
+            color: var(--gray-400);
+        }
+
+        .pricing-description {
+            color: var(--gray-400);
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            color: var(--gray-300);
+        }
+
+        .pricing-features li i {
+            color: var(--primary-teal);
+            margin-right: 0.75rem;
+            width: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
+            color: var(--white);
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-teal);
+        }
+
+        /* Methodology Section */
+        .methodology-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+        }
+
+        .methodology-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .methodology-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        .methodology-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .methodology-label {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        /* Expertise Section */
+        .expertise-section {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .expertise-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .expertise-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .expertise-card h4 {
+            color: var(--primary-teal);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .expertise-card p {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--dark-teal), var(--primary-teal));
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .methodology-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .expertise-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Back Link */
+        .back-link {
+            position: fixed;
+            top: 100px;
+            left: 2rem;
+            background: rgba(0, 180, 216, 0.1);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            color: var(--primary-teal);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-link:hover {
+            background: rgba(0, 180, 216, 0.2);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: inline-block;
+                margin: 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Main Site -->
+    <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to AeroSure
+    </a>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="aerosure-logo.png" alt="aerosure Imaging & Inspection" style="height: 50px; width: auto;">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#methodology">Methodology</a></li>
+                <li><a href="#expertise">Expertise</a></li>
+                <li><a href="#contact">Get Started</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">25+ Years Insurance Expertise • Insurance-Grade Documentation</div>
+            <h1>
+                <span class="gradient-text">RoofWatch™</span><br>
+                Professional Roof Risk Assessment
+            </h1>
+            <p class="hero-subtitle">
+                Powered by 25+ years of commercial property Loss Control and Underwriting expertise, starting as Loss Controls Specialist in 1999. Two service tiers for every budget and need.
+            </p>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="section-header">
+            <span class="section-badge">Choose Your Service Level</span>
+            <h2>Two Tiers, One Standard of Excellence</h2>
+            <p class="section-subtitle">
+                From budget-conscious homeowners to insurance professionals, we have the right solution for your roof assessment needs.
+            </p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Homeowner Assessment -->
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <h3><i class="fas fa-home"></i> Homeowner Assessment</h3>
+                    <div class="pricing-price">$99</div>
+                    <p class="pricing-description">
+                        Professional roof assessment without the complicated jargon. Just tell me what's wrong and when to fix it.
+                    </p>
+                </div>
+
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Roof condition scoring (0-10 scale)</li>
+                    <li><i class="fas fa-check"></i> Priority repair identification</li>
+                    <li><i class="fas fa-check"></i> Maintenance planning calendar</li>
+                    <li><i class="fas fa-check"></i> Cost estimates and timing</li>
+                    <li><i class="fas fa-check"></i> 24-48 hour delivery</li>
+                    <li><i class="fas fa-check"></i> Easy-to-understand reporting</li>
+                </ul>
+
+                <a href="#contact" class="btn-secondary">Choose Homeowner</a>
+                
+                <div style="margin-top: 1rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
+                    Perfect for budget-conscious homeowners
+                </div>
+            </div>
+
+            <!-- Professional Risk Analysis -->
+            <div class="pricing-card featured">
+                <div class="pricing-header">
+                    <h3><i class="fas fa-shield-alt"></i> Professional Risk Analysis</h3>
+                    <div class="pricing-price">$299</div>
+                    <p class="pricing-description">
+                        Enterprise-grade risk intelligence you can stake your professional reputation on. Insurance-industry methodology with professional liability protection.
+                    </p>
+                </div>
+
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Insurance-grade documentation</li>
+                    <li><i class="fas fa-check"></i> Comprehensive risk classification</li>
+                    <li><i class="fas fa-check"></i> Industry-standard methodology</li>
+                    <li><i class="fas fa-check"></i> Contractor selection guidance</li>
+                    <li><i class="fas fa-check"></i> Claims prevention strategies</li>
+                    <li><i class="fas fa-check"></i> Professional liability protection</li>
+                    <li><i class="fas fa-check"></i> 24-hour delivery</li>
+                    <li><i class="fas fa-check"></i> Carrier-ready documentation</li>
+                </ul>
+
+                <a href="#contact" class="btn-primary">Choose Professional</a>
+                
+                <div style="margin-top: 1rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
+                    For insurance agents, realtors, commercial contractors
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section class="methodology-section" id="methodology">
+        <div class="methodology-content">
+            <div class="section-header">
+                <span class="section-badge">Proven Methodology</span>
+                <h2>Insurance Industry Precision</h2>
+                <p class="section-subtitle">
+                    Our proprietary scoring methodology combines 25+ years of commercial property Loss Control experience with adaptation of recognized industry standards (NRCA, Haag Engineering). Dual-verification process ensures insurance-industry precision.
+                </p>
+            </div>
+
+            <div class="methodology-grid">
+                <div class="methodology-card">
+                    <div class="methodology-number">25+</div>
+                    <div class="methodology-label">Years Loss Control Experience</div>
+                </div>
+                <div class="methodology-card">
+                    <div class="methodology-number">1999</div>
+                    <div class="methodology-label">Started as Loss Controls Specialist</div>
+                </div>
+                <div class="methodology-card">
+                    <div class="methodology-number">±0.3</div>
+                    <div class="methodology-label">Point Accuracy Validated</div>
+                </div>
+                <div class="methodology-card">
+                    <div class="methodology-number">NRCA</div>
+                    <div class="methodology-label">Industry Standards Aligned</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Expertise Section -->
+    <section class="expertise-section" id="expertise">
+        <div class="expertise-content">
+            <div class="section-header">
+                <span class="section-badge">Why Choose RoofWatch™</span>
+                <h2>Insurance Expertise You Can't Get Elsewhere</h2>
+                <p class="section-subtitle">
+                    Finally, a drone inspection service that speaks your language. Our assessments are based on 25+ years of loss control experience - we know what actually causes claims.
+                </p>
+            </div>
+
+            <div class="expertise-grid">
+                <div class="expertise-card">
+                    <h4>25+ Years Insurance Industry Expertise</h4>
+                    <p>Started as Loss Controls Specialist in 1999, developed methodology from actual claims experience. We know what actually causes roof claims.</p>
+                </div>
+
+                <div class="expertise-card">
+                    <h4>Only Service Combining Loss Control + Drone Technology</h4>
+                    <p>Professional methodology vs. basic photo documentation. Insurance expertise they can't match.</p>
+                </div>
+
+                <div class="expertise-card">
+                    <h4>Insurance-Grade Documentation and Risk Assessment</h4>
+                    <p>Carrier-ready reports with comprehensive risk classification using industry-standard methodology adapted from NRCA and Haag protocols.</p>
+                </div>
+
+                <div class="expertise-card">
+                    <h4>Proven Methodology with Validated Accuracy</h4>
+                    <p>Dual-verification process (experience + photo analysis) ensures ±0.3 point accuracy with professional liability protection.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="cta-content">
+            <h2>Ready to Get Started?</h2>
+            <p>
+                Choose your service level and get professional roof assessment with insurance-industry expertise. Response within 4 hours during business hours.
+            </p>
+            
+            <div class="cta-buttons">
+                <a href="mailto:info@aerosure.io?subject=Homeowner Assessment ($99)" class="btn-secondary">
+                    Get $99 Homeowner Assessment
+                </a>
+                <a href="mailto:info@aerosure.io?subject=Professional Risk Analysis ($299)" class="btn-primary">
+                    Request Professional Risk Analysis
+                </a>
+            </div>
+
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="margin-bottom: 1rem; opacity: 0.9;">Or contact directly:</p>
+                <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="mailto:info@aerosure.io" style="color: white; text-decoration: none; opacity: 0.9;">
+                        📧 info@aerosure.io
+                    </a>
+                    <a href="tel:+18049979804" style="color: white; text-decoration: none; opacity: 0.9;">
+                        📱 804-997-9804
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
