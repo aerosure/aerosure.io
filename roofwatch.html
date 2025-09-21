@@ -495,7 +495,7 @@
             </p>
         </div>
 
-        <div class="pricing-grid">
+        <div class="pricing-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 1200px;">
             <!-- Homeowner Assessment -->
             <div class="pricing-card">
                 <div class="pricing-header">
@@ -522,8 +522,35 @@
                 </div>
             </div>
 
-            <!-- Professional Risk Analysis -->
+            <!-- Solar Inspection -->
             <div class="pricing-card featured">
+                <div class="pricing-header">
+                    <h3><i class="fas fa-solar-panel"></i> Solar Inspection</h3>
+                    <div class="pricing-price">$179</div>
+                    <p class="pricing-description">
+                        Comprehensive solar panel and roof condition assessment. Pre-installation verification or existing system evaluation.
+                    </p>
+                </div>
+
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Solar panel condition assessment</li>
+                    <li><i class="fas fa-check"></i> Roof structural integrity check</li>
+                    <li><i class="fas fa-check"></i> Installation readiness report</li>
+                    <li><i class="fas fa-check"></i> Efficiency evaluation (existing systems)</li>
+                    <li><i class="fas fa-check"></i> Detailed photo documentation</li>
+                    <li><i class="fas fa-check"></i> 24-hour delivery</li>
+                    <li><i class="fas fa-check"></i> Installer-ready reports</li>
+                </ul>
+
+                <a href="#contact" class="btn-primary">Choose Solar</a>
+                
+                <div style="margin-top: 1rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
+                    Perfect for solar installations & maintenance
+                </div>
+            </div>
+
+            <!-- Professional Risk Analysis -->
+            <div class="pricing-card">
                 <div class="pricing-header">
                     <h3><i class="fas fa-shield-alt"></i> Professional Risk Analysis</h3>
                     <div class="pricing-price">$299</div>
@@ -627,9 +654,12 @@
                 Choose your service level and get professional roof assessment with insurance-industry expertise. Response within 4 hours during business hours.
             </p>
             
-            <div class="cta-buttons">
+            <div class="cta-buttons" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 800px; margin: 2rem auto;">
                 <a href="mailto:info@aerosure.io?subject=Homeowner Assessment ($99)" class="btn-secondary">
                     Get $99 Homeowner Assessment
+                </a>
+                <a href="mailto:info@aerosure.io?subject=Solar Inspection ($179)" class="btn-primary">
+                    Get $179 Solar Inspection
                 </a>
                 <a href="mailto:info@aerosure.io?subject=Professional Risk Analysis ($299)" class="btn-primary">
                     Request Professional Risk Analysis
