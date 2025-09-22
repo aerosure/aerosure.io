@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DroneIQ™ | Drone Intelligence & Custom Solutions | AeroSure</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #ff6b35;
+            --dark-orange: #e55a2b;
+            --light-orange: #ff8c5a;
+            --primary-purple: #8B5CF6;
+            --dark-purple: #7C3AED;
+            --light-purple: #A78BFA;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-orange);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 8rem 2rem 4rem;
+            background: radial-gradient(ellipse at center top, rgba(139, 92, 246, 0.15), transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: var(--primary-purple);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--white), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-400);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Service Details Section */
+        .service-details {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary-purple);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--gray-400);
+            font-size: 1.125rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-purple);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--white);
+        }
+
+        .feature-description {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: var(--primary-purple);
+            margin-bottom: 1.5rem;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .service-description {
+            color: var(--gray-400);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .service-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .service-features li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            color: var(--gray-300);
+            font-size: 0.9rem;
+        }
+
+        .service-features li i {
+            color: var(--primary-purple);
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Expertise Section */
+        .expertise-section {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .expertise-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .expertise-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+        }
+
+        .expertise-label {
+            font-size: 1.1rem;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .expertise-description {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--dark-purple), var(--primary-purple));
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+            text-align: center;
+        }
+
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid var(--primary-purple);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .contact-method {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .contact-method:hover {
+            background: rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Back Link */
+        .back-link {
+            position: fixed;
+            top: 140px;
+            left: 2rem;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: var(--primary-purple);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-link:hover {
+            background: rgba(139, 92, 246, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .expertise-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: inline-block;
+                margin: 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Main Site -->
+    <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to AeroSure
+    </a>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="aerosure-logo.png" alt="aerosure Imaging & Inspection" style="height: 50px; width: auto;">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#services">Services</a></li>
+                <li><a href="#expertise">Expertise</a></li>
+                <li><a href="#capabilities">Capabilities</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Custom Solutions • Advanced Analytics • Training & Consulting</div>
+            <h1>
+                <span class="gradient-text">DroneIQ™</span><br>
+                Drone Intelligence & Custom Solutions
+            </h1>
+            <p class="hero-subtitle">
+                Advanced drone intelligence, custom inspection protocols, and enterprise training solutions. Leverage 25+ years of commercial property expertise for specialized applications and complex challenges.
+            </p>
+            <div style="margin-top: 2rem;">
+                <a href="#contact" class="btn-primary" style="margin-right: 1rem; background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));">
+                    <i class="fas fa-brain"></i> Request Consultation
+                </a>
+                <a href="#services" class="btn-primary">
+                    <i class="fas fa-cogs"></i> Explore Solutions
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Details Section -->
+    <section class="service-details" id="capabilities">
+        <div class="section-header">
+            <span class="section-badge">Core Capabilities</span>
+            <h2>Advanced Drone Intelligence Solutions</h2>
+            <p class="section-subtitle">
+                Beyond standard aerial services - we develop custom solutions, advanced analytics, and specialized protocols for complex industry challenges.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="feature-title">AI-Powered Analytics</h3>
+                <p class="feature-description">
+                    Advanced data processing and machine learning algorithms to extract actionable insights from aerial data. Custom models trained for your specific industry needs.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3 class="feature-title">Custom Protocols</h3>
+                <p class="feature-description">
+                    Specialized inspection and documentation protocols designed for unique industry requirements. Tailored workflows that integrate with your existing systems.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3 class="feature-title">Enterprise Training</h3>
+                <p class="feature-description">
+                    Comprehensive training programs for internal teams. From basic drone operations to advanced risk assessment techniques and regulatory compliance.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section" id="services">
+        <div class="section-header">
+            <span class="section-badge">Custom Solutions</span>
+            <h2>Specialized DroneIQ™ Services</h2>
+            <p class="section-subtitle">
+                Enterprise-grade solutions designed for organizations with complex requirements and specialized applications.
+            </p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="service-title">Risk Analytics Platform</h3>
+                <p class="service-description">
+                    Custom analytics platform combining aerial data with insurance industry expertise. Predictive modeling for property risk assessment and portfolio management.
+                </p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> Custom dashboard development</li>
+                    <li><i class="fas fa-check"></i> Predictive risk modeling</li>
+                    <li><i class="fas fa-check"></i> Portfolio-level analytics</li>
+                    <li><i class="fas fa-check"></i> Integration with existing systems</li>
+                    <li><i class="fas fa-check"></i> Real-time monitoring capabilities</li>
+                </ul>
+                <a href="#contact" class="btn-primary">Discuss Requirements</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3 class="service-title">Training & Certification</h3>
+                <p class="service-description">
+                    Comprehensive training programs for insurance professionals, risk managers, and technical teams. From drone basics to advanced risk assessment techniques.
+                </p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> Custom curriculum development</li>
+                    <li><i class="fas fa-check"></i> Hands-on training sessions</li>
+                    <li><i class="fas fa-check"></i> Industry-specific protocols</li>
+                    <li><i class="fas fa-check"></i> Certification programs</li>
+                    <li><i class="fas fa-check"></i> Ongoing support and updates</li>
+                </ul>
+                <a href="#contact" class="btn-primary">Plan Training</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <h3 class="service-title">R&D Partnerships</h3>
+                <p class="service-description">
+                    Research and development partnerships for cutting-edge applications. Collaborative development of new technologies and methodologies for your industry.
+                </p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> Joint technology development</li>
+                    <li><i class="fas fa-check"></i> Proof of concept projects</li>
+                    <li><i class="fas fa-check"></i> Pilot program implementation</li>
+                    <li><i class="fas fa-check"></i> Industry research collaboration</li>
+                    <li><i class="fas fa-check"></i> Intellectual property development</li>
+                </ul>
+                <a href="#contact" class="btn-primary">Explore Partnership</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3 class="service-title">Strategic Consulting</h3>
+                <p class="service-description">
+                    Strategic consulting for organizations looking to integrate drone technology and aerial intelligence into their operations and risk management practices.
+                </p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> Technology implementation planning</li>
+                    <li><i class="fas fa-check"></i> ROI analysis and business case</li>
+                    <li><i class="fas fa-check"></i> Regulatory compliance guidance</li>
+                    <li><i class="fas fa-check"></i> Process optimization</li>
+                    <li><i class="fas fa-check"></i> Change management support</li>
+                </ul>
+                <a href="#contact" class="btn-primary">Schedule Consultation</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Expertise Section -->
+    <section class="expertise-section" id="expertise">
+        <div class="section-header">
+            <span class="section-badge">Industry Expertise</span>
+            <h2>Deep Domain Knowledge</h2>
+            <p class="section-subtitle">
+                Decades of commercial property and insurance expertise combined with cutting-edge drone technology and data analytics capabilities.
+            </p>
+        </div>
+
+        <div class="expertise-grid">
+            <div class="expertise-item">
+                <div class="expertise-number">25+</div>
+                <div class="expertise-label">Years Insurance Experience</div>
+                <div class="expertise-description">Commercial property underwriting and loss control expertise</div>
+            </div>
+
+            <div class="expertise-item">
+                <div class="expertise-number">500+</div>
+                <div class="expertise-label">Custom Solutions Deployed</div>
+                <div class="expertise-description">Specialized protocols and analytics platforms delivered</div>
+            </div>
+
+            <div class="expertise-item">
+                <div class="expertise-number">50+</div>
+                <div class="expertise-label">Enterprise Clients</div>
+                <div class="expertise-description">Organizations trained and systems implemented</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Develop Custom Drone Intelligence Solutions?</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.9;">
+                Complex challenges require specialized solutions. Let's discuss how DroneIQ™ can develop custom capabilities, training programs, and analytics platforms for your organization.
+            </p>
+
+            <a href="#contact" class="btn-primary" style="background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange)); padding: 1.25rem 2.5rem; font-size: 1.125rem;">
+                <i class="fas fa-rocket"></i> Start Custom Development
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="contact-content">
+            <h2>Start Your DroneIQ™ Project</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem;">
+                Ready to explore custom drone intelligence solutions? Contact our team to discuss your specific requirements, challenges, and objectives.
+            </p>
+
+            <div class="contact-card">
+                <h3 style="color: var(--primary-purple); margin-bottom: 1rem;">
+                    <i class="fas fa-brain"></i> Drone Intelligence Specialists
+                </h3>
+                <p style="margin-bottom: 1.5rem;">
+                    Connect with our team of experts to explore custom solutions, training programs, and strategic partnerships tailored to your organization.
+                </p>
+
+                <div class="contact-info">
+                    <a href="tel:+18049979804" class="contact-method">
+                        <i class="fas fa-phone" style="color: var(--primary-purple); margin-right: 0.5rem;"></i>
+                        <strong>Call: 804-997-9804</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Strategic Consulting Line</span>
+                    </a>
+                    
+                    <a href="mailto:droneiq@aerosure.io?subject=DroneIQ™ Custom Solutions Inquiry" class="contact-method">
+                        <i class="fas fa-envelope" style="color: var(--primary-purple); margin-right: 0.5rem;"></i>
+                        <strong>Email: droneiq@aerosure.io</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Custom Development & Training</span>
+                    </a>
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <p style="font-size: 0.9rem; opacity: 0.8;">
+                        <i class="fas fa-clock"></i> Consultation Hours: Monday-Friday 8AM-6PM<br>
+                        <i class="fas fa-globe"></i> Enterprise Solutions: National & International
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
