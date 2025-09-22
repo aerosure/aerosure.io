@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StormCheck™ | Emergency Storm Documentation | AeroSure</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #ff6b35;
+            --dark-orange: #e55a2b;
+            --light-orange: #ff8c5a;
+            --primary-teal: #00B4D8;
+            --dark-teal: #0082A8;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-orange);
+        }
+
+        /* Emergency Alert Bar */
+        .emergency-bar {
+            background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+            padding: 0.75rem 2rem;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 80px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 4rem 2rem;
+            background: radial-gradient(ellipse at center top, rgba(255, 107, 53, 0.15), transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: var(--light-orange);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--white), var(--primary-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-400);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Service Details Section */
+        .service-details {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--primary-orange);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--gray-400);
+            font-size: 1.125rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 107, 53, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--white);
+        }
+
+        .feature-description {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+        }
+
+        .pricing-card {
+            background: var(--gray-900);
+            border: 2px solid var(--primary-orange);
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-card::before {
+            content: 'EMERGENCY RESPONSE';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-orange);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .pricing-header h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .pricing-price {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-description {
+            color: var(--gray-400);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            color: var(--gray-300);
+        }
+
+        .pricing-features li i {
+            color: var(--primary-orange);
+            margin-right: 0.75rem;
+            width: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Process Section */
+        .process-section {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .process-step::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            right: -1rem;
+            width: 2rem;
+            height: 2px;
+            background: var(--primary-orange);
+        }
+
+        .process-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            color: white;
+        }
+
+        .step-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .step-description {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        /* Urgency Section */
+        .urgency-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--dark-orange), var(--primary-orange));
+            text-align: center;
+        }
+
+        .urgency-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .urgency-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .urgency-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .emergency-contact {
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid var(--primary-orange);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .contact-method {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .contact-method:hover {
+            background: rgba(255, 107, 53, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Back Link */
+        .back-link {
+            position: fixed;
+            top: 100px;
+            left: 2rem;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: var(--primary-orange);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 107, 53, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .process-step::after {
+                display: none;
+            }
+
+            .urgency-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: inline-block;
+                margin: 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Main Site -->
+    <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to AeroSure
+    </a>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="aerosure-logo.png" alt="aerosure Imaging & Inspection" style="height: 50px; width: auto;">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#service">Service Details</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#process">Process</a></li>
+                <li><a href="#contact">Emergency Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Emergency Alert Bar -->
+    <div class="emergency-bar">
+        <i class="fas fa-bolt"></i> STORM RESPONSE ACTIVE - Same Day Documentation Available - Call 804-997-9804
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Emergency Response • Insurance Claims • Same-Day Service</div>
+            <h1>
+                <span class="gradient-text">StormCheck™</span><br>
+                Emergency Storm Documentation
+            </h1>
+            <p class="hero-subtitle">
+                Professional storm damage documentation with same-day delivery. Get the evidence you need for insurance claims while conditions are fresh. 25+ years of Loss Control expertise ensures carrier-ready documentation.
+            </p>
+            <div style="margin-top: 2rem;">
+                <a href="#contact" class="btn-primary" style="margin-right: 1rem;">
+                    <i class="fas fa-phone"></i> Emergency Response - Call Now
+                </a>
+                <a href="#pricing" class="btn-primary">
+                    <i class="fas fa-bolt"></i> Book Same-Day Service
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Details Section -->
+    <section class="service-details" id="service">
+        <div class="section-header">
+            <span class="section-badge">Emergency Documentation</span>
+            <h2>Professional Storm Damage Assessment</h2>
+            <p class="section-subtitle">
+                When storms hit, time is critical. Get professional documentation that insurance companies trust and adjusters respect.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="feature-title">Same-Day Response</h3>
+                <p class="feature-description">
+                    Priority scheduling for storm damage. We typically respond within 2-4 hours of storm passage when conditions are safe.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Insurance-Grade Documentation</h3>
+                <p class="feature-description">
+                    25+ years of Loss Control expertise ensures your documentation meets carrier standards and expedites claim processing.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3 class="feature-title">Carrier-Ready Reports</h3>
+                <p class="feature-description">
+                    Professional reports formatted for insurance submission with damage classification and repair prioritization.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="section-header">
+            <span class="section-badge">Emergency Pricing</span>
+            <h2>StormCheck™ Emergency Response</h2>
+            <p class="section-subtitle">
+                Premium pricing for emergency response and same-day documentation when you need it most.
+            </p>
+        </div>
+
+        <div class="pricing-card">
+            <div class="pricing-header">
+                <h3><i class="fas fa-bolt"></i> StormCheck™ Emergency</h3>
+                <div class="pricing-price">$399</div>
+                <p class="pricing-description">
+                    Professional storm damage documentation with priority response and same-day delivery.
+                </p>
+            </div>
+
+            <ul class="pricing-features">
+                <li><i class="fas fa-check"></i> Priority emergency response (2-4 hour response time)</li>
+                <li><i class="fas fa-check"></i> Comprehensive storm damage documentation</li>
+                <li><i class="fas fa-check"></i> Insurance-grade photo evidence package</li>
+                <li><i class="fas fa-check"></i> Damage classification and prioritization</li>
+                <li><i class="fas fa-check"></i> Carrier-ready claim documentation</li>
+                <li><i class="fas fa-check"></i> Same-day report delivery</li>
+                <li><i class="fas fa-check"></i> Emergency contact support</li>
+                <li><i class="fas fa-check"></i> Professional liability protection</li>
+            </ul>
+
+            <a href="#contact" class="btn-primary" style="width: 100%;">
+                Book Emergency Response
+            </a>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process-section" id="process">
+        <div class="section-header">
+            <span class="section-badge">Our Process</span>
+            <h2>How StormCheck™ Works</h2>
+            <p class="section-subtitle">
+                Streamlined emergency response process designed for speed and accuracy when time matters most.
+            </p>
+        </div>
+
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <h4 class="step-title">Emergency Call</h4>
+                <p class="step-description">Contact us immediately after storm passage. We prioritize storm response calls.</p>
+            </div>
+
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <h4 class="step-title">Rapid Response</h4>
+                <p class="step-description">2-4 hour response time when weather conditions permit safe flight operations.</p>
+            </div>
+
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <h4 class="step-title">Documentation</h4>
+                <p class="step-description">Comprehensive aerial documentation of all visible storm damage and affected areas.</p>
+            </div>
+
+            <div class="process-step">
+                <div class="step-number">4</div>
+                <h4 class="step-title">Same-Day Delivery</h4>
+                <p class="step-description">Insurance-ready report delivered within hours, not days. Ready for immediate claim filing.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Urgency Section -->
+    <section class="urgency-section">
+        <div class="urgency-content">
+            <h2>Why Speed Matters After Storms</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.9;">
+                Insurance companies process claims faster with immediate, professional documentation. Don't wait for conditions to change or evidence to disappear.
+            </p>
+
+            <div class="urgency-stats">
+                <div class="urgency-stat">
+                    <div class="stat-number">2-4hrs</div>
+                    <div class="stat-label">Response Time</div>
+                </div>
+                <div class="urgency-stat">
+                    <div class="stat-number">Same Day</div>
+                    <div class="stat-label">Report Delivery</div>
+                </div>
+                <div class="urgency-stat">
+                    <div class="stat-number">25+ Years</div>
+                    <div class="stat-label">Insurance Expertise</div>
+                </div>
+            </div>
+
+            <p style="font-size: 1rem; opacity: 0.8;">
+                Weather conditions change quickly. Debris gets cleaned up. Evidence disappears. Professional documentation captured immediately after storm passage provides the strongest foundation for your insurance claim.
+            </p>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="cta-content">
+            <h2>Storm Damage? Get Documented Today</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem;">
+                Don't wait. The sooner you document storm damage, the stronger your insurance claim. Professional documentation available same-day when weather permits.
+            </p>
+
+            <div class="emergency-contact">
+                <h3 style="color: var(--primary-orange); margin-bottom: 1rem;">
+                    <i class="fas fa-exclamation-triangle"></i> Emergency Storm Response
+                </h3>
+                <p style="margin-bottom: 1.5rem;">
+                    Available during and immediately after storm events. Priority response for storm damage documentation.
+                </p>
+
+                <div class="contact-info">
+                    <a href="tel:+18049979804" class="contact-method">
+                        <i class="fas fa-phone" style="color: var(--primary-orange); margin-right: 0.5rem;"></i>
+                        <strong>Call: 804-997-9804</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Emergency Priority Line</span>
+                    </a>
+                    
+                    <a href="mailto:emergency@aerosure.io?subject=STORM EMERGENCY - Immediate Response Needed" class="contact-method">
+                        <i class="fas fa-envelope" style="color: var(--primary-orange); margin-right: 0.5rem;"></i>
+                        <strong>Email: emergency@aerosure.io</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Subject: STORM EMERGENCY</span>
+                    </a>
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <p style="font-size: 0.9rem; opacity: 0.8;">
+                        <i class="fas fa-clock"></i> Storm Response: Available 24/7 during active weather events<br>
+                        <i class="fas fa-map-marker-alt"></i> Service Area: Richmond Metro + 50 miles emergency response
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
