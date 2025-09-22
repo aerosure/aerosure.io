@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteWatch™ | Construction Site Monitoring | AeroSure</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #ff6b35;
+            --dark-orange: #e55a2b;
+            --light-orange: #ff8c5a;
+            --primary-teal: #00B4D8;
+            --dark-teal: #0082A8;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-orange);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 8rem 2rem 4rem;
+            background: radial-gradient(ellipse at center top, rgba(0, 180, 216, 0.15), transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(0, 180, 216, 0.1);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            color: var(--primary-teal);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--white), var(--primary-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-400);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Service Details Section */
+        .service-details {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(0, 180, 216, 0.1);
+            color: var(--primary-teal);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--gray-400);
+            font-size: 1.125rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(0, 180, 216, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 180, 216, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-teal);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--white);
+        }
+
+        .feature-description {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--gray-900);
+            border: 2px solid var(--primary-teal);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary-orange);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-orange);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .pricing-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card.featured .pricing-price {
+            color: var(--primary-orange);
+        }
+
+        .pricing-period {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-description {
+            color: var(--gray-400);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            color: var(--gray-300);
+        }
+
+        .pricing-features li i {
+            color: var(--primary-teal);
+            margin-right: 0.75rem;
+            width: 16px;
+        }
+
+        .pricing-card.featured .pricing-features li i {
+            color: var(--primary-orange);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .pricing-card.featured .btn-primary {
+            background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 180, 216, 0.4);
+        }
+
+        .pricing-card.featured .btn-primary:hover {
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Benefits Section */
+        .benefits-section {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .benefit-icon {
+            background: rgba(0, 180, 216, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1.5rem;
+            color: var(--primary-teal);
+            flex-shrink: 0;
+        }
+
+        .benefit-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .benefit-content p {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--dark-teal), var(--primary-teal));
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .cta-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+            text-align: center;
+        }
+
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: rgba(0, 180, 216, 0.1);
+            border: 2px solid var(--primary-teal);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .contact-method {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .contact-method:hover {
+            background: rgba(0, 180, 216, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Back Link */
+        .back-link {
+            position: fixed;
+            top: 140px;
+            left: 2rem;
+            background: rgba(0, 180, 216, 0.1);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            color: var(--primary-teal);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-link:hover {
+            background: rgba(0, 180, 216, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: inline-block;
+                margin: 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Main Site -->
+    <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to AeroSure
+    </a>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="aerosure-logo.png" alt="aerosure Imaging & Inspection" style="height: 50px; width: auto;">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#service">Service Details</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#benefits">Benefits</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Construction Monitoring • Progress Documentation • Safety Compliance</div>
+            <h1>
+                <span class="gradient-text">SiteWatch™</span><br>
+                Professional Construction Monitoring
+            </h1>
+            <p class="hero-subtitle">
+                Comprehensive construction site monitoring with regular aerial documentation. Track progress, ensure compliance, and maintain detailed project records from start to finish.
+            </p>
+            <div style="margin-top: 2rem;">
+                <a href="#contact" class="btn-primary" style="margin-right: 1rem; background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));">
+                    <i class="fas fa-calendar-alt"></i> Schedule Site Assessment
+                </a>
+                <a href="#pricing" class="btn-primary">
+                    <i class="fas fa-eye"></i> View Monitoring Plans
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Details Section -->
+    <section class="service-details" id="service">
+        <div class="section-header">
+            <span class="section-badge">Construction Monitoring</span>
+            <h2>Professional Site Documentation & Progress Tracking</h2>
+            <p class="section-subtitle">
+                Powered by 25+ years of commercial property risk assessment and underwriting expertise. Regular monitoring schedules tailored to your project timeline.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3 class="feature-title">Scheduled Monitoring</h3>
+                <p class="feature-description">
+                    Regular aerial documentation on your schedule - weekly, bi-weekly, or monthly. Consistent progress tracking from groundbreaking to completion.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-check"></i>
+                </div>
+                <h3 class="feature-title">Compliance Documentation</h3>
+                <p class="feature-description">
+                    Safety compliance monitoring, environmental documentation, and risk assessment. Insurance-grade reporting for liability protection.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Progress Analytics</h3>
+                <p class="feature-description">
+                    Detailed progress reports with visual comparisons, timeline analysis, and milestone tracking. Perfect for stakeholder updates.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="section-header">
+            <span class="section-badge">Monitoring Plans</span>
+            <h2>Choose Your SiteWatch™ Plan</h2>
+            <p class="section-subtitle">
+                Flexible monitoring schedules designed to match your project needs and budget requirements.
+            </p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <h3><i class="fas fa-camera"></i> Standard Monitoring</h3>
+                    <div class="pricing-price">$149</div>
+                    <div class="pricing-period">per visit</div>
+                    <p class="pricing-description">
+                        Perfect for smaller projects requiring periodic documentation and progress tracking.
+                    </p>
+                </div>
+
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Comprehensive aerial photography</li>
+                    <li><i class="fas fa-check"></i> Progress documentation report</li>
+                    <li><i class="fas fa-check"></i> High-resolution image package</li>
+                    <li><i class="fas fa-check"></i> Basic progress comparison</li>
+                    <li><i class="fas fa-check"></i> 48-hour delivery</li>
+                    <li><i class="fas fa-check"></i> Digital file access</li>
+                </ul>
+
+                <a href="#contact" class="btn-primary">
+                    Get Started
+                </a>
+            </div>
+
+            <div class="pricing-card featured">
+                <div class="pricing-header">
+                    <h3><i class="fas fa-building"></i> Professional Monitoring</h3>
+                    <div class="pricing-price">$249</div>
+                    <div class="pricing-period">per visit</div>
+                    <p class="pricing-description">
+                        Comprehensive monitoring with detailed analytics, perfect for larger commercial projects.
+                    </p>
+                </div>
+
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Everything in Standard plan</li>
+                    <li><i class="fas fa-check"></i> Detailed progress analytics</li>
+                    <li><i class="fas fa-check"></i> Safety compliance documentation</li>
+                    <li><i class="fas fa-check"></i> Timeline milestone tracking</li>
+                    <li><i class="fas fa-check"></i> Stakeholder presentation package</li>
+                    <li><i class="fas fa-check"></i> Same-day report delivery</li>
+                    <li><i class="fas fa-check"></i> Direct client portal access</li>
+                    <li><i class="fas fa-check"></i> Insurance documentation support</li>
+                </ul>
+
+                <a href="#contact" class="btn-primary">
+                    Start Monitoring
+                </a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem; color: var(--gray-400);">
+            <p><i class="fas fa-info-circle"></i> Volume discounts available for ongoing monitoring contracts. Contact us for custom scheduling and enterprise pricing.</p>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section" id="benefits">
+        <div class="section-header">
+            <span class="section-badge">Why SiteWatch™</span>
+            <h2>Construction Industry Expertise</h2>
+            <p class="section-subtitle">
+                25+ years of commercial property experience ensures we understand what you need to document and how to present it effectively.
+            </p>
+        </div>
+
+        <div class="benefits-grid">
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-hard-hat"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Safety & Compliance Focus</h3>
+                    <p>Identify potential safety issues, monitor compliance requirements, and maintain documentation for insurance and regulatory purposes.</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Timeline Management</h3>
+                    <p>Visual progress tracking helps identify delays early, supports schedule adjustments, and provides clear milestone documentation.</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Stakeholder Communication</h3>
+                    <p>Professional reports perfect for investors, lenders, and project teams. Clear visual progress updates everyone can understand.</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Risk Mitigation</h3>
+                    <p>Early identification of potential issues, environmental compliance monitoring, and comprehensive documentation for liability protection.</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Cost Management</h3>
+                    <p>Track resource utilization, monitor material deliveries, and maintain visual records that support budget management and billing.</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-archive"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Project Archive</h3>
+                    <p>Complete visual history of your project from start to finish. Valuable for future projects, warranty issues, and legal documentation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Monitor Your Construction Project?</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.9;">
+                Professional construction monitoring backed by decades of commercial property expertise. Get the documentation and insights you need to manage your project effectively.
+            </p>
+
+            <div class="cta-stats">
+                <div class="cta-stat">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="cta-stat">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Projects Monitored</div>
+                </div>
+                <div class="cta-stat">
+                    <div class="stat-number">48hr</div>
+                    <div class="stat-label">Report Delivery</div>
+                </div>
+            </div>
+
+            <a href="#contact" class="btn-primary" style="background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange)); padding: 1.25rem 2.5rem; font-size: 1.125rem;">
+                Schedule Site Assessment
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="contact-content">
+            <h2>Start Your SiteWatch™ Monitoring</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem;">
+                Ready to implement professional construction monitoring? Contact us to discuss your project timeline and monitoring requirements.
+            </p>
+
+            <div class="contact-card">
+                <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">
+                    <i class="fas fa-building"></i> Construction Monitoring Specialists
+                </h3>
+                <p style="margin-bottom: 1.5rem;">
+                    Get professional site assessment and customized monitoring schedule recommendations for your project.
+                </p>
+
+                <div class="contact-info">
+                    <a href="tel:+18049979804" class="contact-method">
+                        <i class="fas fa-phone" style="color: var(--primary-teal); margin-right: 0.5rem;"></i>
+                        <strong>Call: 804-997-9804</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Project Consultation Line</span>
+                    </a>
+                    
+                    <a href="mailto:sitewatch@aerosure.io?subject=SiteWatch™ Monitoring Inquiry" class="contact-method">
+                        <i class="fas fa-envelope" style="color: var(--primary-teal); margin-right: 0.5rem;"></i>
+                        <strong>Email: sitewatch@aerosure.io</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Project Planning & Scheduling</span>
+                    </a>
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <p style="font-size: 0.9rem; opacity: 0.8;">
+                        <i class="fas fa-clock"></i> Business Hours: Monday-Friday 8AM-6PM<br>
+                        <i class="fas fa-map-marker-alt"></i> Service Area: Richmond Metro + 50 miles
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
