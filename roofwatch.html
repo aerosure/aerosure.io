@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoofWatch™ | Professional Roof Risk Assessment | AeroSure</title>
+    <title>RoofWatch™ | Professional Roof Inspection | AeroSure</title>
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -14,9 +14,12 @@
         }
 
         :root {
-            --primary-teal: #00B4D8;
-            --dark-teal: #0082A8;
-            --light-teal: #5FD4EC;
+            --primary-orange: #ff6b35;
+            --dark-orange: #e55a2b;
+            --light-orange: #ff8c5a;
+            --primary-burgundy: #991B1B;
+            --dark-burgundy: #7F1D1D;
+            --light-burgundy: #B91C1C;
             --dark-bg: #0f172a;
             --darker-bg: #020617;
             --gray-900: #111827;
@@ -88,18 +91,18 @@
         }
 
         .nav-links a:hover {
-            color: var(--primary-teal);
+            color: var(--primary-orange);
         }
 
         /* Hero Section */
         .hero {
-            min-height: 100vh;
+            min-height: 80vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 6rem 2rem 4rem;
-            background: radial-gradient(ellipse at center top, rgba(14, 165, 233, 0.15), transparent 50%);
+            padding: 8rem 2rem 4rem;
+            background: radial-gradient(ellipse at center top, rgba(153, 27, 27, 0.15), transparent 50%);
         }
 
         .hero-content {
@@ -110,9 +113,9 @@
 
         .hero-badge {
             display: inline-block;
-            background: rgba(14, 165, 233, 0.1);
-            border: 1px solid rgba(14, 165, 233, 0.3);
-            color: var(--light-teal);
+            background: rgba(153, 27, 27, 0.1);
+            border: 1px solid rgba(153, 27, 27, 0.3);
+            color: var(--primary-burgundy);
             padding: 0.5rem 1rem;
             border-radius: 50px;
             font-size: 0.875rem;
@@ -127,7 +130,7 @@
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, var(--white), var(--primary-teal));
+            background: linear-gradient(135deg, var(--white), var(--primary-burgundy));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -140,8 +143,8 @@
             margin: 0 auto 2.5rem;
         }
 
-        /* Pricing Section */
-        .pricing-section {
+        /* Service Details Section */
+        .service-details {
             padding: 5rem 2rem;
             background: var(--darker-bg);
         }
@@ -154,8 +157,8 @@
 
         .section-badge {
             display: inline-block;
-            background: rgba(14, 165, 233, 0.1);
-            color: var(--primary-teal);
+            background: rgba(153, 27, 27, 0.1);
+            color: var(--primary-burgundy);
             padding: 0.25rem 1rem;
             border-radius: 50px;
             font-size: 0.875rem;
@@ -175,6 +178,50 @@
             font-size: 1.125rem;
         }
 
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(153, 27, 27, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(153, 27, 27, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-burgundy);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--white);
+        }
+
+        .feature-description {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+        }
+
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -185,15 +232,15 @@
 
         .pricing-card {
             background: var(--gray-900);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--primary-burgundy);
             border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.3s;
+            padding: 2.5rem;
+            text-align: center;
             position: relative;
         }
 
         .pricing-card.featured {
-            border: 2px solid var(--primary-teal);
+            border-color: var(--primary-orange);
             transform: scale(1.05);
         }
 
@@ -201,50 +248,49 @@
             content: 'MOST POPULAR';
             position: absolute;
             top: -10px;
-            right: 20px;
-            background: var(--primary-teal);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-orange);
             color: white;
-            padding: 0.25rem 0.75rem;
+            padding: 0.5rem 1rem;
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: bold;
         }
 
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(14, 165, 233, 0.3);
-        }
-
-        .pricing-card.featured:hover {
-            transform: scale(1.05) translateY(-5px);
-        }
-
         .pricing-header h3 {
             font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
             color: var(--white);
         }
 
         .pricing-price {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            color: var(--primary-teal);
+            color: var(--primary-burgundy);
             margin-bottom: 0.5rem;
         }
 
-        .pricing-price span {
-            font-size: 1rem;
+        .pricing-card.featured .pricing-price {
+            color: var(--primary-orange);
+        }
+
+        .pricing-period {
             color: var(--gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
         }
 
         .pricing-description {
             color: var(--gray-400);
             margin-bottom: 2rem;
+            font-size: 1rem;
         }
 
         .pricing-features {
             list-style: none;
             margin-bottom: 2rem;
+            text-align: left;
         }
 
         .pricing-features li {
@@ -255,15 +301,19 @@
         }
 
         .pricing-features li i {
-            color: var(--primary-teal);
+            color: var(--primary-burgundy);
             margin-right: 0.75rem;
             width: 16px;
         }
 
+        .pricing-card.featured .pricing-features li i {
+            color: var(--primary-orange);
+        }
+
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
+            background: linear-gradient(135deg, var(--primary-burgundy), var(--dark-burgundy));
             color: var(--white);
-            padding: 0.875rem 2rem;
+            padding: 1rem 2rem;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
@@ -271,105 +321,59 @@
             display: inline-block;
             cursor: pointer;
             border: none;
+            font-size: 1rem;
             width: 100%;
-            text-align: center;
+        }
+
+        .pricing-card.featured .btn-primary {
+            background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(14, 165, 233, 0.4);
+            box-shadow: 0 15px 40px rgba(153, 27, 27, 0.4);
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--white);
-            padding: 0.875rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s;
-            display: inline-block;
-            width: 100%;
-            text-align: center;
+        .pricing-card.featured .btn-primary:hover {
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
         }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--primary-teal);
-        }
-
-        /* Methodology Section */
-        .methodology-section {
-            padding: 5rem 2rem;
-            background: var(--dark-bg);
-        }
-
-        .methodology-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .methodology-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .methodology-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 2rem 1rem;
-            text-align: center;
-        }
-
-        .methodology-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-teal);
-            margin-bottom: 0.5rem;
-        }
-
-        .methodology-label {
-            color: var(--gray-400);
-            font-size: 0.9rem;
-        }
-
-        /* Expertise Section */
-        .expertise-section {
+        /* Applications Section */
+        .applications-section {
             padding: 5rem 2rem;
             background: var(--darker-bg);
         }
 
-        .expertise-content {
-            max-width: 1000px;
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
-        .expertise-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            margin-top: 2rem;
+        .application-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
         }
 
-        .expertise-card {
-            background: var(--gray-900);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .application-icon {
+            background: rgba(153, 27, 27, 0.1);
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1rem;
+            font-size: 1.5rem;
+            color: var(--primary-burgundy);
+            flex-shrink: 0;
         }
 
-        .expertise-card h4 {
-            color: var(--primary-teal);
-            margin-bottom: 0.75rem;
-            font-size: 1.1rem;
+        .application-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
         }
 
-        .expertise-card p {
+        .application-content p {
             color: var(--gray-400);
             line-height: 1.6;
         }
@@ -377,7 +381,7 @@
         /* CTA Section */
         .cta-section {
             padding: 5rem 2rem;
-            background: linear-gradient(135deg, var(--dark-teal), var(--primary-teal));
+            background: linear-gradient(135deg, var(--dark-burgundy), var(--primary-burgundy));
             text-align: center;
         }
 
@@ -386,46 +390,79 @@
             margin: 0 auto;
         }
 
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
+        .cta-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .cta-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+            text-align: center;
+        }
+
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: rgba(153, 27, 27, 0.1);
+            border: 2px solid var(--primary-burgundy);
+            border-radius: 16px;
+            padding: 2rem;
             margin-top: 2rem;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .pricing-grid {
-                grid-template-columns: 1fr;
-            }
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
 
-            .pricing-card.featured {
-                transform: none;
-            }
+        .contact-method {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.3s;
+        }
 
-            .methodology-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .expertise-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
+        .contact-method:hover {
+            background: rgba(153, 27, 27, 0.2);
+            transform: translateY(-2px);
         }
 
         /* Back Link */
         .back-link {
             position: fixed;
-            top: 100px;
+            top: 140px;
             left: 2rem;
-            background: rgba(0, 180, 216, 0.1);
-            border: 1px solid rgba(0, 180, 216, 0.3);
-            color: var(--primary-teal);
+            background: rgba(153, 27, 27, 0.1);
+            border: 1px solid rgba(153, 27, 27, 0.3);
+            color: var(--primary-burgundy);
             padding: 0.5rem 1rem;
             border-radius: 8px;
             text-decoration: none;
@@ -435,11 +472,36 @@
         }
 
         .back-link:hover {
-            background: rgba(0, 180, 216, 0.2);
+            background: rgba(153, 27, 27, 0.2);
             transform: translateX(-5px);
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .applications-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+
             .back-link {
                 position: relative;
                 top: auto;
@@ -463,10 +525,10 @@
                 <img src="aerosure-logo.png" alt="aerosure Imaging & Inspection" style="height: 50px; width: auto;">
             </a>
             <ul class="nav-links">
+                <li><a href="#service">Service Details</a></li>
                 <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#methodology">Methodology</a></li>
-                <li><a href="#expertise">Expertise</a></li>
-                <li><a href="#contact">Get Started</a></li>
+                <li><a href="#applications">Applications</a></li>
+                <li><a href="#contact">Contact</a></li>
             </ul>
         </div>
     </nav>
@@ -474,207 +536,268 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <div class="hero-badge">25+ Years Insurance Expertise • Insurance-Grade Documentation</div>
+            <div class="hero-badge">Roof Inspection • Condition Assessment • Insurance Documentation</div>
             <h1>
                 <span class="gradient-text">RoofWatch™</span><br>
-                Professional Roof Risk Assessment
+                Professional Roof Inspection Services
             </h1>
             <p class="hero-subtitle">
-                Powered by 25+ years of commercial property Loss Control and Underwriting expertise, starting as Loss Controls Specialist in 1999. Two service tiers for every budget and need.
+                Comprehensive drone-based roof inspections providing detailed condition assessment, defect identification, and documentation. Safer, faster, and more objective than traditional manual inspections.
             </p>
+            <div style="margin-top: 2rem;">
+                <a href="#contact" class="btn-primary" style="margin-right: 1rem; background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));">
+                    <i class="fas fa-home"></i> Schedule Inspection
+                </a>
+                <a href="#pricing" class="btn-primary">
+                    <i class="fas fa-clipboard-list"></i> View Services
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Details Section -->
+    <section class="service-details" id="service">
+        <div class="section-header">
+            <span class="section-badge">Roof Inspection Services</span>
+            <h2>Clarity from Above, Confidence Below</h2>
+            <p class="section-subtitle">
+                Advanced drone technology combined with 25+ years of commercial property expertise delivers comprehensive roof condition assessment and documentation.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3 class="feature-title">Detailed Condition Assessment</h3>
+                <p class="feature-description">
+                    High-resolution aerial imagery reveals damage, wear patterns, and potential issues not visible from the ground. Comprehensive documentation for informed decision-making.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Safety & Efficiency</h3>
+                <p class="feature-description">
+                    Eliminates safety hazards and reduces site disruption. Complete roof assessment without personnel accessing dangerous roof areas or using ladders.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h3 class="feature-title">Insurance-Grade Documentation</h3>
+                <p class="feature-description">
+                    Professional reporting that meets insurance industry standards. Detailed documentation supports claims, underwriting decisions, and maintenance planning.
+                </p>
+            </div>
         </div>
     </section>
 
     <!-- Pricing Section -->
     <section class="pricing-section" id="pricing">
         <div class="section-header">
-            <span class="section-badge">Choose Your Service Level</span>
-            <h2>Two Tiers, One Standard of Excellence</h2>
+            <span class="section-badge">Inspection Services</span>
+            <h2>Professional Roof Assessment Options</h2>
             <p class="section-subtitle">
-                From budget-conscious homeowners to insurance professionals, we have the right solution for your roof assessment needs.
+                Choose the level of inspection and documentation that meets your specific needs and requirements.
             </p>
         </div>
 
-        <div class="pricing-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 1200px;">
-            <!-- Homeowner Assessment -->
+        <div class="pricing-grid">
             <div class="pricing-card">
                 <div class="pricing-header">
-                    <h3><i class="fas fa-home"></i> Homeowner Assessment</h3>
-                    <div class="pricing-price">$99</div>
+                    <h3><i class="fas fa-camera"></i> Standard Inspection</h3>
+                    <div class="pricing-price">$299</div>
+                    <div class="pricing-period">per roof</div>
                     <p class="pricing-description">
-                        Professional roof assessment without the complicated jargon. Just tell me what's wrong and when to fix it.
+                        Comprehensive aerial roof inspection with high-resolution imagery and basic condition assessment.
                     </p>
                 </div>
 
                 <ul class="pricing-features">
-                    <li><i class="fas fa-check"></i> Roof condition scoring (0-10 scale)</li>
-                    <li><i class="fas fa-check"></i> Priority repair identification</li>
-                    <li><i class="fas fa-check"></i> Maintenance planning calendar</li>
-                    <li><i class="fas fa-check"></i> Cost estimates and timing</li>
-                    <li><i class="fas fa-check"></i> 24-48 hour delivery</li>
-                    <li><i class="fas fa-check"></i> Easy-to-understand reporting</li>
+                    <li><i class="fas fa-check"></i> Complete roof aerial survey</li>
+                    <li><i class="fas fa-check"></i> High-resolution imagery package</li>
+                    <li><i class="fas fa-check"></i> Basic condition assessment</li>
+                    <li><i class="fas fa-check"></i> Digital photo delivery</li>
+                    <li><i class="fas fa-check"></i> 48-hour turnaround</li>
+                    <li><i class="fas fa-check"></i> Basic summary report</li>
                 </ul>
 
-                <a href="#contact" class="btn-secondary">Choose Homeowner</a>
-                
-                <div style="margin-top: 1rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
-                    Perfect for budget-conscious homeowners
-                </div>
+                <a href="#contact" class="btn-primary">
+                    Schedule Inspection
+                </a>
             </div>
 
-            <!-- Solar Inspection -->
             <div class="pricing-card featured">
                 <div class="pricing-header">
-                    <h3><i class="fas fa-solar-panel"></i> Solar Inspection</h3>
-                    <div class="pricing-price">$179</div>
+                    <h3><i class="fas fa-clipboard-check"></i> Professional Assessment</h3>
+                    <div class="pricing-price">$449</div>
+                    <div class="pricing-period">per roof</div>
                     <p class="pricing-description">
-                        Comprehensive solar panel and roof condition assessment. Pre-installation verification or existing system evaluation.
+                        Comprehensive inspection with detailed analysis, defect identification, and professional reporting.
                     </p>
                 </div>
 
                 <ul class="pricing-features">
-                    <li><i class="fas fa-check"></i> Solar panel condition assessment</li>
-                    <li><i class="fas fa-check"></i> Roof structural integrity check</li>
-                    <li><i class="fas fa-check"></i> Installation readiness report</li>
-                    <li><i class="fas fa-check"></i> Efficiency evaluation (existing systems)</li>
-                    <li><i class="fas fa-check"></i> Detailed photo documentation</li>
-                    <li><i class="fas fa-check"></i> 24-hour delivery</li>
-                    <li><i class="fas fa-check"></i> Installer-ready reports</li>
+                    <li><i class="fas fa-check"></i> Everything in Standard plan</li>
+                    <li><i class="fas fa-check"></i> Detailed defect identification</li>
+                    <li><i class="fas fa-check"></i> Condition scoring and ranking</li>
+                    <li><i class="fas fa-check"></i> Annotated imagery with highlights</li>
+                    <li><i class="fas fa-check"></i> Professional inspection report</li>
+                    <li><i class="fas fa-check"></i> Maintenance recommendations</li>
+                    <li><i class="fas fa-check"></i> Insurance documentation support</li>
+                    <li><i class="fas fa-check"></i> Same-day delivery available</li>
                 </ul>
 
-                <a href="#contact" class="btn-primary">Choose Solar</a>
-                
-                <div style="margin-top: 1rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
-                    Perfect for solar installations & maintenance
-                </div>
-            </div>
-
-            <!-- Professional Risk Analysis -->
-            <div class="pricing-card">
-                <div class="pricing-header">
-                    <h3><i class="fas fa-shield-alt"></i> Professional Risk Analysis</h3>
-                    <div class="pricing-price">$299</div>
-                    <p class="pricing-description">
-                        Enterprise-grade risk intelligence you can stake your professional reputation on. Insurance-industry methodology with professional liability protection.
-                    </p>
-                </div>
-
-                <ul class="pricing-features">
-                    <li><i class="fas fa-check"></i> Insurance-grade documentation</li>
-                    <li><i class="fas fa-check"></i> Comprehensive risk classification</li>
-                    <li><i class="fas fa-check"></i> Industry-standard methodology</li>
-                    <li><i class="fas fa-check"></i> Contractor selection guidance</li>
-                    <li><i class="fas fa-check"></i> Claims prevention strategies</li>
-                    <li><i class="fas fa-check"></i> Professional liability protection</li>
-                    <li><i class="fas fa-check"></i> 24-hour delivery</li>
-                    <li><i class="fas fa-check"></i> Carrier-ready documentation</li>
-                </ul>
-
-                <a href="#contact" class="btn-primary">Choose Professional</a>
-                
-                <div style="margin-top: 1rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
-                    For insurance agents, realtors, commercial contractors
-                </div>
+                <a href="#contact" class="btn-primary">
+                    Get Professional Assessment
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Methodology Section -->
-    <section class="methodology-section" id="methodology">
-        <div class="methodology-content">
-            <div class="section-header">
-                <span class="section-badge">Proven Methodology</span>
-                <h2>Insurance Industry Precision</h2>
-                <p class="section-subtitle">
-                    Our proprietary scoring methodology combines 25+ years of commercial property Loss Control experience with adaptation of recognized industry standards (NRCA, Haag Engineering). Dual-verification process ensures insurance-industry precision.
-                </p>
-            </div>
-
-            <div class="methodology-grid">
-                <div class="methodology-card">
-                    <div class="methodology-number">25+</div>
-                    <div class="methodology-label">Years Loss Control Experience</div>
-                </div>
-                <div class="methodology-card">
-                    <div class="methodology-number">1999</div>
-                    <div class="methodology-label">Started as Loss Controls Specialist</div>
-                </div>
-                <div class="methodology-card">
-                    <div class="methodology-number">±0.3</div>
-                    <div class="methodology-label">Point Accuracy Validated</div>
-                </div>
-                <div class="methodology-card">
-                    <div class="methodology-number">NRCA</div>
-                    <div class="methodology-label">Industry Standards Aligned</div>
-                </div>
-            </div>
+    <!-- Applications Section -->
+    <section class="applications-section" id="applications">
+        <div class="section-header">
+            <span class="section-badge">Applications</span>
+            <h2>When You Need RoofWatch™</h2>
+            <p class="section-subtitle">
+                Professional roof inspection serves multiple purposes across residential, commercial, and insurance applications.
+            </p>
         </div>
-    </section>
 
-    <!-- Expertise Section -->
-    <section class="expertise-section" id="expertise">
-        <div class="expertise-content">
-            <div class="section-header">
-                <span class="section-badge">Why Choose RoofWatch™</span>
-                <h2>Insurance Expertise You Can't Get Elsewhere</h2>
-                <p class="section-subtitle">
-                    Finally, a drone inspection service that speaks your language. Our assessments are based on 25+ years of loss control experience - we know what actually causes claims.
-                </p>
+        <div class="applications-grid">
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-cloud-rain"></i>
+                </div>
+                <div class="application-content">
+                    <h3>Storm Damage Assessment</h3>
+                    <p>Post-storm roof condition documentation for insurance claims. Rapid assessment of hail, wind, and weather-related damage with detailed photographic evidence.</p>
+                </div>
             </div>
 
-            <div class="expertise-grid">
-                <div class="expertise-card">
-                    <h4>25+ Years Insurance Industry Expertise</h4>
-                    <p>Started as Loss Controls Specialist in 1999, developed methodology from actual claims experience. We know what actually causes roof claims.</p>
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-home"></i>
                 </div>
-
-                <div class="expertise-card">
-                    <h4>Only Service Combining Loss Control + Drone Technology</h4>
-                    <p>Professional methodology vs. basic photo documentation. Insurance expertise they can't match.</p>
+                <div class="application-content">
+                    <h3>Pre-Sale Inspections</h3>
+                    <p>Comprehensive roof condition assessment for real estate transactions. Professional documentation supports pricing decisions and negotiation processes.</p>
                 </div>
+            </div>
 
-                <div class="expertise-card">
-                    <h4>Insurance-Grade Documentation and Risk Assessment</h4>
-                    <p>Carrier-ready reports with comprehensive risk classification using industry-standard methodology adapted from NRCA and Haag protocols.</p>
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-tools"></i>
                 </div>
+                <div class="application-content">
+                    <h3>Maintenance Planning</h3>
+                    <p>Regular roof condition monitoring to plan preventative maintenance. Identify issues early to extend roof life and prevent costly emergency repairs.</p>
+                </div>
+            </div>
 
-                <div class="expertise-card">
-                    <h4>Proven Methodology with Validated Accuracy</h4>
-                    <p>Dual-verification process (experience + photo analysis) ensures ±0.3 point accuracy with professional liability protection.</p>
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="application-content">
+                    <h3>Commercial Property Management</h3>
+                    <p>Portfolio-level roof condition assessment for commercial properties. Standardized reporting supports budget planning and risk management decisions.</p>
+                </div>
+            </div>
+
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-solar-panel"></i>
+                </div>
+                <div class="application-content">
+                    <h3>Solar & Equipment Inspections</h3>
+                    <p>Inspection of rooftop solar installations, HVAC equipment, and other roof-mounted systems. Assess condition and identify potential issues safely.</p>
+                </div>
+            </div>
+
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <div class="application-content">
+                    <h3>Warranty & Construction</h3>
+                    <p>New construction and warranty inspection documentation. Verify installation quality and document any issues for contractor or warranty claims.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="cta-section" id="contact">
+    <section class="cta-section">
         <div class="cta-content">
-            <h2>Ready to Get Started?</h2>
-            <p>
-                Choose your service level and get professional roof assessment with insurance-industry expertise. Response within 4 hours during business hours.
+            <h2>Professional Roof Inspection You Can Trust</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.9;">
+                Safer, faster, and more comprehensive than traditional roof inspections. Professional documentation backed by decades of commercial property expertise.
             </p>
-            
-            <div class="cta-buttons" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 800px; margin: 2rem auto;">
-                <a href="mailto:info@aerosure.io?subject=Homeowner Assessment ($99)" class="btn-secondary">
-                    Get $99 Homeowner Assessment
-                </a>
-                <a href="mailto:info@aerosure.io?subject=Solar Inspection ($179)" class="btn-primary">
-                    Get $179 Solar Inspection
-                </a>
-                <a href="mailto:info@aerosure.io?subject=Professional Risk Analysis ($299)" class="btn-primary">
-                    Request Professional Risk Analysis
-                </a>
+
+            <div class="cta-stats">
+                <div class="cta-stat">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="cta-stat">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Safe Inspections</div>
+                </div>
+                <div class="cta-stat">
+                    <div class="stat-number">48hr</div>
+                    <div class="stat-label">Standard Delivery</div>
+                </div>
             </div>
 
-            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                <p style="margin-bottom: 1rem; opacity: 0.9;">Or contact directly:</p>
-                <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
-                    <a href="mailto:info@aerosure.io" style="color: white; text-decoration: none; opacity: 0.9;">
-                        📧 info@aerosure.io
+            <a href="#contact" class="btn-primary" style="background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange)); padding: 1.25rem 2.5rem; font-size: 1.125rem;">
+                Schedule Your Roof Inspection
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="contact-content">
+            <h2>Get Your Professional Roof Inspection</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem;">
+                Ready to assess your roof condition with professional drone inspection? Contact us to schedule your inspection and discuss your specific requirements.
+            </p>
+
+            <div class="contact-card">
+                <h3 style="color: var(--primary-burgundy); margin-bottom: 1rem;">
+                    <i class="fas fa-home"></i> Roof Inspection Specialists
+                </h3>
+                <p style="margin-bottom: 1.5rem;">
+                    Professional roof condition assessment with comprehensive documentation and expert analysis.
+                </p>
+
+                <div class="contact-info">
+                    <a href="tel:+18049979804" class="contact-method">
+                        <i class="fas fa-phone" style="color: var(--primary-burgundy); margin-right: 0.5rem;"></i>
+                        <strong>Call: 804-997-9804</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Roof Inspection Scheduling</span>
                     </a>
-                    <a href="tel:+18049979804" style="color: white; text-decoration: none; opacity: 0.9;">
-                        📱 804-997-9804
+                    
+                    <a href="mailto:roofwatch@aerosure.io?subject=RoofWatch™ Inspection Request" class="contact-method">
+                        <i class="fas fa-envelope" style="color: var(--primary-burgundy); margin-right: 0.5rem;"></i>
+                        <strong>Email: roofwatch@aerosure.io</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Inspection Planning & Quotes</span>
                     </a>
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <p style="font-size: 0.9rem; opacity: 0.8;">
+                        <i class="fas fa-clock"></i> Business Hours: Monday-Friday 8AM-6PM<br>
+                        <i class="fas fa-map-marker-alt"></i> Service Area: Richmond Metro + 75 miles
+                    </p>
                 </div>
             </div>
         </div>
