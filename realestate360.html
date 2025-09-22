@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RealEstate360™ | Property Documentation & Marketing | AeroSure</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #ff6b35;
+            --dark-orange: #e55a2b;
+            --light-orange: #ff8c5a;
+            --primary-green: #10B981;
+            --dark-green: #059669;
+            --light-green: #34D399;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-orange);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 8rem 2rem 4rem;
+            background: radial-gradient(ellipse at center top, rgba(16, 185, 129, 0.15), transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--primary-green);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--white), var(--primary-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-400);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Service Details Section */
+        .service-details {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-green);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--gray-400);
+            font-size: 1.125rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--white);
+        }
+
+        .feature-description {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--gray-900);
+            border: 2px solid var(--primary-green);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary-orange);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-orange);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .pricing-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card.featured .pricing-price {
+            color: var(--primary-orange);
+        }
+
+        .pricing-period {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-description {
+            color: var(--gray-400);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            color: var(--gray-300);
+        }
+
+        .pricing-features li i {
+            color: var(--primary-green);
+            margin-right: 0.75rem;
+            width: 16px;
+        }
+
+        .pricing-card.featured .pricing-features li i {
+            color: var(--primary-orange);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .pricing-card.featured .btn-primary {
+            background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+
+        .pricing-card.featured .btn-primary:hover {
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Use Cases Section */
+        .use-cases-section {
+            padding: 5rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .use-case-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .use-case-icon {
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            flex-shrink: 0;
+        }
+
+        .use-case-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .use-case-content p {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--dark-green), var(--primary-green));
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .cta-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 5rem 2rem;
+            background: var(--dark-bg);
+            text-align: center;
+        }
+
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--primary-green);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .contact-method {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .contact-method:hover {
+            background: rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Back Link */
+        .back-link {
+            position: fixed;
+            top: 140px;
+            left: 2rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--primary-green);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-link:hover {
+            background: rgba(16, 185, 129, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .use-cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: inline-block;
+                margin: 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Main Site -->
+    <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to AeroSure
+    </a>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="aerosure-logo.png" alt="aerosure Imaging & Inspection" style="height: 50px; width: auto;">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#service">Service Details</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#use-cases">Use Cases</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Property Marketing • Due Diligence • Investment Analysis</div>
+            <h1>
+                <span class="gradient-text">RealEstate360™</span><br>
+                Complete Property Documentation
+            </h1>
+            <p class="hero-subtitle">
+                Comprehensive property documentation for listings, due diligence, and investment analysis. Professional aerial photography and detailed reporting backed by 25+ years of commercial property expertise.
+            </p>
+            <div style="margin-top: 2rem;">
+                <a href="#contact" class="btn-primary" style="margin-right: 1rem; background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));">
+                    <i class="fas fa-camera"></i> Schedule Property Shoot
+                </a>
+                <a href="#pricing" class="btn-primary">
+                    <i class="fas fa-home"></i> View Packages
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Details Section -->
+    <section class="service-details" id="service">
+        <div class="section-header">
+            <span class="section-badge">Property Documentation</span>
+            <h2>Professional Real Estate Photography & Analysis</h2>
+            <p class="section-subtitle">
+                From marketing-ready photography to comprehensive property assessments. Powered by decades of commercial property underwriting experience.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-camera-retro"></i>
+                </div>
+                <h3 class="feature-title">Marketing Photography</h3>
+                <p class="feature-description">
+                    Stunning aerial and ground-level photography that showcases properties at their best. Perfect for listings, brochures, and marketing materials.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-search-dollar"></i>
+                </div>
+                <h3 class="feature-title">Due Diligence Inspections</h3>
+                <p class="feature-description">
+                    Comprehensive property condition assessments for buyers and investors. Detailed documentation of potential issues and opportunities.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h3 class="feature-title">Investment Analysis</h3>
+                <p class="feature-description">
+                    Property analysis reports with risk assessment, condition evaluation, and investment recommendations from insurance industry perspective.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="section-header">
+            <span class="section-badge">Service Packages</span>
+            <h2>Choose Your RealEstate360™ Package</h2>
+            <p class="section-subtitle">
+                Flexible packages designed for different real estate needs, from basic listings to comprehensive investment analysis.
+            </p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <h3><i class="fas fa-camera"></i> Listing Pro</h3>
+                    <div class="pricing-price">$199</div>
+                    <div class="pricing-period">per property</div>
+                    <p class="pricing-description">
+                        Perfect for real estate agents and sellers who need professional photography for listings.
+                    </p>
+                </div>
+
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Aerial photography package</li>
+                    <li><i class="fas fa-check"></i> Ground-level exterior shots</li>
+                    <li><i class="fas fa-check"></i> High-resolution images</li>
+                    <li><i class="fas fa-check"></i> MLS-ready formats</li>
+                    <li><i class="fas fa-check"></i> 48-hour delivery</li>
+                    <li><i class="fas fa-check"></i> Usage rights included</li>
+                </ul>
+
+                <a href="#contact" class="btn-primary">
+                    Book Photo Shoot
+                </a>
+            </div>
+
+            <div class="pricing-card featured">
+                <div class="pricing-header">
+                    <h3><i class="fas fa-building"></i> Property Plus</h3>
+                    <div class="pricing-price">$349</div>
+                    <div class="pricing-period">per property</div>
+                    <p class="pricing-description">
+                        Comprehensive package combining marketing photography with basic property condition assessment.
+                    </p>
+                </div>
+
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Everything in Listing Pro</li>
+                    <li><i class="fas fa-check"></i> Property condition overview</li>
+                    <li><i class="fas fa-check"></i> Exterior condition assessment</li>
+                    <li><i class="fas fa-check"></i> Basic risk identification</li>
+                    <li><i class="fas fa-check"></i> Marketing presentation package</li>
+                    <li><i class="fas fa-check"></i> Same-day delivery available</li>
+                    <li><i class="fas fa-check"></i> Professional summary report</li>
+                </ul>
+
+                <a href="#contact" class="btn-primary">
+                    Get Started
+                </a>
+            </div>
+
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <h3><i class="fas fa-chart-line"></i> Investment Analysis</h3>
+                    <div class="pricing-price">$499</div>
+                    <div class="pricing-period">per property</div>
+                    <p class="pricing-description">
+                        Complete due diligence package for serious investors and commercial transactions.
+                    </p>
+                </div>
+
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Everything in Property Plus</li>
+                    <li><i class="fas fa-check"></i> Detailed condition analysis</li>
+                    <li><i class="fas fa-check"></i> Risk assessment report</li>
+                    <li><i class="fas fa-check"></i> Investment recommendations</li>
+                    <li><i class="fas fa-check"></i> Insurance considerations</li>
+                    <li><i class="fas fa-check"></i> Maintenance planning guidance</li>
+                    <li><i class="fas fa-check"></i> Executive presentation format</li>
+                    <li><i class="fas fa-check"></i> Follow-up consultation included</li>
+                </ul>
+
+                <a href="#contact" class="btn-primary">
+                    Schedule Analysis
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="use-cases-section" id="use-cases">
+        <div class="section-header">
+            <span class="section-badge">Applications</span>
+            <h2>Who Uses RealEstate360™</h2>
+            <p class="section-subtitle">
+                Professional property documentation serves multiple stakeholders across the real estate industry.
+            </p>
+        </div>
+
+        <div class="use-cases-grid">
+            <div class="use-case-item">
+                <div class="use-case-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="use-case-content">
+                    <h3>Real Estate Agents</h3>
+                    <p>Professional listing photography that makes properties stand out. Faster sales and higher offers through compelling visual marketing.</p>
+                </div>
+            </div>
+
+            <div class="use-case-item">
+                <div class="use-case-icon">
+                    <i class="fas fa-money-bill-trend-up"></i>
+                </div>
+                <div class="use-case-content">
+                    <h3>Property Investors</h3>
+                    <p>Due diligence documentation and risk assessment. Make informed investment decisions with professional property analysis.</p>
+                </div>
+            </div>
+
+            <div class="use-case-item">
+                <div class="use-case-icon">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div class="use-case-content">
+                    <h3>Commercial Brokers</h3>
+                    <p>Comprehensive documentation for commercial transactions. Professional presentations that support premium pricing.</p>
+                </div>
+            </div>
+
+            <div class="use-case-item">
+                <div class="use-case-icon">
+                    <i class="fas fa-gavel"></i>
+                </div>
+                <div class="use-case-content">
+                    <h3>Legal & Insurance</h3>
+                    <p>Property condition documentation for legal proceedings, insurance claims, and risk assessment with industry expertise.</p>
+                </div>
+            </div>
+
+            <div class="use-case-item">
+                <div class="use-case-icon">
+                    <i class="fas fa-hammer"></i>
+                </div>
+                <div class="use-case-content">
+                    <h3>Developers</h3>
+                    <p>Site analysis and development opportunity assessment. Document existing conditions and development potential.</p>
+                </div>
+            </div>
+
+            <div class="use-case-item">
+                <div class="use-case-icon">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <div class="use-case-content">
+                    <h3>Lenders & Appraisers</h3>
+                    <p>Comprehensive property documentation supporting loan decisions and appraisal processes with detailed condition reports.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Document Your Property?</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.9;">
+                Professional property documentation that serves your specific needs. From marketing photography to investment analysis, backed by decades of commercial property expertise.
+            </p>
+
+            <div class="cta-stats">
+                <div class="cta-stat">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="cta-stat">
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-label">Properties Documented</div>
+                </div>
+                <div class="cta-stat">
+                    <div class="stat-number">48hr</div>
+                    <div class="stat-label">Standard Delivery</div>
+                </div>
+            </div>
+
+            <a href="#contact" class="btn-primary" style="background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange)); padding: 1.25rem 2.5rem; font-size: 1.125rem;">
+                Schedule Property Documentation
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="contact-content">
+            <h2>Start Your RealEstate360™ Documentation</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem;">
+                Ready to get professional property documentation? Contact us to discuss your specific needs and timeline requirements.
+            </p>
+
+            <div class="contact-card">
+                <h3 style="color: var(--primary-green); margin-bottom: 1rem;">
+                    <i class="fas fa-home"></i> Real Estate Documentation Specialists
+                </h3>
+                <p style="margin-bottom: 1.5rem;">
+                    Get expert consultation on the best documentation package for your property and intended use.
+                </p>
+
+                <div class="contact-info">
+                    <a href="tel:+18049979804" class="contact-method">
+                        <i class="fas fa-phone" style="color: var(--primary-green); margin-right: 0.5rem;"></i>
+                        <strong>Call: 804-997-9804</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Property Documentation Line</span>
+                    </a>
+                    
+                    <a href="mailto:realestate@aerosure.io?subject=RealEstate360™ Documentation Inquiry" class="contact-method">
+                        <i class="fas fa-envelope" style="color: var(--primary-green); margin-right: 0.5rem;"></i>
+                        <strong>Email: realestate@aerosure.io</strong><br>
+                        <span style="font-size: 0.9rem; opacity: 0.8;">Project Planning & Scheduling</span>
+                    </a>
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <p style="font-size: 0.9rem; opacity: 0.8;">
+                        <i class="fas fa-clock"></i> Business Hours: Monday-Friday 8AM-6PM<br>
+                        <i class="fas fa-map-marker-alt"></i> Service Area: Richmond Metro + 100 miles
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
