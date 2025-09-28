@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STORM BULLETIN: Imelda & Humberto Threat | Emergency Documentation Services | AeroSure</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --alert-red: #ff3333;
+            --warning-orange: #ff6b35;
+            --dark-orange: #e55a2b;
+            --light-orange: #ff8c5a;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Critical Alert Header */
+        .critical-header {
+            background: linear-gradient(135deg, var(--alert-red), var(--dark-orange));
+            padding: 1rem 2rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            animation: urgentPulse 1.5s infinite;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(255, 51, 51, 0.5);
+        }
+
+        @keyframes urgentPulse {
+            0%, 100% { opacity: 1; background: linear-gradient(135deg, var(--alert-red), var(--dark-orange)); }
+            50% { opacity: 0.85; background: linear-gradient(135deg, var(--dark-orange), var(--alert-red)); }
+        }
+
+        /* Storm Tracker Section */
+        .storm-tracker {
+            margin-top: 60px;
+            padding: 3rem 2rem;
+            background: var(--darker-bg);
+            border-bottom: 2px solid var(--warning-orange);
+        }
+
+        .tracker-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .bulletin-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .bulletin-badge {
+            display: inline-block;
+            background: rgba(255, 51, 51, 0.2);
+            border: 2px solid var(--alert-red);
+            color: var(--alert-red);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .storm-gradient {
+            background: linear-gradient(135deg, var(--alert-red), var(--warning-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Storm Cards */
+        .storm-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .storm-card {
+            background: var(--gray-900);
+            border: 2px solid var(--alert-red);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .storm-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--alert-red), var(--warning-orange));
+            animation: slideWarning 3s infinite;
+        }
+
+        @keyframes slideWarning {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .storm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .storm-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .storm-category {
+            background: var(--alert-red);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .cat-5 { background: #8b0000; }
+        .cat-4 { background: #ff0000; }
+        .cat-3 { background: #ff4500; }
+        .cat-2 { background: #ff8c00; }
+        .cat-1 { background: #ffb347; }
+        .tropical-storm { background: #4169e1; }
+
+        .storm-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .storm-stat {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--warning-orange);
+        }
+
+        /* Impact Timeline */
+        .impact-timeline {
+            background: var(--dark-bg);
+            padding: 3rem 2rem;
+        }
+
+        .timeline-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-events {
+            position: relative;
+            padding: 0 2rem;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--warning-orange);
+        }
+
+        .timeline-event {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .timeline-event:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .event-content {
+            background: var(--gray-900);
+            border: 1px solid var(--warning-orange);
+            border-radius: 12px;
+            padding: 1.5rem;
+            width: 45%;
+        }
+
+        .event-date {
+            color: var(--warning-orange);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--warning-orange);
+            border: 3px solid var(--dark-bg);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        /* Action Required Section */
+        .action-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), transparent);
+        }
+
+        .action-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .action-card {
+            background: var(--gray-900);
+            border: 2px solid var(--warning-orange);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .action-icon {
+            font-size: 3rem;
+            color: var(--warning-orange);
+            margin-bottom: 1rem;
+        }
+
+        .action-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .action-description {
+            color: var(--gray-400);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Service Highlight */
+        .service-highlight {
+            background: var(--darker-bg);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .highlight-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--warning-orange), var(--dark-orange));
+            border-radius: 20px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .highlight-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Coverage Map */
+        .coverage-section {
+            padding: 3rem 2rem;
+            background: var(--dark-bg);
+        }
+
+        .coverage-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .coverage-zones {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .zone-card {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid var(--warning-orange);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .zone-title {
+            color: var(--warning-orange);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .zone-list {
+            list-style: none;
+            color: var(--gray-300);
+        }
+
+        .zone-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* CTA Buttons */
+        .btn-emergency {
+            background: linear-gradient(135deg, var(--alert-red), var(--dark-orange));
+            color: var(--white);
+            padding: 1.25rem 2.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            animation: emergencyPulse 2s infinite;
+        }
+
+        @keyframes emergencyPulse {
+            0%, 100% { box-shadow: 0 4px 20px rgba(255, 51, 51, 0.4); }
+            50% { box-shadow: 0 8px 30px rgba(255, 51, 51, 0.6); }
+        }
+
+        .btn-emergency:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 51, 51, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--warning-orange);
+            color: var(--warning-orange);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 107, 53, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Emergency Contact Bar */
+        .emergency-contact-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--gray-900);
+            border-top: 2px solid var(--alert-red);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            z-index: 999;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-item i {
+            color: var(--warning-orange);
+            font-size: 1.25rem;
+        }
+
+        /* Back Link */
+        .back-link {
+            position: fixed;
+            top: 70px;
+            left: 2rem;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: var(--warning-orange);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            z-index: 998;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 107, 53, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .storm-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-event {
+                flex-direction: column !important;
+            }
+
+            .event-content {
+                width: 100%;
+            }
+
+            .timeline-line {
+                left: 20px;
+            }
+
+            .event-marker {
+                left: 20px;
+            }
+
+            .coverage-zones {
+                grid-template-columns: 1fr;
+            }
+
+            .emergency-contact-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: inline-block;
+                margin: 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Critical Alert Header -->
+    <div class="critical-header">
+        <i class="fas fa-exclamation-triangle"></i> STORM ALERT: Hurricane Humberto (Cat 4) & Tropical Storm Imelda Threatening East Coast - PREPARE NOW
+    </div>
+
+    <!-- Back to StormCheck -->
+    <a href="storm-check.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to StormCheck™
+    </a>
+
+    <!-- Storm Tracker Section -->
+    <section class="storm-tracker">
+        <div class="tracker-container">
+            <div class="bulletin-header">
+                <div class="bulletin-badge">ACTIVE THREAT • SEPTEMBER 28, 2025</div>
+                <h1>
+                    <span class="storm-gradient">DUAL STORM THREAT</span><br>
+                    East Coast Impact Imminent
+                </h1>
+                <p style="font-size: 1.25rem; color: var(--gray-400); max-width: 800px; margin: 0 auto;">
+                    Two major systems approaching the Eastern Seaboard. Professional post-storm documentation services standing by for immediate deployment.
+                </p>
+            </div>
+
+            <div class="storm-grid">
+                <div class="storm-card">
+                    <div class="storm-header">
+                        <h2 class="storm-name">Hurricane Humberto</h2>
+                        <span class="storm-category cat-4">CAT 4</span>
+                    </div>
+                    <div class="storm-stats">
+                        <div class="storm-stat">
+                            <div class="stat-label">Max Winds</div>
+                            <div class="stat-value">150 mph</div>
+                        </div>
+                        <div class="storm-stat">
+                            <div class="stat-label">Movement</div>
+                            <div class="stat-value">WNW 13 mph</div>
+                        </div>
+                        <div class="storm-stat">
+                            <div class="stat-label">Location</div>
+                            <div class="stat-value">535mi S of Bermuda</div>
+                        </div>
+                        <div class="storm-stat">
+                            <div class="stat-label">Threat Level</div>
+                            <div class="stat-value">EXTREME</div>
+                        </div>
+                    </div>
+                    <p style="color: var(--gray-300); line-height: 1.6;">
+                        Major hurricane maintaining dangerous strength. Coastal impacts from Florida to New England with life-threatening surf, rip currents, and potential storm surge.
+                    </p>
+                </div>
+
+                <div class="storm-card">
+                    <div class="storm-header">
+                        <h2 class="storm-name">Tropical Storm Imelda</h2>
+                        <span class="storm-category tropical-storm">STRENGTHENING</span>
+                    </div>
+                    <div class="storm-stats">
+                        <div class="storm-stat">
+                            <div class="stat-label">Max Winds</div>
+                            <div class="stat-value">65 mph</div>
+                        </div>
+                        <div class="storm-stat">
+                            <div class="stat-label">Movement</div>
+                            <div class="stat-value">NW 7 mph</div>
+                        </div>
+                        <div class="storm-stat">
+                            <div class="stat-label">Location</div>
+                            <div class="stat-value">Bahamas</div>
+                        </div>
+                        <div class="storm-stat">
+                            <div class="stat-label">Forecast</div>
+                            <div class="stat-value">Cat 1 Hurricane</div>
+                        </div>
+                    </div>
+                    <p style="color: var(--gray-300); line-height: 1.6;">
+                        Expected to become hurricane strength by Monday. Primary threat to Georgia and Carolinas with heavy rainfall, flooding, and damaging winds early week.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Timeline -->
+    <section class="impact-timeline">
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Impact Timeline</h2>
+                <p style="color: var(--gray-400); font-size: 1.125rem;">
+                    Critical decision points for documentation scheduling
+                </p>
+            </div>
+
+            <div class="timeline-events">
+                <div class="timeline-line"></div>
+                
+                <div class="timeline-event">
+                    <div class="event-content">
+                        <div class="event-date">NOW - Sunday, Sept 28</div>
+                        <h3>Pre-Storm Documentation Window</h3>
+                        <p style="color: var(--gray-400);">Last chance for baseline property documentation before storm impacts</p>
+                    </div>
+                    <div class="event-marker"></div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-content">
+                        <div class="event-date">Monday, Sept 29</div>
+                        <h3>Initial Coastal Impacts</h3>
+                        <p style="color: var(--gray-400);">Storm surge, dangerous surf conditions from Florida to Virginia</p>
+                    </div>
+                    <div class="event-marker"></div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-content">
+                        <div class="event-date">Tuesday, Sept 30</div>
+                        <h3>Peak Storm Impacts</h3>
+                        <p style="color: var(--gray-400);">Imelda near GA/SC coast as Cat 1 hurricane. Maximum wind and rain impacts</p>
+                    </div>
+                    <div class="event-marker"></div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-content">
+                        <div class="event-date">Wednesday, Oct 1</div>
+                        <h3>Post-Storm Documentation</h3>
+                        <p style="color: var(--gray-400);">Critical 24-48 hour window for insurance documentation begins</p>
+                    </div>
+                    <div class="event-marker"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Action Required Section -->
+    <section class="action-section">
+        <div class="action-container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Property Owners: Act Now</h2>
+                <p style="color: var(--gray-400); font-size: 1.125rem;">
+                    Insurance companies require immediate documentation after storm events
+                </p>
+            </div>
+
+            <div class="action-grid">
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h3 class="action-title">Pre-Storm Baseline</h3>
+                    <p class="action-description">
+                        Document current property condition before storm arrival. Essential for proving storm-related damage.
+                    </p>
+                    <a href="tel:+1804xxxxxxx" class="btn-secondary" style="width: 100%;">
+                        Schedule Today
+                    </a>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="action-title">Post-Storm Priority</h3>
+                    <p class="action-description">
+                        Book now for immediate post-storm response. Limited availability - first come, first served.
+                    </p>
+                    <a href="#" class="btn-emergency" style="width: 100%;">
+                        Reserve Response Team
+                    </a>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <h3 class="action-title">Insurance Fast-Track</h3>
+                    <p class="action-description">
+                        Carrier-ready documentation within hours. 25+ years Loss Control expertise ensures acceptance.
+                    </p>
+                    <a href="#" class="btn-secondary" style="width: 100%;">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Highlight -->
+    <section class="service-highlight">
+        <div class="highlight-container">
+            <div class="highlight-box">
+                <div class="highlight-content">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Why AeroSure for Storm Documentation?</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin: 2rem 0;">
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 700;">2-4</div>
+                            <div style="font-size: 1rem;">Hour Response</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 700;">25+</div>
+                            <div style="font-size: 1rem;">Years Insurance Experience</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 700;">100%</div>
+                            <div style="font-size: 1rem;">Carrier Acceptance</div>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.95;">
+                        Former insurance professional with deep understanding of claim requirements. Your documentation will meet or exceed carrier standards, expediting claim processing and maximizing recovery.
+                    </p>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <a href="tel:+1804xxxxxxx" class="btn-emergency">
+                            <i class="fas fa-phone"></i> Call Emergency Line
+                        </a>
+                        <a href="storm-check.html" class="btn-secondary">
+                            View Full Services
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coverage Section -->
+    <section class="coverage-section">
+        <div class="coverage-container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Storm Response Coverage Areas</h2>
+            <p style="color: var(--gray-400); margin-bottom: 2rem;">
+                Priority deployment zones based on storm track projections
+            </p>
+
+            <div class="coverage-zones">
+                <div class="zone-card">
+                    <h3 class="zone-title">
+                        <i class="fas fa-exclamation-circle"></i> IMMEDIATE RESPONSE
+                    </h3>
+                    <ul class="zone-list">
+                        <li>• Richmond Metro Area</li>
+                        <li>• Virginia Beach / Norfolk</li>
+                        <li>• Newport News / Hampton</li>
+                        <li>• Williamsburg Area</li>
+                        <li>• Eastern Shore Virginia</li>
+                    </ul>
+                </div>
+
+                <div class="zone-card">
+                    <h3 class="zone-title">
+                        <i class="fas fa-clock"></i> RAPID DEPLOYMENT (24-48hr)
+                    </h3>
+                    <ul class="zone-list">
+                        <li>• Northern Virginia</li>
+                        <li>• North Carolina Border Counties</li>
+                        <li>• Maryland Eastern Shore</li>
+                        <li>• Central Virginia</li>
+                        <li>• Outer Banks (weather permitting)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="background: rgba(255, 51, 51, 0.1); border: 2px solid var(--alert-red); border-radius: 12px; padding: 1.5rem; margin-top: 2rem;">
+                <p style="font-weight: 600; color: var(--alert-red); margin-bottom: 0.5rem;">
+                    <i class="fas fa-info-circle"></i> CRITICAL NOTICE
+                </p>
+                <p style="color: var(--gray-300);">
+                    Response capacity is limited. Properties will be serviced in order of booking confirmation. 
+                    Do not wait for storm passage - secure your documentation slot now.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Insurance Partners Notice -->
+    <section style="padding: 3rem 2rem; background: var(--darker-bg);">
+        <div style="max-width: 1000px; margin: 0 auto; text-align: center;">
+            <h2 style="font-size: 2rem; margin-bottom: 1rem;">Trusted by Major Carriers</h2>
+            <p style="color: var(--gray-400); font-size: 1.125rem; margin-bottom: 2rem;">
+                Our documentation meets standards for all major insurance carriers including:
+            </p>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; color: var(--gray-500); font-size: 1.1rem;">
+                <span>• State Farm</span>
+                <span>• Allstate</span>
+                <span>• Liberty Mutual</span>
+                <span>• Travelers</span>
+                <span>• USAA</span>
+                <span>• Nationwide</span>
+                <span>• Progressive</span>
+                <span>• Farmers</span>
+            </div>
+            <p style="color: var(--gray-500); margin-top: 2rem; font-size: 0.9rem;">
+                Documentation formatted to each carrier's specific requirements for expedited processing
+            </p>
+        </div>
+    </section>
+
+    <!-- Emergency Contact Bar -->
+    <div class="emergency-contact-bar">
+        <a href="tel:+1804xxxxxxx" class="contact-item">
+            <i class="fas fa-phone-volume"></i>
+            <span>EMERGENCY: 804-XXX-XXXX</span>
+        </a>
+        <a href="mailto:storm@aerosure.io?subject=URGENT - Storm Documentation Request" class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <span>storm@aerosure.io</span>
+        </a>
+        <a href="#" class="contact-item">
+            <i class="fas fa-calendar-check"></i>
+            <span>Book Documentation</span>
+        </a>
+    </div>
+</body>
+</html>
