@@ -20,6 +20,9 @@
             --primary-teal: #00B4D8;
             --dark-teal: #0082A8;
             --light-teal: #5FD4EC;
+            --alert-red: #ff3333;
+            --warning-orange: #ff6b35;
+            --dark-orange: #e55a2b;
             --dark-bg: #0f172a;
             --darker-bg: #020617;
             --gray-900: #111827;
@@ -42,10 +45,105 @@
             line-height: 1.6;
         }
 
-        /* Navigation */
-        nav {
+        /* Storm Alert Banner */
+        .storm-alert-banner {
             position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--alert-red), var(--dark-orange));
+            padding: 0.75rem 1rem;
+            z-index: 1001;
+            box-shadow: 0 4px 20px rgba(255, 51, 51, 0.5);
+            animation: urgentPulse 2s infinite;
+        }
+
+        @keyframes urgentPulse {
+            0%, 100% { 
+                opacity: 1; 
+                background: linear-gradient(135deg, var(--alert-red), var(--dark-orange));
+            }
+            50% { 
+                opacity: 0.9; 
+                background: linear-gradient(135deg, var(--dark-orange), var(--alert-red));
+            }
+        }
+
+        .storm-alert-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .storm-alert-text {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: white;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .storm-icon {
+            font-size: 1.25rem;
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .storm-message {
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        .storm-cta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .storm-cta:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-alert {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            margin-left: 1rem;
+            transition: color 0.3s;
+        }
+
+        .close-alert:hover {
+            color: white;
+        }
+
+        /* Adjust navigation for storm banner */
+        nav {
+            position: fixed;
+            top: 50px; /* Pushed down by storm banner */
             left: 0;
             right: 0;
             background: rgba(15, 23, 42, 0.95);
@@ -53,8 +151,14 @@
             z-index: 1000;
             padding: 1rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: top 0.3s;
         }
 
+        nav.no-banner {
+            top: 0;
+        }
+
+        /* Navigation */
         .nav-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -109,15 +213,20 @@
             box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
         }
 
-        /* Hero Section */
+        /* Hero Section - Adjusted for banner */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 6rem 2rem 4rem;
+            padding: 10rem 2rem 4rem; /* Extra padding for banner + nav */
             background: radial-gradient(ellipse at center top, rgba(14, 165, 233, 0.15), transparent 50%);
+            transition: padding 0.3s;
+        }
+
+        .hero.no-banner {
+            padding: 6rem 2rem 4rem;
         }
 
         .hero-content {
@@ -333,6 +442,41 @@
         .service-output {
             color: var(--gray-500);
             font-size: 0.8rem;
+        }
+
+        /* Storm Service Highlight */
+        .service-card.storm-highlight {
+            border: 2px solid var(--warning-orange);
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), transparent);
+            animation: stormGlow 3s infinite;
+        }
+
+        @keyframes stormGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(255, 107, 53, 0.4); }
+        }
+
+        .service-card.storm-highlight .service-icon {
+            color: var(--warning-orange);
+        }
+
+        .storm-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--alert-red);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
         }
 
         /* About Section */
@@ -709,6 +853,16 @@
         }
 
         @media (max-width: 768px) {
+            .storm-alert-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .storm-cta {
+                width: 100%;
+                justify-content: center;
+            }
+
             .nav-links {
                 display: none;
             }
@@ -748,8 +902,29 @@
     </style>
 </head>
 <body>
+    <!-- Storm Alert Banner -->
+    <div class="storm-alert-banner" id="stormAlert">
+        <div class="storm-alert-content">
+            <div class="storm-alert-text">
+                <i class="fas fa-hurricane storm-icon"></i>
+                <div class="storm-message">
+                    <strong>⚠️ STORM ALERT:</strong> Hurricane Humberto (Cat 4) & Tropical Storm Imelda approaching East Coast | 
+                    <span style="color: #ffff99;">POST-STORM DOCUMENTATION SERVICES READY</span> | 
+                    Book NOW for priority response
+                </div>
+            </div>
+            <a href="storm-bulletin-imelda.html" class="storm-cta">
+                <i class="fas fa-bolt"></i>
+                VIEW STORM BULLETIN
+            </a>
+            <button class="close-alert" onclick="closeStormAlert()" aria-label="Close alert">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Navigation -->
-    <nav>
+    <nav id="mainNav">
         <div class="nav-container">
             <a href="#" class="logo">
                 <img src="aerosure-logo.png" alt="aerosure Imaging & Inspection" style="height: 70px; width: auto;">
@@ -765,7 +940,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="heroSection">
         <div class="grid-bg"></div>
         <div class="hero-content">
             <div class="hero-badge">FAA Part 107 Certified • $1M Liability Insurance • Richmond Metro Area</div>
@@ -829,18 +1004,19 @@
                 </div>
             </div>
 
-            <div class="service-card">
+            <div class="service-card storm-highlight">
+                <span class="storm-badge">URGENT</span>
                 <div class="service-icon">
                     <i class="fas fa-cloud-bolt"></i>
                 </div>
                 <h3 class="service-title">StormCheck™</h3>
-                <p class="service-price">From $399</p>
+                <p class="service-price" style="color: var(--warning-orange);">From $399</p>
                 <p class="service-description">
-                    Same-day storm documentation for insurance claims. Priority response with carrier-ready evidence packages.
+                    <strong>STORM RESPONSE ACTIVE!</strong> Same-day documentation for insurance claims. Priority scheduling available now.
                 </p>
                 <div style="margin-top: auto; text-align: center;">
-                    <a href="stormcheck.html" class="btn-primary">
-                        Learn More About StormCheck™
+                    <a href="storm-bulletin-imelda.html" class="btn-primary" style="background: linear-gradient(135deg, var(--alert-red), var(--dark-orange));">
+                        STORM RESPONSE INFO
                     </a>
                 </div>
             </div>
@@ -1104,5 +1280,36 @@
             </p>
         </div>
     </footer>
+
+    <script>
+        // Close storm alert and adjust page layout
+        function closeStormAlert() {
+            const alert = document.getElementById('stormAlert');
+            const nav = document.getElementById('mainNav');
+            const hero = document.getElementById('heroSection');
+            
+            alert.style.display = 'none';
+            nav.classList.add('no-banner');
+            hero.classList.add('no-banner');
+            
+            // Store in localStorage so it doesn't show again this session
+            localStorage.setItem('stormAlertClosed', 'true');
+        }
+
+        // Check if alert was previously closed
+        window.onload = function() {
+            if (localStorage.getItem('stormAlertClosed') === 'true') {
+                closeStormAlert();
+            }
+        }
+
+        // Optional: Reset the alert after some time (e.g., 24 hours)
+        // Uncomment if you want the alert to reappear after a day
+        /*
+        setTimeout(() => {
+            localStorage.removeItem('stormAlertClosed');
+        }, 24 * 60 * 60 * 1000); // 24 hours
+        */
+    </script>
 </body>
 </html>
