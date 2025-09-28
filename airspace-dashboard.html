@@ -516,9 +516,23 @@
 
     <script>
         // ==============================================================
-        // API KEYS - ADD YOUR KEYS HERE
+        // API KEYS SECTION - ADD ALL YOUR KEYS HERE
         // ==============================================================
-        const AIRNOW_API_KEY = 'FA4501F5-EE6B-41B7-91C6-9463C3769CF2'; // <-- PASTE YOUR AIRNOW API KEY HERE
+        
+        // 1. AIRNOW API KEY (for Air Quality)
+        // Get from: https://docs.airnowapi.org/account/request/
+        const AIRNOW_API_KEY = ''; // <-- PASTE YOUR AIRNOW API KEY HERE
+        
+        // 2. OPENWEATHERMAP API KEY (for UV Index)
+        // Use the same key from your weather-tracker.html
+        const OPENWEATHER_API_KEY = ''; // <-- PASTE YOUR OPENWEATHERMAP API KEY HERE
+        
+        // 3. FUTURE API KEYS (optional)
+        // const NASA_FIRMS_KEY = ''; // For fire detection (get from NASA FIRMS)
+        // const FAA_API_KEY = ''; // For TFRs (if needed)
+        
+        // ==============================================================
+        // END OF API KEYS SECTION
         // ==============================================================
         
         // Richmond coordinates
@@ -657,30 +671,56 @@
             document.getElementById('aqiMarker').style.left = `${Math.min(markerPosition, 95)}%`;
         }
 
-        // UV Index (from OpenWeatherMap if you have the key, or use EPA)
+        // UV Index (from OpenWeatherMap)
         async function getUVIndex() {
-            // Demo values
-            const uv = 6;
-            
+            if (!OPENWEATHER_API_KEY) {
+                console.log('OpenWeatherMap API key not configured - using demo values');
+                // Demo values
+                const uv = 6;
+                updateUVDisplay(uv);
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/uvi?lat=${RICHMOND_LAT}&lon=${RICHMOND_LON}&appid=${OPENWEATHER_API_KEY}`
+                );
+                const data = await response.json();
+                
+                const uv = Math.round(data.value * 10) / 10; // Round to 1 decimal
+                updateUVDisplay(uv);
+            } catch (error) {
+                console.error('UV Index API error:', error);
+                // Fallback to demo values
+                updateUVDisplay(6);
+            }
+        }
+
+        // Update UV display
+        function updateUVDisplay(uv) {
             document.getElementById('uvIndex').textContent = uv;
             
             let category, advice;
             if (uv <= 2) {
                 category = 'Low';
-                advice = 'Ideal conditions';
+                advice = 'Ideal conditions for all operations';
                 document.getElementById('uvIndex').style.color = '#10b981';
             } else if (uv <= 5) {
                 category = 'Moderate';
-                advice = 'Good conditions';
+                advice = 'Good conditions, normal operations';
                 document.getElementById('uvIndex').style.color = '#fbbf24';
             } else if (uv <= 7) {
                 category = 'High';
-                advice = 'Use lens filters';
+                advice = 'Use polarizing filters for best results';
                 document.getElementById('uvIndex').style.color = '#ff6b35';
-            } else {
+            } else if (uv <= 10) {
                 category = 'Very High';
-                advice = 'Strong shadows expected';
+                advice = 'Strong shadows, adjust exposure compensation';
                 document.getElementById('uvIndex').style.color = '#dc2626';
+            } else {
+                category = 'Extreme';
+                advice = 'Harsh lighting, consider early/late flights';
+                document.getElementById('uvIndex').style.color = '#7c3aed';
             }
             
             document.getElementById('uvCategory').textContent = category;
