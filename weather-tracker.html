@@ -329,6 +329,151 @@
             margin: 1rem 0;
         }
 
+        /* Forecast Section */
+        .forecast-section {
+            margin-bottom: 3rem;
+        }
+
+        .forecast-table {
+            background: var(--gray-900);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .forecast-header {
+            background: rgba(14, 165, 233, 0.1);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .forecast-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .forecast-day {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .forecast-day:last-child {
+            border-right: none;
+        }
+
+        .forecast-day:hover {
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .forecast-date {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            margin-bottom: 0.5rem;
+        }
+
+        .forecast-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .forecast-temp {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .forecast-wind {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        /* Storm Tracker Section */
+        .storm-tracker-section {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.05), transparent);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            margin-bottom: 3rem;
+        }
+
+        .storm-alert {
+            background: rgba(255, 51, 51, 0.1);
+            border: 2px solid var(--alert-red);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .storm-alert h3 {
+            color: var(--alert-red);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .storm-details {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Operational Notes */
+        .operations-notes {
+            background: rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .operations-notes h3 {
+            color: var(--primary-teal);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .note-item {
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+        }
+
+        .note-icon {
+            color: var(--primary-teal);
+            margin-top: 0.25rem;
+        }
+
+        .note-text {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
+            color: var(--white);
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(14, 165, 233, 0.4);
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .weather-grid {
