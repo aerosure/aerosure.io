@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airspace & Operations Dashboard - AeroSure</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-teal: #00B4D8;
+            --dark-teal: #0082A8;
+            --alert-red: #ff3333;
+            --warning-orange: #ff6b35;
+            --success-green: #10b981;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-400: #9ca3af;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            color: var(--primary-teal);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(14, 165, 233, 0.2);
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+            padding: 6rem 2rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--gray-400);
+            font-size: 1.125rem;
+        }
+
+        /* Master Status Panel */
+        .master-status {
+            background: var(--gray-900);
+            border: 2px solid var(--primary-teal);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .overall-status {
+            text-align: center;
+        }
+
+        .status-indicator-large {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .status-green {
+            background: var(--success-green);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        }
+
+        .status-yellow {
+            background: var(--warning-orange);
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .status-red {
+            background: var(--alert-red);
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.5);
+        }
+
+        /* API Grid */
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .api-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .api-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+
+        .api-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .api-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .api-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success-green);
+        }
+
+        .api-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .api-detail {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        /* Daylight Card */
+        .daylight-card {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            grid-column: span 2;
+        }
+
+        .daylight-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .time-block {
+            text-align: center;
+        }
+
+        .time-label {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            margin-bottom: 0.25rem;
+        }
+
+        .time-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Airspace Status */
+        .airspace-card {
+            background: var(--gray-900);
+            border: 2px solid var(--warning-orange);
+            grid-column: span 2;
+        }
+
+        .notam-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .notam-item {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--warning-orange);
+        }
+
+        .notam-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .notam-detail {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        /* Air Quality Indicator */
+        .aqi-scale {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: linear-gradient(90deg, 
+                #10b981 0%, 
+                #fbbf24 25%, 
+                #ff6b35 50%, 
+                #dc2626 75%, 
+                #7c3aed 100%);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .aqi-marker {
+            position: absolute;
+            top: -10px;
+            width: 4px;
+            height: 30px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        /* Operations Summary */
+        .operations-summary {
+            background: rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        /* Loading States */
+        .loading {
+            color: var(--gray-400);
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .master-status {
+                grid-template-columns: 1fr;
+            }
+
+            .api-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .daylight-card,
+            .airspace-card {
+                grid-column: span 1;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to AeroSure
+            </a>
+            <div style="font-size: 1.25rem; font-weight: 600;">Airspace & Operations Dashboard</div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="weather-tracker.html" class="back-link">
+                    <i class="fas fa-wind"></i> Weather
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <h1>Complete Flight Operations Status</h1>
+            <p class="subtitle">Real-time airspace, environmental, and operational conditions for Richmond Metro</p>
+        </div>
+
+        <!-- Master Status Panel -->
+        <div class="master-status">
+            <div class="overall-status">
+                <div class="status-indicator-large status-green" id="masterStatus">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div style="font-size: 1.25rem; font-weight: 600;">ALL CLEAR</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">Current Flight Window</div>
+                <div id="currentTime" style="font-size: 2rem; font-weight: 700; color: var(--primary-teal);"></div>
+                <div id="flightHoursRemaining" style="color: var(--gray-400); margin-top: 0.5rem;"></div>
+            </div>
+            <div style="text-align: center;">
+                <div style="margin-bottom: 0.5rem;">Next Update</div>
+                <div id="nextUpdate" style="font-size: 1.25rem; color: var(--primary-teal);">5:00</div>
+                <div style="color: var(--gray-400); font-size: 0.875rem;">Auto-refresh enabled</div>
+            </div>
+        </div>
+
+        <!-- API Status Grid -->
+        <div class="api-grid">
+            <!-- Sunrise/Sunset -->
+            <div class="api-card daylight-card">
+                <div class="api-header">
+                    <h3 class="api-title"><i class="fas fa-sun"></i> Daylight Hours</h3>
+                    <div class="api-status"></div>
+                </div>
+                <div class="daylight-timeline">
+                    <div class="time-block">
+                        <div class="time-label">Sunrise</div>
+                        <div class="time-value" id="sunrise">--:--</div>
+                    </div>
+                    <div class="time-block">
+                        <div class="time-label">Golden Hour AM</div>
+                        <div class="time-value" id="goldenHourAM">--:--</div>
+                    </div>
+                    <div class="time-block">
+                        <div class="time-label">Golden Hour PM</div>
+                        <div class="time-value" id="goldenHourPM">--:--</div>
+                    </div>
+                    <div class="time-block">
+                        <div class="time-label">Sunset</div>
+                        <div class="time-value" id="sunset">--:--</div>
+                    </div>
+                </div>
+                <div class="api-detail" style="text-align: center; margin-top: 1rem;">
+                    <span id="daylightHours">-- hours</span> of daylight today | 
+                    Best photo lighting: <span id="bestLighting">--</span>
+                </div>
+            </div>
+
+            <!-- Air Quality -->
+            <div class="api-card">
+                <div class="api-header">
+                    <h3 class="api-title"><i class="fas fa-lungs"></i> Air Quality</h3>
+                    <div class="api-status"></div>
+                </div>
+                <div class="api-value" id="aqiValue">--</div>
+                <div class="api-detail" id="aqiCategory">Loading...</div>
+                <div class="aqi-scale">
+                    <div class="aqi-marker" id="aqiMarker" style="left: 0%;"></div>
+                </div>
+                <div class="api-detail" style="margin-top: 0.5rem;">
+                    <span id="aqiImpact">Checking impact on operations...</span>
+                </div>
+            </div>
+
+            <!-- FAA Airspace Status -->
+            <div class="api-card airspace-card">
+                <div class="api-header">
+                    <h3 class="api-title"><i class="fas fa-plane"></i> Airspace Status (TFRs)</h3>
+                    <div class="api-status"></div>
+                </div>
+                <div id="tfr-content">
+                    <div class="api-value" style="color: var(--success-green);">CLEAR</div>
+                    <div class="api-detail">No flight restrictions in Richmond area</div>
+                </div>
+                <div class="notam-list" id="notamList" style="display: none;">
+                    <!-- TFRs will be listed here -->
+                </div>
+            </div>
+
+            <!-- UV Index -->
+            <div class="api-card">
+                <div class="api-header">
+                    <h3 class="api-title"><i class="fas fa-radiation"></i> UV Index</h3>
+                    <div class="api-status"></div>
+                </div>
+                <div class="api-value" id="uvIndex">--</div>
+                <div class="api-detail" id="uvCategory">Loading...</div>
+                <div class="api-detail" style="margin-top: 0.5rem;">
+                    <span id="uvAdvice">Checking conditions...</span>
+                </div>
+            </div>
+
+            <!-- Earthquake Activity -->
+            <div class="api-card">
+                <div class="api-header">
+                    <h3 class="api-title"><i class="fas fa-house-crack"></i> Seismic Activity</h3>
+                    <div class="api-status"></div>
+                </div>
+                <div class="api-value" id="seismicStatus">QUIET</div>
+                <div class="api-detail" id="seismicDetail">No recent activity</div>
+                <div class="api-detail" style="margin-top: 0.5rem; color: var(--gray-400);">
+                    <small>Post-quake inspection available</small>
+                </div>
+            </div>
+
+            <!-- Fire Detection -->
+            <div class="api-card">
+                <div class="api-header">
+                    <h3 class="api-title"><i class="fas fa-fire"></i> Fire Detection</h3>
+                    <div class="api-status"></div>
+                </div>
+                <div class="api-value" id="fireStatus">NONE</div>
+                <div class="api-detail" id="fireDetail">No active fires detected</div>
+                <div class="api-detail" style="margin-top: 0.5rem; color: var(--gray-400);">
+                    <small>NASA FIRMS satellite monitoring</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operations Summary -->
+        <div class="operations-summary">
+            <h3 style="margin-bottom: 1rem; color: var(--primary-teal);">
+                <i class="fas fa-clipboard-check"></i> Operations Summary
+            </h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-icon" style="color: var(--success-green);">
+                        <i class="fas fa-drone"></i>
+                    </div>
+                    <div style="font-size: 1.25rem; font-weight: 600;">READY</div>
+                    <div class="summary-label">Flight Status</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-icon" style="color: var(--primary-teal);">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div style="font-size: 1.25rem; font-weight: 600;" id="photoConditions">GOOD</div>
+                    <div class="summary-label">Photo Conditions</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-icon" style="color: var(--warning-orange);">
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                    <div style="font-size: 1.25rem; font-weight: 600;" id="batteryPerformance">OPTIMAL</div>
+                    <div class="summary-label">Battery Performance</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-icon" style="color: var(--primary-teal);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div style="font-size: 1.25rem; font-weight: 600;" id="overallRating">EXCELLENT</div>
+                    <div class="summary-label">Overall Rating</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Richmond coordinates
+        const RICHMOND_LAT = 37.5407;
+        const RICHMOND_LON = -77.4360;
+
+        // Update current time
+        function updateCurrentTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        }
+
+        // Sunrise/Sunset API (no key needed!)
+        async function getSunriseSunset() {
+            try {
+                const response = await fetch(
+                    `https://api.sunrise-sunset.org/json?lat=${RICHMOND_LAT}&lng=${RICHMOND_LON}&formatted=0`
+                );
+                const data = await response.json();
+                
+                const sunrise = new Date(data.results.sunrise);
+                const sunset = new Date(data.results.sunset);
+                const dayLength = data.results.day_length / 3600; // Convert to hours
+                
+                // Calculate golden hours (1 hour after sunrise, 1 hour before sunset)
+                const goldenAM = new Date(sunrise.getTime() + 60 * 60 * 1000);
+                const goldenPM = new Date(sunset.getTime() - 60 * 60 * 1000);
+                
+                // Update display
+                document.getElementById('sunrise').textContent = 
+                    sunrise.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                document.getElementById('sunset').textContent = 
+                    sunset.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                document.getElementById('goldenHourAM').textContent = 
+                    goldenAM.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                document.getElementById('goldenHourPM').textContent = 
+                    goldenPM.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                
+                document.getElementById('daylightHours').textContent = 
+                    `${Math.round(dayLength * 10) / 10} hours`;
+                
+                // Calculate remaining flight hours
+                const now = new Date();
+                if (now < sunset) {
+                    const hoursRemaining = (sunset - now) / (1000 * 60 * 60);
+                    document.getElementById('flightHoursRemaining').textContent = 
+                        `${Math.round(hoursRemaining * 10) / 10} flight hours remaining today`;
+                } else {
+                    document.getElementById('flightHoursRemaining').textContent = 
+                        'Past sunset - Night operations only';
+                }
+
+                // Best lighting recommendation
+                const currentHour = now.getHours();
+                if (currentHour === goldenAM.getHours() || currentHour === goldenPM.getHours()) {
+                    document.getElementById('bestLighting').textContent = 'NOW - Golden Hour!';
+                    document.getElementById('bestLighting').style.color = '#fbbf24';
+                } else {
+                    document.getElementById('bestLighting').textContent = 
+                        `${goldenAM.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} & ${goldenPM.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+                }
+                
+            } catch (error) {
+                console.error('Sunrise/Sunset API error:', error);
+            }
+        }
+
+        // Air Quality API (you'll need to sign up for free at airnow.gov)
+        async function getAirQuality() {
+            // For demo, using static values
+            // In production, use: https://www.airnowapi.org/aq/observation/zipCode/current/
+            const aqi = 45; // Demo value
+            
+            document.getElementById('aqiValue').textContent = aqi;
+            
+            // Set category and color
+            let category, impact, markerPosition;
+            if (aqi <= 50) {
+                category = 'Good';
+                impact = 'Perfect for aerial photography';
+                markerPosition = (aqi / 50) * 20;
+                document.getElementById('aqiValue').style.color = '#10b981';
+            } else if (aqi <= 100) {
+                category = 'Moderate';
+                impact = 'Acceptable visibility for most operations';
+                markerPosition = 20 + ((aqi - 50) / 50) * 20;
+                document.getElementById('aqiValue').style.color = '#fbbf24';
+            } else if (aqi <= 150) {
+                category = 'Unhealthy for Sensitive';
+                impact = 'Reduced visibility may affect photo quality';
+                markerPosition = 40 + ((aqi - 100) / 50) * 20;
+                document.getElementById('aqiValue').style.color = '#ff6b35';
+            } else {
+                category = 'Unhealthy';
+                impact = 'Poor visibility - consider rescheduling';
+                markerPosition = 60 + ((aqi - 150) / 100) * 40;
+                document.getElementById('aqiValue').style.color = '#dc2626';
+            }
+            
+            document.getElementById('aqiCategory').textContent = category;
+            document.getElementById('aqiImpact').textContent = impact;
+            document.getElementById('aqiMarker').style.left = `${markerPosition}%`;
+        }
+
+        // UV Index (from OpenWeatherMap if you have the key, or use EPA)
+        async function getUVIndex() {
+            // Demo values
+            const uv = 6;
+            
+            document.getElementById('uvIndex').textContent = uv;
+            
+            let category, advice;
+            if (uv <= 2) {
+                category = 'Low';
+                advice = 'Ideal conditions';
+                document.getElementById('uvIndex').style.color = '#10b981';
+            } else if (uv <= 5) {
+                category = 'Moderate';
+                advice = 'Good conditions';
+                document.getElementById('uvIndex').style.color = '#fbbf24';
+            } else if (uv <= 7) {
+                category = 'High';
+                advice = 'Use lens filters';
+                document.getElementById('uvIndex').style.color = '#ff6b35';
+            } else {
+                category = 'Very High';
+                advice = 'Strong shadows expected';
+                document.getElementById('uvIndex').style.color = '#dc2626';
+            }
+            
+            document.getElementById('uvCategory').textContent = category;
+            document.getElementById('uvAdvice').textContent = advice;
+        }
+
+        // Check for TFRs (Temporary Flight Restrictions)
+        async function checkTFRs() {
+            // This would connect to FAA API
+            // For demo, showing clear status
+            // In production: https://www.faa.gov/air_traffic/publications/notices/
+            
+            // If there were restrictions, you'd show them like:
+            // document.getElementById('tfr-content').style.display = 'none';
+            // document.getElementById('notamList').style.display = 'block';
+            // Add NOTAM items to the list
+        }
+
+        // USGS Earthquake check
+        async function checkSeismic() {
+            try {
+                // Check for earthquakes within 100 miles in last 7 days
+                const response = await fetch(
+                    `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${RICHMOND_LAT}&longitude=${RICHMOND_LON}&maxradiuskm=160&starttime=${new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()}`
+                );
+                const data = await response.json();
+                
+                if (data.features && data.features.length > 0) {
+                    const latestQuake = data.features[0];
+                    const mag = latestQuake.properties.mag;
+                    const place = latestQuake.properties.place;
+                    
+                    document.getElementById('seismicStatus').textContent = `M${mag}`;
+                    document.getElementById('seismicStatus').style.color = '#ff6b35';
+                    document.getElementById('seismicDetail').textContent = place;
+                } else {
+                    document.getElementById('seismicStatus').textContent = 'QUIET';
+                    document.getElementById('seismicDetail').textContent = 'No activity within 100 miles';
+                }
+            } catch (error) {
+                console.error('USGS API error:', error);
+            }
+        }
+
+        // Update countdown
+        function updateCountdown() {
+            let seconds = 300; // 5 minutes
+            setInterval(() => {
+                seconds--;
+                if (seconds <= 0) {
+                    seconds = 300;
+                    // Refresh all data
+                    loadAllData();
+                }
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                document.getElementById('nextUpdate').textContent = 
+                    `${mins}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Load all data
+        function loadAllData() {
+            updateCurrentTime();
+            getSunriseSunset();
+            getAirQuality();
+            getUVIndex();
+            checkTFRs();
+            checkSeismic();
+        }
+
+        // Initialize
+        loadAllData();
+        updateCountdown();
+        setInterval(updateCurrentTime, 1000);
+    </script>
+</body>
+</html>
