@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Tracker - AeroSure Drone Operations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-teal: #00B4D8;
+            --dark-teal: #0082A8;
+            --alert-red: #ff3333;
+            --warning-orange: #ff6b35;
+            --success-green: #10b981;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-400: #9ca3af;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+        /* Weather Dashboard Section */
+        .weather-dashboard {
+            padding: 4rem 2rem;
+            background: var(--darker-bg);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--primary-teal);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--gray-400);
+            font-size: 1.125rem;
+        }
+
+        /* Flight Status Banner */
+        .flight-status-banner {
+            background: var(--gray-900);
+            border: 2px solid var(--primary-teal);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .status-indicator {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            animation: statusPulse 2s infinite;
+        }
+
+        .status-green {
+            background: var(--success-green);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        }
+
+        .status-yellow {
+            background: var(--warning-orange);
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .status-red {
+            background: var(--alert-red);
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.5);
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.95); }
+        }
+
+        .status-info h3 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-details {
+            color: var(--gray-400);
+            font-size: 1.1rem;
+        }
+
+        .status-metrics {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-teal);
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        /* Weather Cards Grid */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .weather-card {
+            background: var(--gray-900);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .weather-card:hover {
+            border-color: rgba(14, 165, 233, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .weather-card h4 {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .weather-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 0.25rem;
+        }
+
+        .weather-unit {
+            font-size: 1.25rem;
+            color: var(--gray-400);
+            font-weight: 400;
+        }
+
+        .weather-detail {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        /* Wind Speed Indicator */
+        .wind-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wind-icon {
+            font-size: 2rem;
+            animation: windRotate 3s linear infinite;
+        }
+
+        @keyframes windRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .wind-safe { color: var(--success-green); }
+        .wind-caution { color: var(--warning-orange); }
+        .wind-danger { color: var(--alert-red); }
+
+        /* Interactive Maps */
+        .map-section {
+            margin-bottom: 3rem;
+        }
+
+        .map-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .map-tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .map-tab:hover {
+            color: var(--white);
+        }
+
+        .map-tab.active {
+            color: var(--primary-teal);
+        }
+
+        .map-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-teal);
+        }
+
+        .map-container {
+            background: var(--gray-900);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .map-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .map-caption {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .map-caption h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .map-caption p {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        /* Forecast Table */
+        .forecast-section {
+            margin-bottom: 3rem;
+        }
+
+        .forecast-table {
+            background: var(--gray-900);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .forecast-header {
+            background: rgba(14, 165, 233, 0.1);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .forecast-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .forecast-day {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .forecast-day:last-child {
+            border-right: none;
+        }
+
+        .forecast-day:hover {
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .forecast-date {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            margin-bottom: 0.5rem;
+        }
+
+        .forecast-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .forecast-temp {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .forecast-wind {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        /* Storm Tracker */
+        .storm-tracker-section {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.05), transparent);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            margin-bottom: 3rem;
+        }
+
+        .storm-alert {
+            background: rgba(255, 51, 51, 0.1);
+            border: 2px solid var(--alert-red);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .storm-alert h3 {
+            color: var(--alert-red);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .storm-details {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Operational Notes */
+        .operations-notes {
+            background: rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .operations-notes h3 {
+            color: var(--primary-teal);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .note-item {
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+        }
+
+        .note-icon {
+            color: var(--primary-teal);
+            margin-top: 0.25rem;
+        }
+
+        .note-text {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .weather-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .flight-status-banner {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .status-metrics {
+                justify-content: center;
+            }
+
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .forecast-days {
+                grid-template-columns: 1fr;
+            }
+
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .map-iframe {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Weather Dashboard Section -->
+    <section class="weather-dashboard">
+        <div class="dashboard-container">
+            <div class="section-header">
+                <span class="section-badge">Live Weather Monitoring</span>
+                <h2>Flight Operations Center</h2>
+                <p class="section-subtitle">
+                    Real-time conditions monitoring for safe drone operations in Richmond Metro
+                </p>
+            </div>
+
+            <!-- Flight Status Banner -->
+            <div class="flight-status-banner">
+                <div class="status-indicator status-green" id="flightStatus">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="status-info">
+                    <h3>Flight Status: <span style="color: var(--success-green);">OPERATIONAL</span></h3>
+                    <p class="status-details">Current conditions suitable for drone operations</p>
+                </div>
+                <div class="status-metrics">
+                    <div class="metric">
+                        <div class="metric-value">8</div>
+                        <div class="metric-label">mph winds</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">10</div>
+                        <div class="metric-label">mi visibility</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">3,500</div>
+                        <div class="metric-label">ft ceiling</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Conditions Grid -->
+            <div class="weather-grid">
+                <div class="weather-card">
+                    <h4>Wind Speed</h4>
+                    <div class="wind-indicator">
+                        <div class="weather-value">8<span class="weather-unit">mph</span></div>
+                        <i class="fas fa-wind wind-icon wind-safe"></i>
+                    </div>
+                    <div class="weather-detail">Gusts to 12 mph</div>
+                    <div class="weather-detail" style="color: var(--success-green); margin-top: 0.5rem;">
+                        ✓ Safe for flight
+                    </div>
+                </div>
+
+                <div class="weather-card">
+                    <h4>Temperature</h4>
+                    <div class="weather-value">72<span class="weather-unit">°F</span></div>
+                    <div class="weather-detail">Feels like 70°F</div>
+                    <div class="weather-detail" style="margin-top: 0.5rem;">
+                        Battery optimal
+                    </div>
+                </div>
+
+                <div class="weather-card">
+                    <h4>Precipitation</h4>
+                    <div class="weather-value">0<span class="weather-unit">%</span></div>
+                    <div class="weather-detail">Clear skies</div>
+                    <div class="weather-detail" style="color: var(--success-green); margin-top: 0.5rem;">
+                        ✓ No rain expected
+                    </div>
+                </div>
+
+                <div class="weather-card">
+                    <h4>Visibility</h4>
+                    <div class="weather-value">10<span class="weather-unit">mi</span></div>
+                    <div class="weather-detail">Unlimited ceiling</div>
+                    <div class="weather-detail" style="color: var(--success-green); margin-top: 0.5rem;">
+                        ✓ Excellent visibility
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Weather Maps -->
+            <div class="map-section">
+                <div class="map-tabs">
+                    <button class="map-tab active" onclick="showMap('wind')">Wind Conditions</button>
+                    <button class="map-tab" onclick="showMap('radar')">Weather Radar</button>
+                    <button class="map-tab" onclick="showMap('satellite')">Satellite</button>
+                    <button class="map-tab" onclick="showMap('forecast')">48hr Forecast</button>
+                </div>
+
+                <div class="map-container">
+                    <!-- Windy.com embed for Richmond area -->
+                    <iframe 
+                        id="windyMap"
+                        class="map-iframe"
+                        src="https://embed.windy.com/embed2.html?lat=37.540&lon=-77.436&detailLat=37.540&detailLon=-77.436&width=100%&height=600&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1" 
+                        frameborder="0">
+                    </iframe>
+                    
+                    <div class="map-caption">
+                        <h3>Professional Wind Analysis</h3>
+                        <p>
+                            Real-time wind data at multiple altitudes. Green zones (0-15 mph) are ideal for drone operations. 
+                            Yellow zones (15-25 mph) require caution. Red zones (25+ mph) indicate unsafe conditions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7-Day Forecast -->
+            <div class="forecast-section">
+                <h3 style="margin-bottom: 1.5rem;">7-Day Flight Forecast</h3>
+                <div class="forecast-table">
+                    <div class="forecast-header">
+                        <strong>Extended operational outlook for Richmond Metro</strong>
+                    </div>
+                    <div class="forecast-days">
+                        <div class="forecast-day">
+                            <div class="forecast-date">Today</div>
+                            <div class="forecast-icon" style="color: #fbbf24;">☀️</div>
+                            <div class="forecast-temp">72°</div>
+                            <div class="forecast-wind">8 mph</div>
+                            <div style="color: var(--success-green); font-size: 0.75rem; margin-top: 0.5rem;">✓ Flyable</div>
+                        </div>
+                        <div class="forecast-day">
+                            <div class="forecast-date">Mon</div>
+                            <div class="forecast-icon" style="color: #9ca3af;">⛅</div>
+                            <div class="forecast-temp">68°</div>
+                            <div class="forecast-wind">12 mph</div>
+                            <div style="color: var(--success-green); font-size: 0.75rem; margin-top: 0.5rem;">✓ Flyable</div>
+                        </div>
+                        <div class="forecast-day">
+                            <div class="forecast-date">Tue</div>
+                            <div class="forecast-icon" style="color: #3b82f6;">🌧️</div>
+                            <div class="forecast-temp">65°</div>
+                            <div class="forecast-wind">18 mph</div>
+                            <div style="color: var(--warning-orange); font-size: 0.75rem; margin-top: 0.5rem;">⚠ Limited</div>
+                        </div>
+                        <div class="forecast-day">
+                            <div class="forecast-date">Wed</div>
+                            <div class="forecast-icon" style="color: #6b7280;">☁️</div>
+                            <div class="forecast-temp">70°</div>
+                            <div class="forecast-wind">10 mph</div>
+                            <div style="color: var(--success-green); font-size: 0.75rem; margin-top: 0.5rem;">✓ Flyable</div>
+                        </div>
+                        <div class="forecast-day">
+                            <div class="forecast-date">Thu</div>
+                            <div class="forecast-icon" style="color: #fbbf24;">☀️</div>
+                            <div class="forecast-temp">75°</div>
+                            <div class="forecast-wind">6 mph</div>
+                            <div style="color: var(--success-green); font-size: 0.75rem; margin-top: 0.5rem;">✓ Ideal</div>
+                        </div>
+                        <div class="forecast-day">
+                            <div class="forecast-date">Fri</div>
+                            <div class="forecast-icon" style="color: #fbbf24;">☀️</div>
+                            <div class="forecast-temp">78°</div>
+                            <div class="forecast-wind">8 mph</div>
+                            <div style="color: var(--success-green); font-size: 0.75rem; margin-top: 0.5rem;">✓ Ideal</div>
+                        </div>
+                        <div class="forecast-day">
+                            <div class="forecast-date">Sat</div>
+                            <div class="forecast-icon" style="color: #9ca3af;">⛅</div>
+                            <div class="forecast-temp">73°</div>
+                            <div class="forecast-wind">11 mph</div>
+                            <div style="color: var(--success-green); font-size: 0.75rem; margin-top: 0.5rem;">✓ Flyable</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Storm Tracking Alert -->
+            <div class="storm-tracker-section" id="stormTracker">
+                <div class="storm-alert">
+                    <h3>
+                        <i class="fas fa-hurricane"></i>
+                        Active Storm Monitoring
+                    </h3>
+                    <div class="storm-details">
+                        <strong>Hurricane Humberto:</strong> Category 4, 535 mi S of Bermuda, moving WNW<br>
+                        <strong>Tropical Storm Imelda:</strong> Strengthening near Bahamas, potential Cat 1 by Tuesday<br>
+                        <strong>Impact Timeline:</strong> Coastal effects possible Tuesday-Wednesday<br>
+                        <strong>Service Status:</strong> Accepting pre-storm documentation requests through Monday
+                    </div>
+                </div>
+                
+                <!-- Hurricane Tracker Embed (optional - from Cyclocane or similar) -->
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="storm-bulletin-imelda.html" class="btn-primary" style="background: linear-gradient(135deg, #ff3333, #ff6b35); padding: 1rem 2rem; border-radius: 8px; color: white; text-decoration: none; display: inline-block; font-weight: 600;">
+                        View Detailed Storm Bulletin
+                    </a>
+                </div>
+            </div>
+
+            <!-- Operational Notes -->
+            <div class="operations-notes">
+                <h3>
+                    <i class="fas fa-info-circle"></i>
+                    Flight Operations Guidelines
+                </h3>
+                <div class="notes-grid">
+                    <div class="note-item">
+                        <i class="fas fa-check note-icon"></i>
+                        <div class="note-text">
+                            <strong>Safe to Fly:</strong> Winds under 20 mph, no precipitation, visibility > 3 miles
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <i class="fas fa-exclamation-triangle note-icon" style="color: var(--warning-orange);"></i>
+                        <div class="note-text">
+                            <strong>Caution:</strong> Winds 20-25 mph, light rain, or visibility 1-3 miles
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <i class="fas fa-times note-icon" style="color: var(--alert-red);"></i>
+                        <div class="note-text">
+                            <strong>Grounded:</strong> Winds over 25 mph, heavy rain, or visibility under 1 mile
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top: 1.5rem; color: var(--gray-400); font-size: 0.9rem;">
+                    Weather conditions are monitored continuously. If conditions prevent scheduled flights, we'll contact you immediately 
+                    to reschedule at no additional charge. Storm damage documentation takes priority during severe weather events.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Map tab switching functionality
+        function showMap(type) {
+            const tabs = document.querySelectorAll('.map-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const windyMap = document.getElementById('windyMap');
+            
+            switch(type) {
+                case 'wind':
+                    windyMap.src = 'https://embed.windy.com/embed2.html?lat=37.540&lon=-77.436&detailLat=37.540&detailLon=-77.436&width=100%&height=600&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1';
+                    break;
+                case 'radar':
+                    windyMap.src = 'https://embed.windy.com/embed2.html?lat=37.540&lon=-77.436&detailLat=37.540&detailLon=-77.436&width=100%&height=600&zoom=9&level=surface&overlay=radar&product=radar&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1';
+                    break;
+                case 'satellite':
+                    windyMap.src = 'https://embed.windy.com/embed2.html?lat=37.540&lon=-77.436&detailLat=37.540&detailLon=-77.436&width=100%&height=600&zoom=9&level=surface&overlay=satellite&product=satellite&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=mph&metricTemp=%C2%B°F&radarRange=-1';
+                    break;
+                case 'forecast':
+                    windyMap.src = 'https://embed.windy.com/embed2.html?lat=37.540&lon=-77.436&detailLat=37.540&detailLon=-77.436&width=100%&height=600&zoom=9&level=surface&overlay=rain&product=ecmwf&menu=&message=true&marker=true&calendar=48&pressure=&type=map&location=coordinates&detail=&metricWind=mph&metricTemp=%C2%B°F&radarRange=-1';
+                    break;
+            }
+        }
+
+        // Simulate real-time weather updates (in production, this would connect to actual weather APIs)
+        function updateWeatherStatus() {
+            // This would normally fetch from weather API
+            // For demo purposes, using static values
+            
+            // Example of updating flight status based on conditions
+            const windSpeed = 8; // Would come from API
+            const visibility = 10; // Would come from API
+            
+            const statusIndicator = document.getElementById('flightStatus');
+            const statusText = document.querySelector('.status-info h3 span');
+            
+            if (windSpeed < 20 && visibility > 3) {
+                statusIndicator.className = 'status-indicator status-green';
+                statusIndicator.innerHTML = '<i class="fas fa-check"></i>';
+                statusText.textContent = 'OPERATIONAL';
+                statusText.style.color = 'var(--success-green)';
+            } else if (windSpeed < 25 && visibility > 1) {
+                statusIndicator.className = 'status-indicator status-yellow';
+                statusIndicator.innerHTML = '<i class="fas fa-exclamation"></i>';
+                statusText.textContent = 'LIMITED OPERATIONS';
+                statusText.style.color = 'var(--warning-orange)';
+            } else {
+                statusIndicator.className = 'status-indicator status-red';
+                statusIndicator.innerHTML = '<i class="fas fa-times"></i>';
+                statusText.textContent = 'GROUNDED';
+                statusText.style.color = 'var(--alert-red)';
+            }
+        }
+
+        // Update weather every 5 minutes
+        setInterval(updateWeatherStatus, 300000);
+        
+        // Initial update
+        updateWeatherStatus();
+    </script>
+</body>
+</html>
