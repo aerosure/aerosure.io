@@ -734,32 +734,121 @@
 
     <!-- Hero Section -->
     <section class="hero">
+        <div class="hero-background">
+            <!-- Animated gradient background -->
+            <div style="position: absolute; inset: 0; background: radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(0, 180, 216, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 20%, rgba(0, 180, 216, 0.08) 0%, transparent 50%);"></div>
+        </div>
         <div class="hero-content">
-            <h1>Professional Drone Services</h1>
-            <p class="hero-subtitle">
-                Insurance-grade imaging and inspection with 24-hour turnaround
+            <!-- Top Badge -->
+            <div style="display: inline-flex; align-items: center; gap: 2rem; padding: 0.75rem 1.5rem; background: rgba(0, 180, 216, 0.1); border: 1px solid rgba(0, 180, 216, 0.3); border-radius: 50px; margin-bottom: 2rem;">
+                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-certificate" style="color: var(--primary-teal);"></i>
+                    <span style="font-size: 0.875rem;">FAA Part 107 Certified</span>
+                </span>
+                <span style="color: rgba(255, 255, 255, 0.3);">•</span>
+                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-shield-alt" style="color: var(--primary-teal);"></i>
+                    <span style="font-size: 0.875rem;">$1M Liability Insurance</span>
+                </span>
+                <span style="color: rgba(255, 255, 255, 0.3);">•</span>
+                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary-teal);"></i>
+                    <span style="font-size: 0.875rem;">Richmond Metro Area</span>
+                </span>
+            </div>
+
+            <!-- Main Headlines -->
+            <h1 style="font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1.1; margin-bottom: 1rem;">
+                Elevate Your <span style="background: linear-gradient(135deg, var(--primary-teal) 0%, #4dd0e1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perspective</span>
+            </h1>
+            <h2 style="font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; margin-bottom: 1.5rem; background: linear-gradient(135deg, var(--white) 0%, var(--gray-300) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                Professional Drone Services
+            </h2>
+
+            <!-- Tagline -->
+            <p style="font-size: clamp(1.25rem, 2vw, 1.75rem); color: var(--primary-teal); margin-bottom: 1rem; font-weight: 600; letter-spacing: 1px;">
+                Clarity Above, Confidence Below
             </p>
-            <div class="hero-badges">
-                <div class="badge">
-                    <i class="fas fa-certificate"></i>
-                    <span>FAA Part 107 Certified</span>
-                </div>
-                <div class="badge">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>$1M Liability Insurance</span>
-                </div>
-                <div class="badge">
-                    <i class="fas fa-clock"></i>
+
+            <!-- Description -->
+            <p class="hero-subtitle" style="max-width: 800px; margin: 0 auto 2.5rem; font-size: 1.125rem; line-height: 1.7;">
+                Cutting-edge aerial imaging and inspection services that deliver 4K documentation in 24 hours. 
+                Serving Richmond, Henrico, Chesterfield, and Central Virginia within 50 miles.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+                <a href="#contact" class="cta-button" style="font-size: 1.125rem; padding: 1rem 2.5rem; background: linear-gradient(135deg, var(--primary-teal) 0%, var(--dark-teal) 100%); position: relative; overflow: hidden;">
+                    <span style="position: relative; z-index: 1;">Get Free Quote</span>
+                    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #00d4ff 0%, var(--primary-teal) 100%); opacity: 0; transition: opacity 0.3s;"></div>
+                </a>
+                <a href="#services" style="font-size: 1.125rem; padding: 1rem 2.5rem; border: 2px solid rgba(255, 255, 255, 0.3); color: white; text-decoration: none; border-radius: 50px; transition: all 0.3s; backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.05);" 
+                   onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.borderColor='rgba(255, 255, 255, 0.5)';" 
+                   onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)';">
+                    View Services
+                </a>
+            </div>
+
+            <!-- Feature Grid -->
+            <div class="hero-badges" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; max-width: 600px; margin: 3rem auto 0;">
+                <div class="badge" style="background: rgba(0, 180, 216, 0.05); backdrop-filter: blur(10px);">
+                    <i class="fas fa-clock" style="color: var(--primary-teal);"></i>
                     <span>24hr Delivery</span>
                 </div>
+                <div class="badge" style="background: rgba(0, 180, 216, 0.05); backdrop-filter: blur(10px);">
+                    <i class="fas fa-camera" style="color: var(--primary-teal);"></i>
+                    <span>4K Resolution</span>
+                </div>
+                <div class="badge" style="background: rgba(0, 180, 216, 0.05); backdrop-filter: blur(10px);">
+                    <i class="fas fa-hurricane" style="color: var(--warning-orange);"></i>
+                    <span>Storm Response</span>
+                </div>
+                <div class="badge" style="background: rgba(0, 180, 216, 0.05); backdrop-filter: blur(10px);">
+                    <i class="fas fa-chart-line" style="color: var(--primary-teal);"></i>
+                    <span>Live Tracking</span>
+                </div>
             </div>
-            <div style="margin-top: 2rem;">
-                <a href="#services" class="cta-button" style="font-size: 1.125rem; padding: 0.875rem 2rem;">
-                    Explore Services
-                </a>
+
+            <!-- Scroll Indicator -->
+            <div style="position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite;">
+                <i class="fas fa-chevron-down" style="font-size: 1.5rem; color: rgba(255, 255, 255, 0.3);"></i>
             </div>
         </div>
     </section>
+
+    <style>
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+        
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-background {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 0 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .cta-button:hover > div {
+            opacity: 1 !important;
+        }
+    </style>
 
     <!-- Services Section -->
     <section class="services" id="services">
