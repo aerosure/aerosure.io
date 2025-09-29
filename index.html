@@ -42,12 +42,12 @@
         /* Navigation with Dropdown */
         nav {
             position: fixed;
-            top: 50px; /* Account for storm banner */
+            top: 60px; /* Increased to account for storm banner */
             left: 0;
             right: 0;
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
-            z-index: 1000;
+            z-index: 999; /* Below storm banner */
             padding: 1rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: top 0.3s;
@@ -278,7 +278,7 @@
             justify-content: center;
             background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
             position: relative;
-            padding-top: 120px; /* Account for fixed banner and nav */
+            padding-top: 140px; /* Increased to account for banner + nav */
         }
 
         .hero-background {
@@ -828,19 +828,19 @@
         </div>
         <div class="hero-content">
             <!-- Top Badge -->
-            <div style="display: inline-flex; align-items: center; gap: 2rem; padding: 0.75rem 1.5rem; background: rgba(0, 180, 216, 0.1); border: 1px solid rgba(0, 180, 216, 0.3); border-radius: 50px; margin-bottom: 2rem;">
+            <div style="display: inline-flex; align-items: center; gap: 1.5rem; padding: 0.625rem 1.25rem; background: rgba(0, 180, 216, 0.1); border: 1px solid rgba(0, 180, 216, 0.3); border-radius: 50px; margin-bottom: 2rem;">
                 <span style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-certificate" style="color: var(--primary-teal);"></i>
+                    <i class="fas fa-certificate" style="color: var(--primary-teal); font-size: 0.875rem;"></i>
                     <span style="font-size: 0.875rem;">FAA Part 107 Certified</span>
                 </span>
-                <span style="color: rgba(255, 255, 255, 0.3);">•</span>
+                <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.875rem;">•</span>
                 <span style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-shield-alt" style="color: var(--primary-teal);"></i>
+                    <i class="fas fa-shield-alt" style="color: var(--primary-teal); font-size: 0.875rem;"></i>
                     <span style="font-size: 0.875rem;">$1M Liability Insurance</span>
                 </span>
-                <span style="color: rgba(255, 255, 255, 0.3);">•</span>
+                <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.875rem;">•</span>
                 <span style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-map-marker-alt" style="color: var(--primary-teal);"></i>
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary-teal); font-size: 0.875rem;"></i>
                     <span style="font-size: 0.875rem;">Richmond Metro Area</span>
                 </span>
             </div>
