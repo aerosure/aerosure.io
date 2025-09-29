@@ -42,7 +42,7 @@
         /* Navigation with Dropdown */
         nav {
             position: fixed;
-            top: 0;
+            top: 50px; /* Account for storm banner */
             left: 0;
             right: 0;
             background: rgba(15, 23, 42, 0.95);
@@ -50,6 +50,11 @@
             z-index: 1000;
             padding: 1rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: top 0.3s;
+        }
+
+        nav.no-banner {
+            top: 0;
         }
 
         .nav-container {
@@ -178,30 +183,47 @@
 
         /* Storm Alert Banner */
         .storm-alert {
-            background: linear-gradient(90deg, rgba(255, 51, 51, 0.1), rgba(255, 107, 53, 0.1));
-            border-bottom: 2px solid rgba(255, 107, 53, 0.3);
-            padding: 0.75rem;
-            text-align: center;
-            margin-top: 60px;
-            animation: alertPulse 3s ease-in-out infinite;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--alert-red), var(--warning-orange));
+            padding: 0.75rem 1rem;
+            z-index: 1001;
+            box-shadow: 0 4px 20px rgba(255, 51, 51, 0.5);
+            animation: urgentPulse 2s infinite;
         }
 
-        @keyframes alertPulse {
-            0%, 100% { background: linear-gradient(90deg, rgba(255, 51, 51, 0.1), rgba(255, 107, 53, 0.1)); }
-            50% { background: linear-gradient(90deg, rgba(255, 51, 51, 0.15), rgba(255, 107, 53, 0.15)); }
+        @keyframes urgentPulse {
+            0%, 100% { 
+                opacity: 1; 
+                background: linear-gradient(135deg, var(--alert-red), var(--warning-orange));
+            }
+            50% { 
+                opacity: 0.9; 
+                background: linear-gradient(135deg, var(--warning-orange), var(--alert-red));
+            }
         }
 
         .storm-alert-content {
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .storm-alert-text {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
         }
 
         .storm-icon {
-            color: var(--warning-orange);
+            color: var(--white);
             font-size: 1.25rem;
             animation: spin 4s linear infinite;
         }
@@ -213,23 +235,39 @@
 
         .storm-alert-links {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .storm-link {
-            color: var(--warning-orange);
+            color: var(--white);
             text-decoration: none;
-            padding: 0.25rem 0.75rem;
-            border: 1px solid rgba(255, 107, 53, 0.3);
-            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
             transition: all 0.3s;
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .storm-link:hover {
-            background: rgba(255, 107, 53, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-banner {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.3s;
+        }
+
+        .close-banner:hover {
+            color: white;
         }
 
         /* Hero Section */
@@ -240,6 +278,7 @@
             justify-content: center;
             background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
             position: relative;
+            padding-top: 120px; /* Account for fixed banner and nav */
         }
 
         .hero-background {
@@ -690,6 +729,12 @@
         }
 
         /* Mobile Responsive */
+        @media (max-width: 1200px) {
+            .services-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -698,6 +743,10 @@
             .storm-alert-content {
                 flex-direction: column;
                 gap: 0.5rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr !important;
             }
 
             .about-content {
@@ -723,8 +772,7 @@
     <nav>
         <div class="nav-container">
             <a href="#" class="logo">
-                <img src="aerosure-logo.png"
-                <span class="logo-text">aerosure</span>
+                <img src="aerosure-logo.png" alt="AeroSure">
             </a>
             <ul class="nav-links">
                 <li><a href="#services">Services</a></li>
@@ -745,21 +793,26 @@
     </nav>
 
     <!-- Storm Alert Banner -->
-    <div class="storm-alert">
+    <div class="storm-alert" id="stormBanner">
         <div class="storm-alert-content">
-            <i class="fas fa-hurricane storm-icon"></i>
-            <span><strong>STORM TRACKING ACTIVE:</strong> Monitoring Hurricane Humberto (Cat 4) and TS Imelda</span>
+            <div class="storm-alert-text">
+                <i class="fas fa-hurricane storm-icon"></i>
+                <div>
+                    <strong style="font-size: 1rem;">⚠️ STORM ALERT:</strong> 
+                    <span style="font-weight: 600;">Hurricane Humberto (Cat 4) & Tropical Storm Imelda approaching East Coast | POST-STORM DOCUMENTATION SERVICES READY | Book NOW for priority response</span>
+                </div>
+            </div>
             <div class="storm-alert-links">
                 <a href="storm-tracker.html" class="storm-link">
-                    <i class="fas fa-satellite"></i> Live Tracker
+                    <i class="fas fa-satellite"></i> LIVE TRACKER
                 </a>
                 <a href="storm-bulletin-imelda.html" class="storm-link">
-                    <i class="fas fa-shield-alt"></i> Storm Bulletin
-                </a>
-                <a href="stormcheck.html" class="storm-link">
-                    <i class="fas fa-bolt"></i> Emergency Services
+                    <i class="fas fa-bolt"></i> VIEW BULLETIN
                 </a>
             </div>
+            <button class="close-banner" onclick="closeBanner()" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
 
@@ -818,23 +871,17 @@
                 </a>
             </div>
 
-            <!-- Feature Grid -->
-            <div class="hero-badges" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; max-width: 600px; margin: 3rem auto 0;">
-                <div class="badge" style="background: rgba(0, 180, 216, 0.05); backdrop-filter: blur(10px);">
-                    <i class="fas fa-clock" style="color: var(--primary-teal);"></i>
-                    <span>24hr Delivery</span>
-                </div>
-                <div class="badge" style="background: rgba(0, 180, 216, 0.05); backdrop-filter: blur(10px);">
-                    <i class="fas fa-camera" style="color: var(--primary-teal);"></i>
-                    <span>4K Resolution</span>
-                </div>
-                <div class="badge" style="background: rgba(0, 180, 216, 0.05); backdrop-filter: blur(10px);">
-                    <i class="fas fa-hurricane" style="color: var(--warning-orange);"></i>
-                    <span>Storm Response</span>
-                </div>
-                <div class="badge" style="background: rgba(0, 180, 216, 0.05); backdrop-filter: blur(10px);">
-                    <i class="fas fa-chart-line" style="color: var(--primary-teal);"></i>
-                    <span>Live Tracking</span>
+            <!-- Flight Status Widget -->
+            <div style="margin-top: 3rem; padding: 1.5rem; background: rgba(0, 180, 216, 0.1); border: 1px solid rgba(0, 180, 216, 0.3); border-radius: 12px; display: inline-block;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 50px; height: 50px; background: var(--success-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white;">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <strong style="font-size: 1.1rem; color: white;">Flight Status: OPERATIONAL</strong><br>
+                        <span style="color: var(--gray-400);">Current conditions suitable for drone flights</span><br>
+                        <span style="color: var(--primary-teal); font-size: 0.9rem;">View detailed weather conditions →</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -845,63 +892,86 @@
         <div class="section-header">
             <span class="section-badge">Services</span>
             <h2>Professional Solutions</h2>
-            <p class="section-subtitle">Specialized imaging and inspection services for every need</p>
+            <p class="section-subtitle">Inspections tailored for speed and accuracy. Real-time weather monitoring ensures optimal flight conditions.</p>
         </div>
-        <div class="services-grid">
+        <div class="services-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.5rem; max-width: 1400px; margin: 0 auto; padding: 0 2rem;">
+            <!-- Flight Weather Card -->
+            <div class="service-card" style="background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), transparent); border-color: rgba(0, 180, 216, 0.3);">
+                <i class="fas fa-cloud-sun service-icon"></i>
+                <h3 class="service-name">Flight Weather</h3>
+                <p class="service-price" style="color: var(--success-green);">Live Status</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                    Real-time weather monitoring for Richmond Metro drone operations.
+                </p>
+                <a href="weather-tracker.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                    Check Conditions
+                </a>
+            </div>
+
+            <!-- RoofWatch Card -->
             <div class="service-card">
                 <i class="fas fa-home service-icon"></i>
                 <h3 class="service-name">RoofWatch™</h3>
-                <p class="service-price">$350</p>
-                <ul class="service-features">
-                    <li>✓ Complete roof inspection</li>
-                    <li>✓ 100+ 4K images</li>
-                    <li>✓ Insurance-ready reports</li>
-                    <li>✓ 24-hour delivery</li>
-                </ul>
+                <p class="service-price">Starting at $99</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                    Professional roof risk assessment with insurance expertise.
+                </p>
+                <a href="roofwatch.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                    Learn More
+                </a>
             </div>
+
+            <!-- SiteWatch Card -->
+            <div class="service-card">
+                <i class="fas fa-hard-hat service-icon"></i>
+                <h3 class="service-name">SiteWatch™</h3>
+                <p class="service-price">From $250/visit</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                    Construction progress and condition documentation.
+                </p>
+                <a href="sitewatch.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                    Learn More
+                </a>
+            </div>
+
+            <!-- StormCheck Card -->
+            <div class="service-card" style="border: 2px solid var(--warning-orange); background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), transparent); position: relative;">
+                <span style="position: absolute; top: 10px; right: 10px; background: var(--alert-red); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">URGENT</span>
+                <i class="fas fa-bolt service-icon" style="color: var(--warning-orange);"></i>
+                <h3 class="service-name">StormCheck™</h3>
+                <p class="service-price" style="color: var(--warning-orange);">From $399</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                    <strong>STORM RESPONSE ACTIVE!</strong> Same-day documentation available.
+                </p>
+                <a href="storm-bulletin-imelda.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem; background: linear-gradient(135deg, var(--alert-red), var(--warning-orange));">
+                    STORM INFO
+                </a>
+            </div>
+
+            <!-- RealEstate360 Card -->
             <div class="service-card">
                 <i class="fas fa-building service-icon"></i>
-                <h3 class="service-name">SiteWatch™</h3>
-                <p class="service-price">$450</p>
-                <ul class="service-features">
-                    <li>✓ Construction monitoring</li>
-                    <li>✓ Weekly progress capture</li>
-                    <li>✓ 3D site mapping</li>
-                    <li>✓ Cloud portal access</li>
-                </ul>
-            </div>
-            <div class="service-card">
-                <i class="fas fa-bolt service-icon"></i>
-                <h3 class="service-name">StormCheck™</h3>
-                <p class="service-price">$750</p>
-                <ul class="service-features">
-                    <li>✓ Emergency response</li>
-                    <li>✓ 2-hour deployment</li>
-                    <li>✓ Damage assessment</li>
-                    <li>✓ Direct insurer submission</li>
-                </ul>
-            </div>
-            <div class="service-card">
-                <i class="fas fa-camera service-icon"></i>
                 <h3 class="service-name">RealEstate360™</h3>
-                <p class="service-price">$299</p>
-                <ul class="service-features">
-                    <li>✓ Aerial photography</li>
-                    <li>✓ Twilight shots</li>
-                    <li>✓ Virtual staging ready</li>
-                    <li>✓ MLS-optimized delivery</li>
-                </ul>
+                <p class="service-price">From $199</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                    Marketing imagery for property listings.
+                </p>
+                <a href="realestate360.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                    Learn More
+                </a>
             </div>
+
+            <!-- DroneIQ Card -->
             <div class="service-card">
-                <i class="fas fa-chart-line service-icon"></i>
+                <i class="fas fa-network-wired service-icon"></i>
                 <h3 class="service-name">DroneIQ™</h3>
-                <p class="service-price">Custom</p>
-                <ul class="service-features">
-                    <li>✓ Custom inspection</li>
-                    <li>✓ Thermal imaging</li>
-                    <li>✓ 3D modeling</li>
-                    <li>✓ Engineering reports</li>
-                </ul>
+                <p class="service-price">Custom Quote</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                    Flight planning and documentation pipeline.
+                </p>
+                <a href="droneiq.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                    Learn More
+                </a>
             </div>
         </div>
     </section>
@@ -1140,5 +1210,30 @@
             </p>
         </div>
     </footer>
+
+    <script>
+        // Close storm banner
+        function closeBanner() {
+            const banner = document.getElementById('stormBanner');
+            const nav = document.querySelector('nav');
+            const hero = document.querySelector('.hero');
+            
+            banner.style.display = 'none';
+            nav.classList.add('no-banner');
+            if (hero) {
+                hero.style.paddingTop = '80px';
+            }
+            
+            // Remember that user closed it
+            localStorage.setItem('stormBannerClosed', 'true');
+        }
+
+        // Check if banner was previously closed
+        window.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('stormBannerClosed') === 'true') {
+                closeBanner();
+            }
+        });
+    </script>
 </body>
 </html>
