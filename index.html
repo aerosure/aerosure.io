@@ -6,7 +6,7 @@
     <title>AeroSure - Professional Drone Imaging & Inspection Services</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
     <style>
         /* CSS Variables */
         :root {
@@ -385,9 +385,14 @@
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 2rem;
+            padding: 2rem 1.5rem;
             transition: all 0.3s;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-height: 380px;
         }
 
         .service-card:hover {
@@ -871,7 +876,7 @@
                 </a>
             </div>
 
-            <!-- Flight Status Widget -->
+            <!-- Flight Status Widget - FIXED -->
             <div style="margin-top: 3rem; padding: 1.5rem; background: rgba(0, 180, 216, 0.1); border: 1px solid rgba(0, 180, 216, 0.3); border-radius: 12px; display: inline-block;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <div style="width: 50px; height: 50px; background: var(--success-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white;">
@@ -879,8 +884,7 @@
                     </div>
                     <div>
                         <strong style="font-size: 1.1rem; color: white;">Flight Status: OPERATIONAL</strong><br>
-                        <span style="color: var(--gray-400);">Current conditions suitable for drone flights</span><br>
-                        <span style="color: var(--primary-teal); font-size: 0.9rem;">View detailed weather conditions →</span>
+                        <span style="color: var(--gray-400);">Current conditions suitable for drone flights</span>
                     </div>
                 </div>
             </div>
@@ -888,88 +892,88 @@
     </section>
 
     <!-- Services Section -->
-    <section class="services" id="services">
-        <div class="section-header">
+    <section class="services" id="services" style="padding: 5rem 0; background: var(--darker-bg);">
+        <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
             <span class="section-badge">Services</span>
-            <h2>Professional Solutions</h2>
-            <p class="section-subtitle">Inspections tailored for speed and accuracy. Real-time weather monitoring ensures optimal flight conditions.</p>
+            <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem;">Professional Solutions</h2>
+            <p style="color: var(--gray-400); font-size: 1.125rem; max-width: 800px; margin: 0 auto;">Inspections tailored for speed and accuracy. Real-time weather monitoring ensures optimal flight conditions.</p>
         </div>
-        <div class="services-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.5rem; max-width: 1400px; margin: 0 auto; padding: 0 2rem;">
+        <div style="display: flex; gap: 1rem; max-width: 1400px; margin: 0 auto; padding: 0 2rem; overflow-x: auto;">
             <!-- Flight Weather Card -->
-            <div class="service-card" style="background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), transparent); border-color: rgba(0, 180, 216, 0.3);">
-                <i class="fas fa-cloud-sun service-icon"></i>
-                <h3 class="service-name">Flight Weather</h3>
-                <p class="service-price" style="color: var(--success-green);">Live Status</p>
-                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 16px; padding: 2rem 1.5rem; min-width: 200px; flex: 1; text-align: center; display: flex; flex-direction: column;">
+                <i class="fas fa-cloud-sun" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Flight Weather</h3>
+                <p style="color: var(--success-green); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">Live Status</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: auto; min-height: 60px;">
                     Real-time weather monitoring for Richmond Metro drone operations.
                 </p>
-                <a href="weather-tracker.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                <a href="weather-tracker.html" style="display: block; background: var(--primary-teal); color: white; padding: 0.75rem; border-radius: 8px; text-decoration: none; margin-top: 1rem;">
                     Check Conditions
                 </a>
             </div>
 
             <!-- RoofWatch Card -->
-            <div class="service-card">
-                <i class="fas fa-home service-icon"></i>
-                <h3 class="service-name">RoofWatch™</h3>
-                <p class="service-price">Starting at $99</p>
-                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem 1.5rem; min-width: 200px; flex: 1; text-align: center; display: flex; flex-direction: column;">
+                <i class="fas fa-home" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">RoofWatch™</h3>
+                <p style="color: var(--warning-orange); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">Starting at $99</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: auto; min-height: 60px;">
                     Professional roof risk assessment with insurance expertise.
                 </p>
-                <a href="roofwatch.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                <a href="roofwatch.html" style="display: block; background: var(--primary-teal); color: white; padding: 0.75rem; border-radius: 8px; text-decoration: none; margin-top: 1rem;">
                     Learn More
                 </a>
             </div>
 
             <!-- SiteWatch Card -->
-            <div class="service-card">
-                <i class="fas fa-hard-hat service-icon"></i>
-                <h3 class="service-name">SiteWatch™</h3>
-                <p class="service-price">From $250/visit</p>
-                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem 1.5rem; min-width: 200px; flex: 1; text-align: center; display: flex; flex-direction: column;">
+                <i class="fas fa-hard-hat" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">SiteWatch™</h3>
+                <p style="color: var(--warning-orange); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">From $250/visit</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: auto; min-height: 60px;">
                     Construction progress and condition documentation.
                 </p>
-                <a href="sitewatch.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                <a href="sitewatch.html" style="display: block; background: var(--primary-teal); color: white; padding: 0.75rem; border-radius: 8px; text-decoration: none; margin-top: 1rem;">
                     Learn More
                 </a>
             </div>
 
             <!-- StormCheck Card -->
-            <div class="service-card" style="border: 2px solid var(--warning-orange); background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), transparent); position: relative;">
+            <div style="background: rgba(255, 107, 53, 0.05); border: 2px solid var(--warning-orange); border-radius: 16px; padding: 2rem 1.5rem; min-width: 200px; flex: 1; text-align: center; display: flex; flex-direction: column; position: relative;">
                 <span style="position: absolute; top: 10px; right: 10px; background: var(--alert-red); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">URGENT</span>
-                <i class="fas fa-bolt service-icon" style="color: var(--warning-orange);"></i>
-                <h3 class="service-name">StormCheck™</h3>
-                <p class="service-price" style="color: var(--warning-orange);">From $399</p>
-                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                <i class="fas fa-cloud-bolt" style="font-size: 3rem; color: var(--warning-orange); margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">StormCheck™</h3>
+                <p style="color: var(--warning-orange); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">From $399</p>
+                <p style="color: var(--gray-300); font-size: 0.875rem; margin-bottom: auto; min-height: 60px;">
                     <strong>STORM RESPONSE ACTIVE!</strong> Same-day documentation available.
                 </p>
-                <a href="storm-bulletin-imelda.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem; background: linear-gradient(135deg, var(--alert-red), var(--warning-orange));">
+                <a href="storm-bulletin-imelda.html" style="display: block; background: linear-gradient(135deg, var(--alert-red), var(--warning-orange)); color: white; padding: 0.75rem; border-radius: 8px; text-decoration: none; margin-top: 1rem;">
                     STORM INFO
                 </a>
             </div>
 
             <!-- RealEstate360 Card -->
-            <div class="service-card">
-                <i class="fas fa-building service-icon"></i>
-                <h3 class="service-name">RealEstate360™</h3>
-                <p class="service-price">From $199</p>
-                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem 1.5rem; min-width: 200px; flex: 1; text-align: center; display: flex; flex-direction: column;">
+                <i class="fas fa-building" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">RealEstate360™</h3>
+                <p style="color: var(--warning-orange); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">From $199</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: auto; min-height: 60px;">
                     Marketing imagery for property listings.
                 </p>
-                <a href="realestate360.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                <a href="realestate360.html" style="display: block; background: var(--primary-teal); color: white; padding: 0.75rem; border-radius: 8px; text-decoration: none; margin-top: 1rem;">
                     Learn More
                 </a>
             </div>
 
             <!-- DroneIQ Card -->
-            <div class="service-card">
-                <i class="fas fa-network-wired service-icon"></i>
-                <h3 class="service-name">DroneIQ™</h3>
-                <p class="service-price">Custom Quote</p>
-                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem 1.5rem; min-width: 200px; flex: 1; text-align: center; display: flex; flex-direction: column;">
+                <i class="fas fa-network-wired" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">DroneIQ™</h3>
+                <p style="color: var(--warning-orange); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">Custom Quote</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: auto; min-height: 60px;">
                     Flight planning and documentation pipeline.
                 </p>
-                <a href="droneiq.html" class="btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                <a href="droneiq.html" style="display: block; background: var(--primary-teal); color: white; padding: 0.75rem; border-radius: 8px; text-decoration: none; margin-top: 1rem;">
                     Learn More
                 </a>
             </div>
@@ -1123,7 +1127,7 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
+    <!-- CTA Section - FIXED RECAPTCHA -->
     <section class="cta-section" id="contact">
         <div class="cta-content">
             <h2>Ready to Elevate Your Project?</h2>
@@ -1151,7 +1155,7 @@
                         <textarea name="Details" placeholder="Tell us about your project (property type, service needed, timeline)" required></textarea>
                     </div>
                     <div class="form-group">
-                        <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY_HERE"></div>
+                        <div class="g-recaptcha" data-sitekey="6Leg-88rAAAAAMRxOJZQjzvqCnxDKl8Px_IT-kju" data-action="LOGIN"></div>
                     </div>
                     <button type="submit" class="btn-primary" style="width: 100%;">Send Inquiry</button>
                 </form>
