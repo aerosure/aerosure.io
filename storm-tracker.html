@@ -695,6 +695,24 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // =======================
+        // API CONFIGURATION SECTION
+        // =======================
+        // IMPORTANT: Add your API keys here!
+        const API_KEYS = {
+            // OpenWeatherMap API Key
+            // Get yours at: https://openweathermap.org/api
+            OPENWEATHER: '96a0c5d3ea09e85deea208f1d1a805af',  // <-- REPLACE THIS
+            
+            // AirNow API Key  
+            // Get yours at: https://docs.airnowapi.org/
+            AIRNOW: 'FA4501F5-EE6B-41B7-91C6-9463C3769CF2',  // <-- REPLACE THIS
+            
+            // NASA FIRMS API Key
+            // Get yours at: https://firms.modaps.eosdis.nasa.gov/api/area/
+            NASA_FIRMS: 'fdbef89599757a03bef24969c610a5af'  // <-- REPLACE THIS
+        };
+
+        // =======================
         // STORM DATA SERVICE
         // =======================
         class StormDataService {
@@ -703,6 +721,7 @@
                 this.useAthenium = new Date() < new Date('2025-10-17');
                 this.dataCache = new Map();
                 this.lastUpdate = null;
+                this.apiKeys = API_KEYS;
                 
                 // Update data source display
                 this.updateDataSourceDisplay();
@@ -813,6 +832,97 @@
                         ]
                     }
                 ];
+            }
+
+            // =======================
+            // ENHANCED API FEATURES
+            // =======================
+            
+            // Get current weather conditions at storm location using OpenWeatherMap
+            async getStormEnvironment(lat, lon) {
+                if (!this.apiKeys.OPENWEATHER || this.apiKeys.OPENWEATHER === 'YOUR_OPENWEATHER_API_KEY_HERE') {
+                    return null;
+                }
+
+                try {
+                    const response = await fetch(
+                        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.apiKeys.OPENWEATHER}&units=imperial`
+                    );
+                    const data = await response.json();
+                    
+                    return {
+                        temperature: Math.round(data.main.temp),
+                        feelsLike: Math.round(data.main.feels_like),
+                        humidity: data.main.humidity,
+                        pressure: data.main.pressure,
+                        visibility: Math.round(data.visibility * 0.000621371), // meters to miles
+                        cloudCover: data.clouds.all,
+                        seaLevel: data.main.sea_level || data.main.pressure
+                    };
+                } catch (error) {
+                    console.error('Error fetching storm environment:', error);
+                    return null;
+                }
+            }
+
+            // Check for fires near storm path using NASA FIRMS
+            async getFiresNearStorm(lat, lon, radiusDegrees = 2) {
+                if (!this.apiKeys.NASA_FIRMS || this.apiKeys.NASA_FIRMS === 'YOUR_NASA_FIRMS_API_KEY_HERE') {
+                    return null;
+                }
+
+                try {
+                    const response = await fetch(
+                        `https://firms.modaps.eosdis.nasa.gov/api/area/v1/${this.apiKeys.NASA_FIRMS}/VIIRS_SNPP_NRT/${lat-radiusDegrees}/${lon-radiusDegrees}/${lat+radiusDegrees}/${lon+radiusDegrees}/1/json`
+                    );
+                    const fires = await response.json();
+                    
+                    return {
+                        count: fires.length,
+                        fires: fires.slice(0, 5), // First 5 fires
+                        risk: fires.length > 10 ? 'HIGH' : fires.length > 5 ? 'MEDIUM' : 'LOW'
+                    };
+                } catch (error) {
+                    console.error('Error fetching fire data:', error);
+                    return null;
+                }
+            }
+
+            // Get air quality near storm using AirNow
+            async getAirQualityNearStorm(lat, lon) {
+                if (!this.apiKeys.AIRNOW || this.apiKeys.AIRNOW === 'YOUR_AIRNOW_API_KEY_HERE') {
+                    return null;
+                }
+
+                try {
+                    const response = await fetch(
+                        `https://www.airnowapi.org/aq/forecast/latLong/?format=json&latitude=${lat}&longitude=${lon}&API_KEY=${this.apiKeys.AIRNOW}`
+                    );
+                    const data = await response.json();
+                    
+                    if (data && data.length > 0) {
+                        const current = data[0];
+                        return {
+                            aqi: current.AQI,
+                            category: current.Category.Name,
+                            pollutant: current.ParameterName,
+                            color: this.getAQIColor(current.AQI)
+                        };
+                    }
+                    return null;
+                } catch (error) {
+                    console.error('Error fetching air quality:', error);
+                    return null;
+                }
+            }
+
+            getAQIColor(aqi) {
+                if (aqi <= 50) return '#00e400';      // Good - Green
+                if (aqi <= 100) return '#ffff00';     // Moderate - Yellow
+                if (aqi <= 150) return '#ff7e00';     // Unhealthy for Sensitive - Orange
+                if (aqi <= 200) return '#ff0000';     // Unhealthy - Red
+                if (aqi <= 300) return '#8f3f97';     // Very Unhealthy - Purple
+                return '#7e0023';                      // Hazardous - Maroon
             }
 
             calculateDistanceToRichmond(lat, lon) {
@@ -1052,6 +1162,9 @@
                     const impact = this.dataService.getImpactLevel(distance);
                     const categoryInfo = this.dataService.getCategoryInfo(storm.category);
                     
+                    // Enhanced data will be loaded asynchronously
+                    this.loadEnhancedStormData(storm);
+                    
                     return `
                         <div class="storm-card ${storm.category.toLowerCase()}">
                             <div class="storm-header">
@@ -1093,9 +1206,100 @@
                                     ${impact.level} THREAT
                                 </span>
                             </div>
+                            
+                            <!-- Enhanced Data Section (populated by API calls) -->
+                            <div id="enhanced-${storm.id}" class="storm-enhanced" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.875rem;">
+                                    <div id="env-${storm.id}" style="color: var(--gray-400);">
+                                        <i class="fas fa-thermometer-half"></i> Loading...
+                                    </div>
+                                    <div id="fire-${storm.id}" style="color: var(--gray-400);">
+                                        <i class="fas fa-fire"></i> Loading...
+                                    </div>
+                                    <div id="air-${storm.id}" style="color: var(--gray-400);">
+                                        <i class="fas fa-smog"></i> Loading...
+                                    </div>
+                                    <div id="cloud-${storm.id}" style="color: var(--gray-400);">
+                                        <i class="fas fa-cloud"></i> Loading...
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     `;
                 }).join('');
+            }
+
+            // Load enhanced data for each storm using API keys
+            async loadEnhancedStormData(storm) {
+                const enhancedEl = document.getElementById(`enhanced-${storm.id}`);
+                
+                // Check if we have any API keys configured
+                const hasKeys = (
+                    this.dataService.apiKeys.OPENWEATHER !== 'YOUR_OPENWEATHER_API_KEY_HERE' ||
+                    this.dataService.apiKeys.NASA_FIRMS !== 'YOUR_NASA_FIRMS_API_KEY_HERE' ||
+                    this.dataService.apiKeys.AIRNOW !== 'YOUR_AIRNOW_API_KEY_HERE'
+                );
+
+                if (!hasKeys) return; // Don't show enhanced section if no keys
+
+                // Show the enhanced section
+                if (enhancedEl) enhancedEl.style.display = 'block';
+
+                // Load environment data (OpenWeatherMap)
+                const environment = await this.dataService.getStormEnvironment(
+                    storm.position.lat, 
+                    storm.position.lon
+                );
+                if (environment) {
+                    const envEl = document.getElementById(`env-${storm.id}`);
+                    if (envEl) {
+                        envEl.innerHTML = `
+                            <i class="fas fa-thermometer-half"></i> 
+                            ${environment.temperature}°F | ${environment.humidity}% RH
+                        `;
+                    }
+
+                    const cloudEl = document.getElementById(`cloud-${storm.id}`);
+                    if (cloudEl) {
+                        cloudEl.innerHTML = `
+                            <i class="fas fa-cloud"></i> 
+                            ${environment.cloudCover}% cover
+                        `;
+                    }
+                }
+
+                // Load fire data (NASA FIRMS)
+                const fires = await this.dataService.getFiresNearStorm(
+                    storm.position.lat,
+                    storm.position.lon
+                );
+                if (fires) {
+                    const fireEl = document.getElementById(`fire-${storm.id}`);
+                    if (fireEl) {
+                        const fireColor = fires.risk === 'HIGH' ? 'var(--alert-red)' : 
+                                         fires.risk === 'MEDIUM' ? 'var(--warning-orange)' : 
+                                         'var(--success-green)';
+                        fireEl.innerHTML = `
+                            <i class="fas fa-fire" style="color: ${fireColor};"></i> 
+                            ${fires.count} fires nearby
+                        `;
+                    }
+                }
+
+                // Load air quality (AirNow)
+                const airQuality = await this.dataService.getAirQualityNearStorm(
+                    storm.position.lat,
+                    storm.position.lon
+                );
+                if (airQuality) {
+                    const airEl = document.getElementById(`air-${storm.id}`);
+                    if (airEl) {
+                        airEl.innerHTML = `
+                            <i class="fas fa-smog" style="color: ${airQuality.color};"></i> 
+                            AQI: ${airQuality.aqi}
+                        `;
+                    }
+                }
             }
 
             updateAnalysis() {
