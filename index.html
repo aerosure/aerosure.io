@@ -3,163 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>aerosure | Professional Drone Imaging & Inspection</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
-    <link rel="apple-touch-icon" href="favicon.png">
+    <title>AeroSure - Professional Drone Imaging & Inspection Services</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
+        /* CSS Variables */
+        :root {
+            --primary-teal: #00B4D8;
+            --dark-teal: #0082A8;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --white: #ffffff;
+            --alert-red: #ff3333;
+            --warning-orange: #ff6b35;
+            --success-green: #10b981;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary-teal: #00B4D8;
-            --dark-teal: #0082A8;
-            --light-teal: #5FD4EC;
-            --alert-red: #ff3333;
-            --warning-orange: #ff6b35;
-            --dark-orange: #e55a2b;
-            --success-green: #10b981;
-            --dark-bg: #0f172a;
-            --darker-bg: #020617;
-            --gray-900: #111827;
-            --gray-800: #1f2937;
-            --gray-700: #374151;
-            --gray-600: #4b5563;
-            --gray-500: #6b7280;
-            --gray-400: #9ca3af;
-            --gray-300: #d1d5db;
-            --gray-200: #e5e7eb;
-            --gray-100: #f3f4f6;
-            --white: #ffffff;
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background-color: var(--dark-bg);
             color: var(--white);
-            overflow-x: hidden;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Storm Alert Banner */
-        .storm-alert-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, var(--alert-red), var(--dark-orange));
-            padding: 0.75rem 1rem;
-            z-index: 1001;
-            box-shadow: 0 4px 20px rgba(255, 51, 51, 0.5);
-            animation: urgentPulse 2s infinite;
-        }
-
-        @keyframes urgentPulse {
-            0%, 100% { 
-                opacity: 1; 
-                background: linear-gradient(135deg, var(--alert-red), var(--dark-orange));
-            }
-            50% { 
-                opacity: 0.9; 
-                background: linear-gradient(135deg, var(--dark-orange), var(--alert-red));
-            }
-        }
-
-        .storm-alert-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .storm-alert-text {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: white;
-            font-weight: 700;
-            flex: 1;
-        }
-
-        .storm-icon {
-            font-size: 1.25rem;
-            animation: spin 3s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .storm-message {
-            font-size: 0.95rem;
-            line-height: 1.3;
-        }
-
-        .storm-cta {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 0.5rem 1.25rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.9rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .storm-cta:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .close-alert {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.25rem;
-            cursor: pointer;
-            padding: 0.25rem;
-            margin-left: 1rem;
-            transition: color 0.3s;
-        }
-
-        .close-alert:hover {
-            color: white;
-        }
-
-        /* Adjust navigation for storm banner */
+        /* Navigation with Dropdown */
         nav {
             position: fixed;
-            top: 50px; /* Pushed down by storm banner */
+            top: 0;
             left: 0;
             right: 0;
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
             z-index: 1000;
             padding: 1rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: top 0.3s;
         }
 
-        nav.no-banner {
-            top: 0;
-        }
-
-        /* Navigation */
         .nav-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -172,13 +61,18 @@
         .logo {
             display: flex;
             align-items: center;
+            gap: 0.75rem;
             text-decoration: none;
+            color: var(--white);
         }
 
-        .logo img {
-            height: 70px;
-            width: auto;
-            display: block;
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--white) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .nav-links {
@@ -191,85 +85,178 @@
         .nav-links a {
             color: var(--gray-300);
             text-decoration: none;
-            transition: color 0.3s;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            transition: all 0.3s;
+            font-weight: 500;
         }
 
         .nav-links a:hover {
             color: var(--primary-teal);
         }
 
-        .weather-link {
-            color: var(--warning-orange) !important;
-            font-weight: 600;
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
         }
 
-        .weather-link:hover {
-            color: var(--light-teal) !important;
+        .dropdown > a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--warning-orange) !important;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem;
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            list-style: none;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-menu li {
+            margin: 0;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--gray-300) !important;
+            border-radius: 4px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu a:hover {
+            background: rgba(0, 180, 216, 0.1);
+            color: var(--primary-teal) !important;
+        }
+
+        .dropdown-menu i {
+            width: 20px;
+            text-align: center;
         }
 
         .cta-button {
-            background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
-            color: var(--white);
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: transform 0.3s, box-shadow 0.3s;
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--dark-teal) 100%);
+            color: white !important;
+            padding: 0.625rem 1.5rem;
+            border-radius: 50px;
+            transition: all 0.3s;
         }
 
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 180, 216, 0.3);
         }
 
-        /* Hero Section - Adjusted for banner */
+        /* Storm Alert Banner */
+        .storm-alert {
+            background: linear-gradient(90deg, rgba(255, 51, 51, 0.1), rgba(255, 107, 53, 0.1));
+            border-bottom: 2px solid rgba(255, 107, 53, 0.3);
+            padding: 0.75rem;
+            text-align: center;
+            margin-top: 60px;
+            animation: alertPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes alertPulse {
+            0%, 100% { background: linear-gradient(90deg, rgba(255, 51, 51, 0.1), rgba(255, 107, 53, 0.1)); }
+            50% { background: linear-gradient(90deg, rgba(255, 51, 51, 0.15), rgba(255, 107, 53, 0.15)); }
+        }
+
+        .storm-alert-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .storm-icon {
+            color: var(--warning-orange);
+            font-size: 1.25rem;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .storm-alert-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .storm-link {
+            color: var(--warning-orange);
+            text-decoration: none;
+            padding: 0.25rem 0.75rem;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .storm-link:hover {
+            background: rgba(255, 107, 53, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
             position: relative;
-            padding: 10rem 2rem 4rem; /* Extra padding for banner + nav */
-            background: radial-gradient(ellipse at center top, rgba(14, 165, 233, 0.15), transparent 50%);
-            transition: padding 0.3s;
-        }
-
-        .hero.no-banner {
-            padding: 6rem 2rem 4rem;
         }
 
         .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
             text-align: center;
+            max-width: 900px;
+            padding: 0 2rem;
+            animation: fadeInUp 1s ease-out;
         }
 
-        .hero-badge {
-            display: inline-block;
-            background: rgba(14, 165, 233, 0.1);
-            border: 1px solid rgba(14, 165, 233, 0.3);
-            color: var(--light-teal);
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-size: 0.875rem;
-            margin-bottom: 2rem;
-            animation: fadeInUp 0.6s ease-out;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            font-weight: 700;
-            line-height: 1.1;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
             margin-bottom: 1.5rem;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, var(--white), var(--primary-teal));
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--white) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -277,189 +264,43 @@
 
         .hero-subtitle {
             font-size: 1.25rem;
-            color: var(--gray-400);
-            max-width: 600px;
-            margin: 0 auto 2.5rem;
-            animation: fadeInUp 1s ease-out;
+            color: var(--gray-300);
+            margin-bottom: 2rem;
         }
 
-        .hero-buttons {
+        .hero-badges {
             display: flex;
-            gap: 1rem;
             justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
             flex-wrap: wrap;
-            animation: fadeInUp 1.2s ease-out;
         }
 
-        /* Weather Status Widget in Hero */
-        .weather-status-hero {
-            margin-top: 3rem;
-            padding: 1.5rem;
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             background: rgba(0, 180, 216, 0.1);
             border: 1px solid rgba(0, 180, 216, 0.3);
-            border-radius: 12px;
-            display: inline-block;
-            animation: fadeInUp 1.4s ease-out;
-        }
-
-        .weather-status-content {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .weather-status-indicator {
-            width: 50px;
-            height: 50px;
-            background: var(--success-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            animation: statusPulse 2s infinite;
-        }
-
-        @keyframes statusPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-        }
-
-        .weather-status-text strong {
-            font-size: 1.1rem;
-            color: white;
-        }
-
-        .weather-status-text span {
-            color: var(--gray-400);
-        }
-
-        .weather-status-text a {
-            color: var(--primary-teal);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .weather-status-text a:hover {
-            color: var(--light-teal);
-        }
-
-        /* Floating Weather Widget */
-        .floating-weather {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 999;
-            background: var(--gray-900);
-            border: 2px solid var(--primary-teal);
-            border-radius: 12px;
-            padding: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s;
-        }
-
-        .floating-weather:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 180, 216, 0.3);
-        }
-
-        .floating-weather a {
-            text-decoration: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .floating-status {
-            width: 40px;
-            height: 40px;
-            background: var(--success-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .floating-text strong {
-            color: var(--primary-teal);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
             font-size: 0.875rem;
-            display: block;
         }
 
-        .floating-text span {
-            color: var(--success-green);
-            font-size: 0.75rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
-            color: var(--white);
-            padding: 0.875rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: inline-block;
-            cursor: pointer;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(14, 165, 233, 0.4);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--white);
-            padding: 0.875rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s;
-            display: inline-block;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--primary-teal);
-        }
-
-        /* Grid Background */
-        .grid-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            opacity: 0.3;
-            animation: float 20s infinite linear;
-            pointer-events: none;
-        }
-
-        /* Services Section */
+        /* Services Grid */
         .services {
-            padding: 5rem 2rem;
+            padding: 5rem 0;
             background: var(--darker-bg);
         }
 
         .section-header {
             text-align: center;
-            max-width: 800px;
-            margin: 0 auto 4rem;
+            margin-bottom: 3rem;
         }
 
         .section-badge {
             display: inline-block;
-            background: rgba(14, 165, 233, 0.1);
+            background: rgba(0, 180, 216, 0.1);
             color: var(--primary-teal);
             padding: 0.25rem 1rem;
             border-radius: 50px;
@@ -481,229 +322,392 @@
         }
 
         .services-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 1.5rem;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
         }
 
         .service-card {
-            background: var(--gray-900);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 2rem;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-teal), var(--dark-teal));
-            opacity: 0;
-            transition: opacity 0.3s;
+            cursor: pointer;
         }
 
         .service-card:hover {
+            background: rgba(0, 180, 216, 0.05);
+            border-color: rgba(0, 180, 216, 0.3);
             transform: translateY(-5px);
-            border-color: rgba(14, 165, 233, 0.3);
-        }
-
-        .service-card:hover::before {
-            opacity: 1;
         }
 
         .service-icon {
             font-size: 2.5rem;
             color: var(--primary-teal);
             margin-bottom: 1rem;
-            transition: transform 0.3s;
         }
 
-        .service-card:hover .service-icon {
-            transform: scale(1.1);
-        }
-
-        .service-title {
+        .service-name {
             font-size: 1.25rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
-            color: var(--white);
         }
 
         .service-price {
-            font-size: 1.1rem;
+            color: var(--warning-orange);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .service-features {
+            list-style: none;
+            color: var(--gray-300);
+            font-size: 0.9rem;
+        }
+
+        .service-features li {
+            padding: 0.25rem 0;
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.05) 0%, var(--dark-bg) 100%);
+        }
+
+        .about-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
             color: var(--primary-teal);
+        }
+
+        .about-text p {
+            color: var(--gray-300);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .credentials {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .credential {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(0, 180, 216, 0.05);
+            border-left: 3px solid var(--primary-teal);
+            border-radius: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray-400);
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 1px;
+        }
+
+        /* Technology Section */
+        .tech-stack {
+            padding: 5rem 0;
+            background: var(--darker-bg);
+        }
+
+        .tech-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .tech-card {
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), rgba(0, 180, 216, 0.05));
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .tech-name {
+            font-size: 1.25rem;
             font-weight: 600;
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-description {
+            color: var(--gray-300);
+            font-size: 0.9rem;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 0;
+            background: linear-gradient(180deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+        }
+
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .faq-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .faq-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .faq-question {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--primary-teal);
             margin-bottom: 0.75rem;
         }
 
-        .service-description {
-            color: var(--gray-400);
+        .faq-answer {
+            color: var(--gray-300);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, var(--darker-bg) 100%);
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .cta-content h2 {
             margin-bottom: 1rem;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            min-height: 3.5rem;
         }
 
-        /* Weather Service Card */
-        .service-card.weather-card {
-            background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), transparent);
-            border-color: rgba(0, 180, 216, 0.3);
+        .cta-content p {
+            color: var(--gray-300);
+            margin-bottom: 2rem;
+            font-size: 1.125rem;
         }
 
-        /* Storm Service Highlight */
-        .service-card.storm-highlight {
-            border: 2px solid var(--warning-orange);
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), transparent);
-            animation: stormGlow 3s infinite;
+        .compact-form {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
         }
 
-        @keyframes stormGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.2); }
-            50% { box-shadow: 0 0 30px rgba(255, 107, 53, 0.4); }
+        .compact-form h3 {
+            color: var(--primary-teal);
+            margin-bottom: 1rem;
         }
 
-        .service-card.storm-highlight .service-icon {
-            color: var(--warning-orange);
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
-        .storm-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--alert-red);
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-teal);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--dark-teal) 100%);
             color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            animation: bounce 2s infinite;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 180, 216, 0.3);
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Footer */
+        footer {
+            background: var(--darker-bg);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 0 2rem;
         }
 
-        @keyframes float {
-            0% {
-                transform: translate(0, 0);
-            }
-            100% {
-                transform: translate(-50px, -50px);
-            }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
         }
 
-        /* Continue with all other existing styles... */
-        /* (I'm truncating here for space, but all the About, Tech Stack, FAQ, CTA, and Footer styles remain the same) */
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .services-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        .footer-brand h3 {
+            margin-bottom: 1rem;
         }
 
+        .footer-brand p {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        .footer-section h4 {
+            color: var(--primary-teal);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-teal);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .storm-alert-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .storm-cta {
-                width: 100%;
-                justify-content: center;
-            }
-
             .nav-links {
                 display: none;
             }
 
-            .hero-buttons {
+            .storm-alert-content {
                 flex-direction: column;
-                align-items: center;
+                gap: 0.5rem;
             }
 
-            .services-grid {
+            .about-content {
                 grid-template-columns: 1fr;
             }
 
-            .weather-status-content {
-                flex-direction: column;
-                text-align: center;
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
 
-            .floating-weather {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Storm Alert Banner -->
-    <div class="storm-alert-banner" id="stormAlert">
-        <div class="storm-alert-content">
-            <div class="storm-alert-text">
-                <i class="fas fa-hurricane storm-icon"></i>
-                <div class="storm-message">
-                    <strong>⚠️ STORM ALERT:</strong> Hurricane Humberto (Cat 4) & Tropical Storm Imelda approaching East Coast | 
-                    <span style="color: #ffff99;">POST-STORM DOCUMENTATION SERVICES READY</span> | 
-                    Book NOW for priority response
-                </div>
-            </div>
-            <a href="storm-bulletin-imelda.html" class="storm-cta">
-                <i class="fas fa-bolt"></i>
-                VIEW STORM BULLETIN
-            </a>
-            <button class="close-alert" onclick="closeStormAlert()" aria-label="Close alert">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- Navigation with Weather Link -->
-    <nav id="mainNav">
+    <!-- Navigation -->
+    <nav>
         <div class="nav-container">
             <a href="#" class="logo">
-                <img src="aerosure-logo.png" alt="aerosure Imaging & Inspection" style="height: 70px; width: auto;">
+                <i class="fas fa-drone" style="font-size: 1.5rem; color: var(--primary-teal);"></i>
+                <span class="logo-text">aerosure</span>
             </a>
             <ul class="nav-links">
                 <li><a href="#services">Services</a></li>
                 <li><a href="#about">About</a></li>
-                <li>
-                    <a href="weather-tracker.html" class="weather-link">
-                        <i class="fas fa-wind"></i> Flight Weather
-                    </a>
-                </li>
-                <li>
-                    <a href="airspace-dashboard.html" class="weather-link">
-                        <i class="fas fa-plane"></i> Airspace
-                    </a>
+                <li class="dropdown">
+                    <a href="#">Flight Ops <i class="fas fa-chevron-down" style="font-size: 0.75rem;"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="weather-tracker.html"><i class="fas fa-wind"></i> Weather</a></li>
+                        <li><a href="airspace-dashboard.html"><i class="fas fa-plane"></i> Airspace</a></li>
+                        <li><a href="storm-tracker.html"><i class="fas fa-hurricane"></i> Storm Tracker</a></li>
+                    </ul>
                 </li>
                 <li><a href="#technology">Technology</a></li>
                 <li><a href="#faq">FAQ</a></li>
@@ -712,214 +716,339 @@
         </div>
     </nav>
 
-    <!-- Hero Section with Weather Status -->
-    <section class="hero" id="heroSection">
-        <div class="grid-bg"></div>
-        <div class="hero-content">
-            <div class="hero-badge">FAA Part 107 Certified • $1M Liability Insurance • Richmond Metro Area</div>
-            <h1>
-                <span class="gradient-text">Elevate Your Perspective</span><br>
-                Professional Drone Services
-            </h1>
-            <p class="hero-subtitle" style="font-size: 1.5rem; font-weight: 600; color: var(--primary-teal); margin-bottom: 1rem;">
-                Clarity Above, Confidence Below
-            </p>
-            <p class="hero-subtitle">
-                Cutting-edge aerial imaging and inspection services that deliver 4K documentation in 24 hours. Serving Richmond, Henrico, Chesterfield, and Central Virginia within 50 miles.
-            </p>
-            <div class="hero-buttons">
-                <a href="#contact" class="btn-primary">Get Free Quote</a>
-                <a href="#services" class="btn-secondary">View Services</a>
+    <!-- Storm Alert Banner -->
+    <div class="storm-alert">
+        <div class="storm-alert-content">
+            <i class="fas fa-hurricane storm-icon"></i>
+            <span><strong>STORM TRACKING ACTIVE:</strong> Monitoring Hurricane Humberto (Cat 4) and TS Imelda</span>
+            <div class="storm-alert-links">
+                <a href="storm-tracker.html" class="storm-link">
+                    <i class="fas fa-satellite"></i> Live Tracker
+                </a>
+                <a href="stormcheck.html" class="storm-link">
+                    <i class="fas fa-shield-alt"></i> Emergency Services
+                </a>
             </div>
-            
-            <!-- Weather Status Widget in Hero -->
-            <div class="weather-status-hero">
-                <div class="weather-status-content">
-                    <div class="weather-status-indicator">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <div class="weather-status-text">
-                        <strong>Flight Status: OPERATIONAL</strong><br>
-                        <span>Current conditions suitable for drone flights</span><br>
-                        <a href="weather-tracker.html">View detailed weather conditions →</a>
-                    </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Professional Drone Services</h1>
+            <p class="hero-subtitle">
+                Insurance-grade imaging and inspection with 24-hour turnaround
+            </p>
+            <div class="hero-badges">
+                <div class="badge">
+                    <i class="fas fa-certificate"></i>
+                    <span>FAA Part 107 Certified</span>
                 </div>
+                <div class="badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>$1M Liability Insurance</span>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-clock"></i>
+                    <span>24hr Delivery</span>
+                </div>
+            </div>
+            <div style="margin-top: 2rem;">
+                <a href="#services" class="cta-button" style="font-size: 1.125rem; padding: 0.875rem 2rem;">
+                    Explore Services
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Services Section with Weather Card -->
+    <!-- Services Section -->
     <section class="services" id="services">
         <div class="section-header">
             <span class="section-badge">Services</span>
             <h2>Professional Solutions</h2>
-            <p class="section-subtitle">
-                Inspections tailored for speed and accuracy. Real-time weather monitoring ensures optimal flight conditions.
-            </p>
+            <p class="section-subtitle">Specialized imaging and inspection services for every need</p>
         </div>
-
         <div class="services-grid">
-            <!-- Weather Monitoring Card (First) -->
-            <div class="service-card weather-card">
-                <div class="service-icon">
-                    <i class="fas fa-cloud-sun"></i>
-                </div>
-                <h3 class="service-title">Flight Weather</h3>
-                <p class="service-price" style="color: var(--success-green);">Live Status</p>
-                <p class="service-description">
-                    Real-time weather monitoring for Richmond Metro drone operations.
-                </p>
-                <div style="margin-top: auto; text-align: center;">
-                    <a href="weather-tracker.html" class="btn-primary">
-                        Check Conditions
-                    </a>
-                </div>
-            </div>
-
             <div class="service-card">
-                <div class="service-icon">
-                    <i class="fas fa-home"></i>
-                </div>
-                <h3 class="service-title">RoofWatch™</h3>
-                <p class="service-price">Starting at $99</p>
-                <p class="service-description">
-                    Professional roof risk assessment with insurance expertise.
-                </p>
-                <div style="margin-top: auto; text-align: center;">
-                    <a href="roofwatch.html" class="btn-primary">
-                        Learn More
-                    </a>
-                </div>
+                <i class="fas fa-home service-icon"></i>
+                <h3 class="service-name">RoofWatch™</h3>
+                <p class="service-price">$350</p>
+                <ul class="service-features">
+                    <li>✓ Complete roof inspection</li>
+                    <li>✓ 100+ 4K images</li>
+                    <li>✓ Insurance-ready reports</li>
+                    <li>✓ 24-hour delivery</li>
+                </ul>
             </div>
-
             <div class="service-card">
-                <div class="service-icon">
-                    <i class="fas fa-hard-hat"></i>
-                </div>
-                <h3 class="service-title">SiteWatch™</h3>
-                <p class="service-price">From $250/visit</p>
-                <p class="service-description">
-                    Construction progress and condition documentation.
-                </p>
-                <div style="margin-top: auto; text-align: center;">
-                    <a href="sitewatch.html" class="btn-primary">
-                        Learn More
-                    </a>
-                </div>
+                <i class="fas fa-building service-icon"></i>
+                <h3 class="service-name">SiteWatch™</h3>
+                <p class="service-price">$450</p>
+                <ul class="service-features">
+                    <li>✓ Construction monitoring</li>
+                    <li>✓ Weekly progress capture</li>
+                    <li>✓ 3D site mapping</li>
+                    <li>✓ Cloud portal access</li>
+                </ul>
             </div>
-
-            <div class="service-card storm-highlight">
-                <span class="storm-badge">URGENT</span>
-                <div class="service-icon">
-                    <i class="fas fa-cloud-bolt"></i>
-                </div>
-                <h3 class="service-title">StormCheck™</h3>
-                <p class="service-price" style="color: var(--warning-orange);">From $399</p>
-                <p class="service-description">
-                    <strong>STORM RESPONSE ACTIVE!</strong> Same-day documentation available.
-                </p>
-                <div style="margin-top: auto; text-align: center;">
-                    <a href="storm-bulletin-imelda.html" class="btn-primary" style="background: linear-gradient(135deg, var(--alert-red), var(--dark-orange));">
-                        STORM INFO
-                    </a>
-                </div>
-            </div>
-
             <div class="service-card">
-                <div class="service-icon">
-                    <i class="fas fa-building"></i>
-                </div>
-                <h3 class="service-title">RealEstate360™</h3>
-                <p class="service-price">From $199</p>
-                <p class="service-description">
-                    Marketing imagery for property listings.
+                <i class="fas fa-bolt service-icon"></i>
+                <h3 class="service-name">StormCheck™</h3>
+                <p class="service-price">$750</p>
+                <ul class="service-features">
+                    <li>✓ Emergency response</li>
+                    <li>✓ 2-hour deployment</li>
+                    <li>✓ Damage assessment</li>
+                    <li>✓ Direct insurer submission</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-camera service-icon"></i>
+                <h3 class="service-name">RealEstate360™</h3>
+                <p class="service-price">$299</p>
+                <ul class="service-features">
+                    <li>✓ Aerial photography</li>
+                    <li>✓ Twilight shots</li>
+                    <li>✓ Virtual staging ready</li>
+                    <li>✓ MLS-optimized delivery</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-chart-line service-icon"></i>
+                <h3 class="service-name">DroneIQ™</h3>
+                <p class="service-price">Custom</p>
+                <ul class="service-features">
+                    <li>✓ Custom inspection</li>
+                    <li>✓ Thermal imaging</li>
+                    <li>✓ 3D modeling</li>
+                    <li>✓ Engineering reports</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="about-content">
+            <div class="about-text">
+                <span class="section-badge">About AeroSure</span>
+                <h3>Richmond's Premier Drone Service</h3>
+                <p>
+                    AeroSure combines cutting-edge drone technology with deep insurance industry expertise 
+                    to deliver unmatched aerial imaging and inspection services.
                 </p>
-                <div style="margin-top: auto; text-align: center;">
-                    <a href="realestate360.html" class="btn-primary">
-                        Learn More
-                    </a>
+                <p>
+                    Founded by an SVP of Insurance with FAA Part 107 certification, we understand exactly 
+                    what insurers, contractors, and property owners need: accurate documentation, fast 
+                    turnaround, and professional-grade deliverables.
+                </p>
+                <div class="credentials">
+                    <div class="credential">
+                        <i class="fas fa-certificate" style="color: var(--primary-teal); font-size: 1.5rem;"></i>
+                        <div>
+                            <strong>FAA Part 107 Certified</strong><br>
+                            <span style="color: var(--gray-400); font-size: 0.875rem;">Licensed commercial drone pilot</span>
+                        </div>
+                    </div>
+                    <div class="credential">
+                        <i class="fas fa-shield-alt" style="color: var(--primary-teal); font-size: 1.5rem;"></i>
+                        <div>
+                            <strong>$1M Liability Insurance</strong><br>
+                            <span style="color: var(--gray-400); font-size: 0.875rem;">Full commercial coverage</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="service-card">
-                <div class="service-icon">
-                    <i class="fas fa-network-wired"></i>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">$1M</div>
+                    <div class="stat-label">Insurance Coverage</div>
                 </div>
-                <h3 class="service-title">DroneIQ™</h3>
-                <p class="service-price">Custom Quote</p>
-                <p class="service-description">
-                    Flight planning and documentation pipeline.
-                </p>
-                <div style="margin-top: auto; text-align: center;">
-                    <a href="droneiq.html" class="btn-primary">
-                        Learn More
-                    </a>
+                <div class="stat-card">
+                    <div class="stat-number">24hr</div>
+                    <div class="stat-label">Turnaround Time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4K</div>
+                    <div class="stat-label">Image Resolution</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50mi</div>
+                    <div class="stat-label">Service Radius</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Floating Weather Widget -->
-    <div class="floating-weather" id="floatingWeather">
-        <a href="weather-tracker.html">
-            <div class="floating-status">
-                <i class="fas fa-check"></i>
+    <!-- Technology Section -->
+    <section class="tech-stack" id="technology">
+        <div class="section-header">
+            <span class="section-badge">Technology</span>
+            <h2>Professional Equipment</h2>
+            <p class="section-subtitle">Enterprise-grade tools for superior results</p>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-name">DJI Air 3</div>
+                <div class="tech-description">48MP dual-camera system with 4K/60fps HDR video</div>
             </div>
-            <div class="floating-text">
-                <strong>FLIGHT STATUS</strong>
-                <span>Operational</span>
+            <div class="tech-card">
+                <div class="tech-name">120-Minute Flight Time</div>
+                <div class="tech-description">Extended coverage with multi-battery system</div>
             </div>
-        </a>
-    </div>
+            <div class="tech-card">
+                <div class="tech-name">Thermal Imaging</div>
+                <div class="tech-description">FLIR integration for moisture and heat detection</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">Cloud Processing</div>
+                <div class="tech-description">Secure delivery via encrypted cloud portal</div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Rest of your page content (About, Tech Stack, FAQ, CTA, Footer) remains the same... -->
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <div class="section-header">
+            <span class="section-badge">FAQ</span>
+            <h2>Common Questions</h2>
+            <p class="section-subtitle">Quick answers to help you make informed decisions</p>
+        </div>
+        <div class="faq-container">
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3 class="faq-question">What happens if weather prevents flying?</h3>
+                    <p class="faq-answer">
+                        We monitor conditions closely and reschedule at no charge. For storm damage 
+                        documentation, we prioritize clear weather windows to capture evidence quickly. 
+                        Our Flight Ops center provides real-time weather tracking for transparency.
+                    </p>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">Do I need to be present during inspection?</h3>
+                    <p class="faq-answer">
+                        Not required for exterior inspections. We just need property access confirmation. 
+                        For interior or detailed inspections, we'll coordinate with you directly.
+                    </p>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">How quickly can you respond to storm damage?</h3>
+                    <p class="faq-answer">
+                        Our StormCheck™ service offers 2-hour emergency response during daylight hours. 
+                        We actively monitor tropical systems and pre-position for rapid deployment when 
+                        storms threaten Virginia.
+                    </p>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">What deliverables do I receive?</h3>
+                    <p class="faq-answer">
+                        All packages include high-resolution images (4K), detailed inspection report, 
+                        and secure cloud access. Insurance packages include carrier-specific formatting 
+                        and direct submission capability.
+                    </p>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">Are you insured for commercial operations?</h3>
+                    <p class="faq-answer">
+                        Yes, we carry $1M liability insurance specifically for commercial drone operations. 
+                        Certificate of insurance available upon request. All flights comply with FAA Part 107 
+                        regulations.
+                    </p>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">How do you price larger projects?</h3>
+                    <p class="faq-answer">
+                        Base pricing covers standard residential and small commercial properties. 
+                        Larger properties, multiple buildings, or specialized requirements are quoted 
+                        based on scope. Volume discounts available for regular monitoring.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <script>
-        // Close storm alert and adjust page layout
-        function closeStormAlert() {
-            const alert = document.getElementById('stormAlert');
-            const nav = document.getElementById('mainNav');
-            const hero = document.getElementById('heroSection');
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="cta-content">
+            <h2>Ready to Elevate Your Project?</h2>
+            <p>
+                Professional drone services with insurance-grade documentation and 24-hour turnaround.
+            </p>
             
-            alert.style.display = 'none';
-            nav.classList.add('no-banner');
-            hero.classList.add('no-banner');
-            
-            localStorage.setItem('stormAlertClosed', 'true');
-        }
+            <div class="compact-form">
+                <h3>Get a Fast Quote</h3>
+                <p><strong>Response within 4 hours during business hours</strong></p>
+                
+                <form action="mailto:info@aerosure.io" method="post" enctype="text/plain">
+                    <div class="contact-grid">
+                        <div class="form-group">
+                            <input type="text" name="Name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="Email" placeholder="Email Address" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="Address" placeholder="Property Address" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="Details" placeholder="Tell us about your project (property type, service needed, timeline)" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Send Inquiry</button>
+                </form>
+                
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                    <p style="margin-bottom: 1rem; color: var(--gray-300);">Or contact directly:</p>
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="mailto:info@aerosure.io" style="color: white; text-decoration: none;">
+                            <i class="fas fa-envelope"></i> info@aerosure.io
+                        </a>
+                        <a href="tel:+18045551234" style="color: white; text-decoration: none;">
+                            <i class="fas fa-phone"></i> (804) 555-1234
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // Check if alert was previously closed
-        window.onload = function() {
-            if (localStorage.getItem('stormAlertClosed') === 'true') {
-                closeStormAlert();
-            }
-            
-            // Update weather status (would connect to real API)
-            updateWeatherStatus();
-        }
-
-        // Simulate weather status updates
-        function updateWeatherStatus() {
-            // In production, this would fetch from weather API
-            // For now, using static "operational" status
-            const isOperational = true; // Would come from API
-            
-            const heroIndicator = document.querySelector('.weather-status-indicator');
-            const floatingIndicator = document.querySelector('.floating-status');
-            
-            if (isOperational) {
-                // Keep green/operational status
-            } else {
-                // Would change to yellow or red based on conditions
-                heroIndicator.style.background = 'var(--warning-orange)';
-                heroIndicator.innerHTML = '<i class="fas fa-exclamation"></i>';
-                floatingIndicator.style.background = 'var(--warning-orange)';
-                floatingIndicator.innerHTML = '<i class="fas fa-exclamation"></i>';
-            }
-        }
-
-        // Update weather status every 5 minutes
-        setInterval(updateWeatherStatus, 300000);
-    </script>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3><span class="logo-text">aerosure</span></h3>
+                <p>Professional drone imaging and inspection services in Richmond, Virginia.</p>
+                <p style="margin-top: 1rem;">
+                    FAA Part 107 Certified<br>
+                    Fully Insured<br>
+                    AeroSure LLC
+                </p>
+            </div>
+            <div class="footer-section">
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="roofwatch.html">RoofWatch™</a></li>
+                    <li><a href="sitewatch.html">SiteWatch™</a></li>
+                    <li><a href="stormcheck.html">StormCheck™</a></li>
+                    <li><a href="realestate360.html">RealEstate360™</a></li>
+                    <li><a href="droneiq.html">DroneIQ™</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Flight Operations</h4>
+                <ul class="footer-links">
+                    <li><a href="weather-tracker.html">Weather Conditions</a></li>
+                    <li><a href="airspace-dashboard.html">Airspace Status</a></li>
+                    <li><a href="storm-tracker.html">Storm Tracking</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 AeroSure LLC. All rights reserved. | $1M Liability Insurance | FAA Part 107 Certified</p>
+            <p style="font-size: 0.75rem; margin-top: 0.5rem;">
+                Weather-dependent services. 50% deposit required. Full terms available upon booking.
+            </p>
+        </div>
+    </footer>
 </body>
 </html>
