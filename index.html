@@ -42,7 +42,7 @@
         /* Navigation with Dropdown */
         nav {
             position: fixed;
-            top: 60px; /* Increased to account for storm banner */
+            top: 70px; /* Further increased for proper clearance */
             left: 0;
             right: 0;
             background: rgba(15, 23, 42, 0.95);
@@ -192,6 +192,7 @@
             z-index: 1001;
             box-shadow: 0 4px 20px rgba(255, 51, 51, 0.5);
             animation: urgentPulse 2s infinite;
+            min-height: 55px; /* Ensure consistent height */
         }
 
         @keyframes urgentPulse {
@@ -278,7 +279,7 @@
             justify-content: center;
             background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
             position: relative;
-            padding-top: 140px; /* Increased to account for banner + nav */
+            padding-top: 150px; /* Further increased for banner + nav clearance */
         }
 
         .hero-background {
@@ -828,20 +829,20 @@
         </div>
         <div class="hero-content">
             <!-- Top Badge -->
-            <div style="display: inline-flex; align-items: center; gap: 1.5rem; padding: 0.625rem 1.25rem; background: rgba(0, 180, 216, 0.1); border: 1px solid rgba(0, 180, 216, 0.3); border-radius: 50px; margin-bottom: 2rem;">
-                <span style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-certificate" style="color: var(--primary-teal); font-size: 0.875rem;"></i>
-                    <span style="font-size: 0.875rem;">FAA Part 107 Certified</span>
+            <div style="display: inline-flex; align-items: center; gap: 1rem; padding: 0.5rem 1rem; background: rgba(0, 180, 216, 0.1); border: 1px solid rgba(0, 180, 216, 0.3); border-radius: 50px; margin-bottom: 2rem; font-size: 0.825rem;">
+                <span style="display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fas fa-certificate" style="color: var(--primary-teal); font-size: 0.8rem;"></i>
+                    <span>FAA Part 107 Certified</span>
                 </span>
-                <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.875rem;">•</span>
-                <span style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-shield-alt" style="color: var(--primary-teal); font-size: 0.875rem;"></i>
-                    <span style="font-size: 0.875rem;">$1M Liability Insurance</span>
+                <span style="color: rgba(255, 255, 255, 0.3);">•</span>
+                <span style="display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fas fa-shield-alt" style="color: var(--primary-teal); font-size: 0.8rem;"></i>
+                    <span>$1M Liability Insurance</span>
                 </span>
-                <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.875rem;">•</span>
-                <span style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-map-marker-alt" style="color: var(--primary-teal); font-size: 0.875rem;"></i>
-                    <span style="font-size: 0.875rem;">Richmond Metro Area</span>
+                <span style="color: rgba(255, 255, 255, 0.3);">•</span>
+                <span style="display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary-teal); font-size: 0.8rem;"></i>
+                    <span>Central Virginia</span>
                 </span>
             </div>
 
@@ -985,7 +986,7 @@
         <div class="about-content">
             <div class="about-text">
                 <span class="section-badge">About AeroSure</span>
-                <h3>Richmond's Premier Drone Service</h3>
+                <h3>Where Insurance Expertise Meets Aerial Intelligence</h3>
                 <p>
                     AeroSure Imaging & Inspection delivers clarity from above for those who manage risk on the ground. 
                     We combine advanced drone platforms, AI-powered analytics, and decades of real-world insurance 
@@ -1044,23 +1045,23 @@
         </div>
         <div class="tech-grid">
             <div class="tech-card">
-                <div class="tech-icon">📷</div>
+                <i class="fas fa-camera" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
                 <div class="tech-name">DJI Air 3</div>
                 <div class="tech-description">48MP dual-camera system with 4K/60fps HDR video</div>
             </div>
             <div class="tech-card">
-                <div class="tech-icon">⏱️</div>
+                <i class="fas fa-clock" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
                 <div class="tech-name">120-Minute Flight Time</div>
                 <div class="tech-description">Extended coverage with multi-battery system</div>
             </div>
             <div class="tech-card">
-                <div class="tech-icon">🌡️</div>
+                <i class="fas fa-temperature-high" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
                 <div class="tech-name">Thermal Imaging</div>
                 <div class="tech-description">FLIR integration for moisture and heat detection</div>
                 <span class="coming-soon">Coming Soon</span>
             </div>
             <div class="tech-card">
-                <div class="tech-icon">☁️</div>
+                <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
                 <div class="tech-name">Cloud Processing</div>
                 <div class="tech-description">Secure delivery via encrypted cloud portal</div>
             </div>
