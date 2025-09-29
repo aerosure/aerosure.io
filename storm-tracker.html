@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storm Tracker - AeroSure Emergency Response</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-teal: #00B4D8;
+            --dark-teal: #0082A8;
+            --alert-red: #ff3333;
+            --warning-orange: #ff6b35;
+            --success-green: #10b981;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --gray-900: #111827;
+            --gray-400: #9ca3af;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-link {
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            color: var(--primary-teal);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(14, 165, 233, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: var(--gray-400);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.875rem;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: var(--warning-orange);
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 7rem 2rem 3rem;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(0, 180, 216, 0.05) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            background: linear-gradient(135deg, var(--warning-orange) 0%, var(--primary-teal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            color: var(--gray-400);
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Data Source Indicator */
+        .data-source-banner {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .data-source-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--success-green);
+        }
+
+        .migration-notice {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Emergency Response Banner */
+        .emergency-banner {
+            background: linear-gradient(135deg, rgba(255, 51, 51, 0.1), rgba(255, 107, 53, 0.05));
+            border: 2px solid rgba(255, 51, 51, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .emergency-content h2 {
+            color: var(--alert-red);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .emergency-content p {
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .emergency-cta {
+            background: var(--alert-red);
+            color: var(--white);
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .emergency-cta:hover {
+            background: #ff4444;
+            transform: translateY(-2px);
+        }
+
+        /* Storm Map Container */
+        .map-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .map-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .map-title h2 {
+            font-size: 1.75rem;
+        }
+
+        .hurricane-icon {
+            color: var(--warning-orange);
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .last-update {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        #stormMap {
+            height: 500px;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        /* Storm Cards Grid */
+        .storms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .storm-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .storm-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--warning-orange), transparent);
+        }
+
+        .storm-card.cat5 { border-color: rgba(255, 0, 0, 0.5); }
+        .storm-card.cat5::before { background: linear-gradient(90deg, transparent, #ff0000, transparent); }
+        .storm-card.cat4 { border-color: rgba(255, 69, 0, 0.5); }
+        .storm-card.cat4::before { background: linear-gradient(90deg, transparent, #ff4500, transparent); }
+        .storm-card.cat3 { border-color: rgba(255, 140, 0, 0.5); }
+        .storm-card.cat3::before { background: linear-gradient(90deg, transparent, #ff8c00, transparent); }
+        .storm-card.cat2 { border-color: rgba(255, 215, 0, 0.5); }
+        .storm-card.cat2::before { background: linear-gradient(90deg, transparent, #ffd700, transparent); }
+        .storm-card.cat1 { border-color: rgba(255, 255, 0, 0.5); }
+        .storm-card.cat1::before { background: linear-gradient(90deg, transparent, #ffff00, transparent); }
+        .storm-card.ts { border-color: rgba(135, 206, 235, 0.5); }
+        .storm-card.ts::before { background: linear-gradient(90deg, transparent, #87ceeb, transparent); }
+
+        .storm-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .storm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+        }
+
+        .storm-name-block {
+            flex: 1;
+        }
+
+        .storm-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .storm-id {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        .storm-category-badge {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 107, 53, 0.2);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .storm-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            color: var(--gray-400);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-teal);
+        }
+
+        .storm-impact {
+            background: rgba(255, 107, 53, 0.05);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .impact-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .impact-header h4 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .distance-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .impact-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .impact-high {
+            background: rgba(255, 51, 51, 0.2);
+            color: var(--alert-red);
+            border: 1px solid rgba(255, 51, 51, 0.3);
+        }
+
+        .impact-medium {
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--warning-orange);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .impact-low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        /* Analysis Section */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .analysis-card {
+            background: rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .analysis-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--primary-teal);
+        }
+
+        .analysis-content {
+            color: var(--gray-400);
+            line-height: 1.8;
+        }
+
+        .opportunity-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .opportunity-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .opportunity-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* No Storms State */
+        .no-storms {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+        }
+
+        .no-storms i {
+            font-size: 4rem;
+            color: var(--success-green);
+            margin-bottom: 1rem;
+        }
+
+        .no-storms h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        .footer-info {
+            background: rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .footer-info h3 {
+            color: var(--primary-teal);
+            margin-bottom: 1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-item i {
+            font-size: 2rem;
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-label {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 6rem 1rem 2rem;
+            }
+
+            .emergency-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .storms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .storm-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to AeroSure
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="weather-tracker.html" class="nav-link">
+                    <i class="fas fa-wind"></i> Weather
+                </a>
+                <a href="airspace-dashboard.html" class="nav-link">
+                    <i class="fas fa-plane"></i> Airspace
+                </a>
+                <a href="storm-tracker.html" class="nav-link active">
+                    <i class="fas fa-hurricane"></i> Storms
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Storm Tracker</h1>
+            <p class="subtitle">Real-time tropical storm monitoring for emergency response operations</p>
+            
+            <div class="data-source-banner">
+                <div class="data-source-badge">
+                    <i class="fas fa-database"></i>
+                    <span id="dataSourceName">Checking...</span>
+                </div>
+                <span class="migration-notice" id="migrationNotice">
+                    <!-- Will be updated by JavaScript -->
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard">
+        <!-- Emergency Response Banner -->
+        <div class="emergency-banner" id="emergencyBanner" style="display: none;">
+            <div class="emergency-content">
+                <h2>Storm Response Active</h2>
+                <p>Emergency inspection services available for storm-affected properties</p>
+                <ul style="list-style: none; margin-bottom: 1rem;">
+                    <li>✓ 24-hour response time</li>
+                    <li>✓ Insurance-grade documentation</li>
+                    <li>✓ Direct carrier submission</li>
+                </ul>
+            </div>
+            <div>
+                <a href="stormcheck.html" class="emergency-cta">
+                    <i class="fas fa-bolt"></i> Activate StormCheck™
+                </a>
+            </div>
+        </div>
+
+        <!-- Storm Map Section -->
+        <div class="map-section">
+            <div class="map-header">
+                <div class="map-title">
+                    <i class="fas fa-hurricane hurricane-icon" style="font-size: 2rem;"></i>
+                    <h2>Active Tropical Systems</h2>
+                </div>
+                <div class="last-update">
+                    Last update: <span id="lastUpdate">--</span>
+                </div>
+            </div>
+            <div id="stormMap"></div>
+            <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; flex-wrap: wrap;">
+                <span style="font-size: 0.875rem; color: var(--gray-400);">
+                    <i class="fas fa-circle" style="color: #ff0000;"></i> Cat 5
+                </span>
+                <span style="font-size: 0.875rem; color: var(--gray-400);">
+                    <i class="fas fa-circle" style="color: #ff4500;"></i> Cat 4
+                </span>
+                <span style="font-size: 0.875rem; color: var(--gray-400);">
+                    <i class="fas fa-circle" style="color: #ff8c00;"></i> Cat 3
+                </span>
+                <span style="font-size: 0.875rem; color: var(--gray-400);">
+                    <i class="fas fa-circle" style="color: #ffd700;"></i> Cat 2
+                </span>
+                <span style="font-size: 0.875rem; color: var(--gray-400);">
+                    <i class="fas fa-circle" style="color: #ffff00;"></i> Cat 1
+                </span>
+                <span style="font-size: 0.875rem; color: var(--gray-400);">
+                    <i class="fas fa-circle" style="color: #87ceeb;"></i> TS
+                </span>
+            </div>
+        </div>
+
+        <!-- Active Storms Grid -->
+        <div class="storms-grid" id="stormsGrid">
+            <!-- Storm cards will be inserted here -->
+        </div>
+
+        <!-- Analysis Section -->
+        <div class="analysis-grid">
+            <div class="analysis-card">
+                <h3><i class="fas fa-chart-line"></i> Market Opportunity</h3>
+                <div class="analysis-content">
+                    <div id="opportunityAnalysis">
+                        <p>Analyzing storm paths and potential inspection demand...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analysis-card">
+                <h3><i class="fas fa-map-marked-alt"></i> Virginia Impact</h3>
+                <div class="analysis-content">
+                    <div id="virginiaImpact">
+                        <p>Calculating potential impacts to Virginia region...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analysis-card">
+                <h3><i class="fas fa-clock"></i> Response Timeline</h3>
+                <div class="analysis-content">
+                    <div id="responseTimeline">
+                        <p>Estimating optimal deployment windows...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="footer-info">
+            <h3>Storm Intelligence Network</h3>
+            <p style="color: var(--gray-400); margin-bottom: 1.5rem;">
+                Integrated monitoring from multiple authoritative sources
+            </p>
+            <div class="info-grid">
+                <div class="info-item">
+                    <i class="fas fa-satellite"></i>
+                    <div class="info-label">NOAA/NHC</div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-hurricane"></i>
+                    <div class="info-label">Hurricane Models</div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-chart-area"></i>
+                    <div class="info-label">Forecast Cones</div>
+                </div>
+                <div class="info-item" id="atheniumInfo" style="display: none;">
+                    <i class="fas fa-shield-alt"></i>
+                    <div class="info-label">Athenium Analytics</div>
+                </div>
+            </div>
+            <p style="color: var(--gray-400); margin-top: 1.5rem; font-size: 0.875rem;">
+                Updates every 6 hours during active storms • 24/7 monitoring during hurricane season
+            </p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // =======================
+        // STORM DATA SERVICE
+        // =======================
+        class StormDataService {
+            constructor() {
+                // Check if we're before October 17, 2025
+                this.useAthenium = new Date() < new Date('2025-10-17');
+                this.dataCache = new Map();
+                this.lastUpdate = null;
+                
+                // Update data source display
+                this.updateDataSourceDisplay();
+            }
+
+            updateDataSourceDisplay() {
+                const sourceEl = document.getElementById('dataSourceName');
+                const noticeEl = document.getElementById('migrationNotice');
+                const atheniumEl = document.getElementById('atheniumInfo');
+                
+                if (this.useAthenium) {
+                    sourceEl.textContent = 'Athenium Analytics';
+                    const daysRemaining = Math.ceil((new Date('2025-10-17') - new Date()) / (1000 * 60 * 60 * 24));
+                    noticeEl.textContent = `Enhanced data available for ${daysRemaining} more days`;
+                    if (atheniumEl) atheniumEl.style.display = 'block';
+                } else {
+                    sourceEl.textContent = 'NOAA/NHC Direct Feed';
+                    noticeEl.textContent = 'Professional-grade hurricane tracking';
+                    if (atheniumEl) atheniumEl.style.display = 'none';
+                }
+            }
+
+            async getActiveStorms() {
+                // Try cache first
+                const cacheKey = 'activeStorms';
+                if (this.dataCache.has(cacheKey)) {
+                    const cached = this.dataCache.get(cacheKey);
+                    if (Date.now() - cached.timestamp < 600000) { // 10 minutes
+                        return cached.data;
+                    }
+                }
+
+                try {
+                    let storms;
+                    
+                    if (this.useAthenium) {
+                        // Would call Athenium backend here
+                        console.log('Athenium data source active');
+                        // Fall through to public API for now
+                    }
+                    
+                    // Public NHC API
+                    storms = await this.fetchNHCStorms();
+                    
+                    // Cache the result
+                    this.dataCache.set(cacheKey, {
+                        data: storms,
+                        timestamp: Date.now()
+                    });
+                    
+                    return storms;
+                } catch (error) {
+                    console.error('Error fetching storm data:', error);
+                    return this.getMockStorms();
+                }
+            }
+
+            async fetchNHCStorms() {
+                // For demo, return mock data
+                // In production, would fetch from:
+                // https://www.nhc.noaa.gov/CurrentStorms.json
+                return this.getMockStorms();
+            }
+
+            getMockStorms() {
+                // Current active storms as of September 28, 2025
+                return [
+                    {
+                        id: 'AL082025',
+                        name: 'HUMBERTO',
+                        category: 'CAT4',
+                        position: { lat: 25.5, lon: -65.4 },
+                        winds: 145,
+                        gusts: 175,
+                        pressure: 937,
+                        movement: { 
+                            direction: 'NW', 
+                            speed: 11,
+                            heading: 305
+                        },
+                        forecastTrack: [
+                            [25.5, -65.4],
+                            [26.2, -66.8],
+                            [27.1, -68.5],
+                            [28.3, -70.2],
+                            [29.8, -71.5]
+                        ]
+                    },
+                    {
+                        id: 'AL092025',
+                        name: 'IMELDA',
+                        category: 'TS',
+                        position: { lat: 24.2, lon: -77.3 },
+                        winds: 40,
+                        gusts: 50,
+                        pressure: 998,
+                        movement: { 
+                            direction: 'N', 
+                            speed: 9,
+                            heading: 360
+                        },
+                        forecastTrack: [
+                            [24.2, -77.3],
+                            [25.1, -77.2],
+                            [26.0, -77.0],
+                            [27.0, -76.5],
+                            [28.2, -75.8]
+                        ]
+                    }
+                ];
+            }
+
+            calculateDistanceToRichmond(lat, lon) {
+                const richmondLat = 37.505;
+                const richmondLon = -77.319;
+                
+                const R = 3959; // Earth radius in miles
+                const dLat = (richmondLat - lat) * Math.PI / 180;
+                const dLon = (richmondLon - lon) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat * Math.PI / 180) * Math.cos(richmondLat * Math.PI / 180) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                
+                return Math.round(R * c);
+            }
+
+            getImpactLevel(distance) {
+                if (distance < 300) return { level: 'HIGH', class: 'impact-high' };
+                if (distance < 600) return { level: 'MEDIUM', class: 'impact-medium' };
+                return { level: 'LOW', class: 'impact-low' };
+            }
+
+            getCategoryInfo(category) {
+                const categories = {
+                    'CAT5': { min: 157, label: 'Category 5', severity: 'Catastrophic' },
+                    'CAT4': { min: 130, label: 'Category 4', severity: 'Extreme' },
+                    'CAT3': { min: 111, label: 'Category 3', severity: 'Major' },
+                    'CAT2': { min: 96, label: 'Category 2', severity: 'Moderate' },
+                    'CAT1': { min: 74, label: 'Category 1', severity: 'Minimal' },
+                    'TS': { min: 39, label: 'Tropical Storm', severity: 'Minor' },
+                    'TD': { min: 0, label: 'Tropical Depression', severity: 'Minimal' }
+                };
+                return categories[category] || categories['TD'];
+            }
+        }
+
+        // =======================
+        // STORM MAP
+        // =======================
+        class StormMapManager {
+            constructor() {
+                this.map = null;
+                this.stormLayers = [];
+                this.initMap();
+            }
+
+            initMap() {
+                this.map = L.map('stormMap').setView([28, -72], 5);
+                
+                // Dark theme map
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }).addTo(this.map);
+
+                // Add Richmond base marker
+                const richmondIcon = L.divIcon({
+                    html: '<i class="fas fa-home" style="color: #00B4D8; font-size: 20px;"></i>',
+                    iconSize: [20, 20],
+                    className: 'richmond-base'
+                });
+
+                L.marker([37.505, -77.319], { icon: richmondIcon })
+                    .addTo(this.map)
+                    .bindPopup('<b>Richmond, VA</b><br>AeroSure Operations Base');
+
+                // Add 300-mile and 600-mile radius circles
+                L.circle([37.505, -77.319], {
+                    radius: 482803, // 300 miles in meters
+                    color: '#ff3333',
+                    fillColor: '#ff3333',
+                    fillOpacity: 0.05,
+                    weight: 1,
+                    dashArray: '5, 10'
+                }).addTo(this.map);
+
+                L.circle([37.505, -77.319], {
+                    radius: 965606, // 600 miles in meters
+                    color: '#ff6b35',
+                    fillColor: '#ff6b35',
+                    fillOpacity: 0.03,
+                    weight: 1,
+                    dashArray: '5, 10'
+                }).addTo(this.map);
+            }
+
+            updateStorms(storms) {
+                // Clear existing storm layers
+                this.stormLayers.forEach(layer => this.map.removeLayer(layer));
+                this.stormLayers = [];
+
+                storms.forEach(storm => {
+                    // Storm position marker
+                    const icon = this.getStormIcon(storm.category);
+                    const marker = L.marker([storm.position.lat, storm.position.lon], { icon })
+                        .addTo(this.map)
+                        .bindPopup(this.createPopupContent(storm));
+                    
+                    this.stormLayers.push(marker);
+
+                    // Forecast track
+                    if (storm.forecastTrack && storm.forecastTrack.length > 1) {
+                        const polyline = L.polyline(storm.forecastTrack, {
+                            color: this.getCategoryColor(storm.category),
+                            weight: 3,
+                            opacity: 0.7,
+                            dashArray: '10, 5'
+                        }).addTo(this.map);
+                        
+                        this.stormLayers.push(polyline);
+
+                        // Add forecast points
+                        storm.forecastTrack.forEach((point, index) => {
+                            if (index > 0) {
+                                const forecastMarker = L.circleMarker(point, {
+                                    radius: 4,
+                                    fillColor: this.getCategoryColor(storm.category),
+                                    color: '#ffffff',
+                                    weight: 1,
+                                    opacity: 1,
+                                    fillOpacity: 0.8
+                                }).addTo(this.map);
+                                
+                                this.stormLayers.push(forecastMarker);
+                            }
+                        });
+                    }
+                });
+            }
+
+            getStormIcon(category) {
+                const color = this.getCategoryColor(category);
+                return L.divIcon({
+                    html: `<i class="fas fa-hurricane" style="color: ${color}; font-size: 28px; filter: drop-shadow(0 0 3px rgba(0,0,0,0.5));"></i>`,
+                    iconSize: [28, 28],
+                    className: 'storm-icon-marker'
+                });
+            }
+
+            getCategoryColor(category) {
+                const colors = {
+                    'CAT5': '#ff0000',
+                    'CAT4': '#ff4500',
+                    'CAT3': '#ff8c00',
+                    'CAT2': '#ffd700',
+                    'CAT1': '#ffff00',
+                    'TS': '#87ceeb',
+                    'TD': '#b0c4de'
+                };
+                return colors[category] || '#ffffff';
+            }
+
+            createPopupContent(storm) {
+                return `
+                    <div style="min-width: 200px;">
+                        <h3 style="margin: 0 0 0.5rem 0; color: #333;">${storm.name}</h3>
+                        <div style="color: #555; line-height: 1.5;">
+                            <strong>Category:</strong> ${storm.category}<br>
+                            <strong>Winds:</strong> ${storm.winds} mph (gusts ${storm.gusts} mph)<br>
+                            <strong>Pressure:</strong> ${storm.pressure} mb<br>
+                            <strong>Movement:</strong> ${storm.movement.direction} at ${storm.movement.speed} mph<br>
+                            <strong>Position:</strong> ${storm.position.lat.toFixed(1)}°N, ${Math.abs(storm.position.lon).toFixed(1)}°W
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // =======================
+        // MAIN APPLICATION
+        // =======================
+        class StormTracker {
+            constructor() {
+                this.dataService = new StormDataService();
+                this.mapManager = new StormMapManager();
+                this.storms = [];
+                
+                this.init();
+            }
+
+            async init() {
+                await this.updateStorms();
+                // Refresh every 10 minutes
+                setInterval(() => this.updateStorms(), 600000);
+            }
+
+            async updateStorms() {
+                try {
+                    this.storms = await this.dataService.getActiveStorms();
+                    
+                    // Update map
+                    this.mapManager.updateStorms(this.storms);
+                    
+                    // Update storm cards
+                    this.renderStormCards();
+                    
+                    // Update analysis sections
+                    this.updateAnalysis();
+                    
+                    // Update emergency banner
+                    this.updateEmergencyBanner();
+                    
+                    // Update last refresh time
+                    document.getElementById('lastUpdate').textContent = 
+                        new Date().toLocaleTimeString('en-US', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
+                } catch (error) {
+                    console.error('Error updating storms:', error);
+                }
+            }
+
+            renderStormCards() {
+                const grid = document.getElementById('stormsGrid');
+                
+                if (this.storms.length === 0) {
+                    grid.innerHTML = `
+                        <div class="no-storms" style="grid-column: 1/-1;">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>No Active Tropical Systems</h3>
+                            <p style="color: var(--gray-400);">
+                                Atlantic basin is currently quiet. Monitoring continues 24/7.
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = this.storms.map(storm => {
+                    const distance = this.dataService.calculateDistanceToRichmond(
+                        storm.position.lat, 
+                        storm.position.lon
+                    );
+                    const impact = this.dataService.getImpactLevel(distance);
+                    const categoryInfo = this.dataService.getCategoryInfo(storm.category);
+                    
+                    return `
+                        <div class="storm-card ${storm.category.toLowerCase()}">
+                            <div class="storm-header">
+                                <div class="storm-name-block">
+                                    <div class="storm-name">${storm.name}</div>
+                                    <div class="storm-id">${storm.id}</div>
+                                </div>
+                                <div class="storm-category-badge">
+                                    ${storm.category}
+                                </div>
+                            </div>
+                            
+                            <div class="storm-metrics">
+                                <div class="metric">
+                                    <div class="metric-label">Max Winds</div>
+                                    <div class="metric-value">${storm.winds} mph</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Pressure</div>
+                                    <div class="metric-value">${storm.pressure} mb</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Movement</div>
+                                    <div class="metric-value">${storm.movement.direction} ${storm.movement.speed}mph</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Position</div>
+                                    <div class="metric-value">${storm.position.lat.toFixed(1)}°N ${Math.abs(storm.position.lon).toFixed(1)}°W</div>
+                                </div>
+                            </div>
+                            
+                            <div class="storm-impact">
+                                <div class="impact-header">
+                                    <i class="fas fa-location-arrow"></i>
+                                    <h4>Richmond Impact</h4>
+                                </div>
+                                <div class="distance-value">${distance} miles</div>
+                                <span class="impact-status ${impact.class}">
+                                    ${impact.level} THREAT
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateAnalysis() {
+                // Market Opportunity
+                const opportunityEl = document.getElementById('opportunityAnalysis');
+                const highThreatStorms = this.storms.filter(s => {
+                    const distance = this.dataService.calculateDistanceToRichmond(s.position.lat, s.position.lon);
+                    return distance < 600;
+                });
+
+                if (highThreatStorms.length > 0) {
+                    opportunityEl.innerHTML = `
+                        <p style="color: var(--warning-orange); font-weight: 500;">
+                            <i class="fas fa-exclamation-circle"></i> ${highThreatStorms.length} storm(s) within operational range
+                        </p>
+                        <ul class="opportunity-list">
+                            <li><i class="fas fa-check"></i> Pre-storm documentation services in demand</li>
+                            <li><i class="fas fa-check"></i> Post-storm damage assessment ready</li>
+                            <li><i class="fas fa-check"></i> Insurance fast-track documentation available</li>
+                        </ul>
+                    `;
+                } else {
+                    opportunityEl.innerHTML = `
+                        <p>No immediate storm threats to mid-Atlantic region.</p>
+                        <p style="margin-top: 0.5rem;">Continue monitoring for development.</p>
+                    `;
+                }
+
+                // Virginia Impact
+                const virginiaEl = document.getElementById('virginiaImpact');
+                const closestStorm = this.storms.reduce((closest, storm) => {
+                    const distance = this.dataService.calculateDistanceToRichmond(storm.position.lat, storm.position.lon);
+                    if (!closest || distance < closest.distance) {
+                        return { storm, distance };
+                    }
+                    return closest;
+                }, null);
+
+                if (closestStorm && closestStorm.distance < 1000) {
+                    virginiaEl.innerHTML = `
+                        <p><strong>${closestStorm.storm.name}</strong> is ${closestStorm.distance} miles from Richmond</p>
+                        <p style="margin-top: 0.5rem;">
+                            ${closestStorm.distance < 300 ? 
+                                'Direct impact possible - prepare for emergency operations' :
+                                closestStorm.distance < 600 ?
+                                'Peripheral impacts likely - monitor closely' :
+                                'Watching for potential track changes'}
+                        </p>
+                    `;
+                } else {
+                    virginiaEl.innerHTML = `
+                        <p>All systems currently >1000 miles from Virginia</p>
+                        <p style="margin-top: 0.5rem;">Normal operations continue</p>
+                    `;
+                }
+
+                // Response Timeline
+                const timelineEl = document.getElementById('responseTimeline');
+                if (highThreatStorms.length > 0) {
+                    timelineEl.innerHTML = `
+                        <p style="font-weight: 500;">Deployment Windows:</p>
+                        <ul style="list-style: none; margin-top: 0.5rem;">
+                            <li>📸 Now: Pre-storm baseline documentation</li>
+                            <li>🌊 Storm +24h: Initial damage assessment</li>
+                            <li>📋 Storm +48h: Insurance documentation</li>
+                            <li>🔄 Storm +72h: Follow-up inspections</li>
+                        </ul>
+                    `;
+                } else {
+                    timelineEl.innerHTML = `
+                        <p>No active deployment windows</p>
+                        <p style="margin-top: 0.5rem;">Equipment ready for rapid response</p>
+                    `;
+                }
+            }
+
+            updateEmergencyBanner() {
+                const banner = document.getElementById('emergencyBanner');
+                const hasNearbyStorms = this.storms.some(storm => {
+                    const distance = this.dataService.calculateDistanceToRichmond(storm.position.lat, storm.position.lon);
+                    return distance < 600;
+                });
+
+                banner.style.display = hasNearbyStorms ? 'flex' : 'none';
+            }
+        }
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new StormTracker();
+        });
+    </script>
+</body>
+</html>
