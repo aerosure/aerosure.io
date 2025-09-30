@@ -7,6 +7,24 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+    
+    <script>
+        // ========================================
+        // STORM ACTIVATION TOGGLE
+        // Change this ONE line to activate/deactivate storm mode
+        // ========================================
+        const STORM_ACTIVE = false; // Set to true when storm threatens
+        
+        // Storm details (update these when activating)
+        const STORM_CONFIG = {
+            stormName: "Hurricane Humberto",
+            stormCategory: "Cat 4",
+            stormName2: "Tropical Storm Imelda",
+            region: "East Coast",
+            bulletinLink: "storm-bulletin-imelda.html" // Update to actual bulletin filename
+        };
+    </script>
+    
     <style>
         /* CSS Variables */
         :root {
@@ -42,19 +60,19 @@
         /* Navigation with Dropdown */
         nav {
             position: fixed;
-            top: 70px; /* Further increased for proper clearance */
+            top: 0;
             left: 0;
             right: 0;
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
-            z-index: 999; /* Below storm banner */
+            z-index: 999;
             padding: 1rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: top 0.3s;
         }
 
-        nav.no-banner {
-            top: 0;
+        nav.storm-active {
+            top: 70px; /* Pushes down when storm banner is active */
         }
 
         .nav-container {
@@ -192,7 +210,12 @@
             z-index: 1001;
             box-shadow: 0 4px 20px rgba(255, 51, 51, 0.5);
             animation: urgentPulse 2s infinite;
-            min-height: 55px; /* Ensure consistent height */
+            min-height: 55px;
+            display: none; /* Hidden by default */
+        }
+
+        .storm-alert.active {
+            display: block;
         }
 
         @keyframes urgentPulse {
@@ -279,7 +302,12 @@
             justify-content: center;
             background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
             position: relative;
-            padding-top: 150px; /* Further increased for banner + nav clearance */
+            padding-top: 80px;
+            transition: padding-top 0.3s;
+        }
+
+        .hero.storm-active {
+            padding-top: 150px;
         }
 
         .hero-background {
@@ -774,8 +802,32 @@
     </style>
 </head>
 <body>
+    <!-- Storm Alert Banner (Hidden by default, shown when STORM_ACTIVE = true) -->
+    <div class="storm-alert" id="stormBanner">
+        <div class="storm-alert-content">
+            <div class="storm-alert-text">
+                <i class="fas fa-hurricane storm-icon"></i>
+                <div>
+                    <strong style="font-size: 1rem;">⚠️ STORM ALERT:</strong> 
+                    <span style="font-weight: 600;" id="stormText">Storm approaching | POST-STORM DOCUMENTATION SERVICES READY | Book NOW for priority response</span>
+                </div>
+            </div>
+            <div class="storm-alert-links">
+                <a href="storm-tracker.html" class="storm-link">
+                    <i class="fas fa-satellite"></i> LIVE TRACKER
+                </a>
+                <a href="#" id="bulletinLink" class="storm-link">
+                    <i class="fas fa-bolt"></i> VIEW BULLETIN
+                </a>
+            </div>
+            <button class="close-banner" onclick="closeBanner()" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Navigation -->
-    <nav>
+    <nav id="mainNav">
         <div class="nav-container">
             <a href="#" class="logo">
                 <img src="aerosure-logo.png" alt="AeroSure">
@@ -798,32 +850,8 @@
         </div>
     </nav>
 
-    <!-- Storm Alert Banner -->
-    <div class="storm-alert" id="stormBanner">
-        <div class="storm-alert-content">
-            <div class="storm-alert-text">
-                <i class="fas fa-hurricane storm-icon"></i>
-                <div>
-                    <strong style="font-size: 1rem;">⚠️ STORM ALERT:</strong> 
-                    <span style="font-weight: 600;">Hurricane Humberto (Cat 4) & Tropical Storm Imelda approaching East Coast | POST-STORM DOCUMENTATION SERVICES READY | Book NOW for priority response</span>
-                </div>
-            </div>
-            <div class="storm-alert-links">
-                <a href="storm-tracker.html" class="storm-link">
-                    <i class="fas fa-satellite"></i> LIVE TRACKER
-                </a>
-                <a href="stormcheck.html" class="storm-link">
-                    <i class="fas fa-bolt"></i> VIEW BULLETIN
-                </a>
-            </div>
-            <button class="close-banner" onclick="closeBanner()" aria-label="Close">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="heroSection">
         <div class="hero-background">
             <div style="position: absolute; inset: 0; background: radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(0, 180, 216, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 20%, rgba(0, 180, 216, 0.08) 0%, transparent 50%);"></div>
         </div>
@@ -877,7 +905,7 @@
                 </a>
             </div>
 
-            <!-- Flight Status Widget - FIXED -->
+            <!-- Flight Status Widget -->
             <div style="margin-top: 3rem; padding: 1.5rem; background: rgba(0, 180, 216, 0.1); border: 1px solid rgba(0, 180, 216, 0.3); border-radius: 12px; display: inline-block;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <div style="width: 50px; height: 50px; background: var(--success-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white;">
@@ -939,17 +967,16 @@
                 </a>
             </div>
 
-            <!-- StormCheck Card -->
-            <div style="background: rgba(255, 107, 53, 0.05); border: 2px solid var(--warning-orange); border-radius: 16px; padding: 2rem 1.5rem; min-width: 200px; flex: 1; text-align: center; display: flex; flex-direction: column; position: relative;">
-                <span style="position: absolute; top: 10px; right: 10px; background: var(--alert-red); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">URGENT</span>
-                <i class="fas fa-cloud-bolt" style="font-size: 3rem; color: var(--warning-orange); margin-bottom: 1rem;"></i>
+            <!-- StormCheck Card - UPDATED TO LINK TO STORMCHECK.HTML -->
+            <div id="stormCheckCard" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem 1.5rem; min-width: 200px; flex: 1; text-align: center; display: flex; flex-direction: column; position: relative;">
+                <i class="fas fa-cloud-bolt" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
                 <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">StormCheck™</h3>
                 <p style="color: var(--warning-orange); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">From $399</p>
-                <p style="color: var(--gray-300); font-size: 0.875rem; margin-bottom: auto; min-height: 60px;">
-                    <strong>STORM RESPONSE ACTIVE!</strong> Same-day documentation available.
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: auto; min-height: 60px;">
+                    Same-day post-storm documentation for insurance claims.
                 </p>
-                <a href="stormcheck.html" style="display: block; background: linear-gradient(135deg, var(--alert-red), var(--warning-orange)); color: white; padding: 0.75rem; border-radius: 8px; text-decoration: none; margin-top: 1rem;">
-                    STORM INFO
+                <a href="stormcheck.html" style="display: block; background: var(--primary-teal); color: white; padding: 0.75rem; border-radius: 8px; text-decoration: none; margin-top: 1rem;">
+                    Learn More
                 </a>
             </div>
 
@@ -1128,7 +1155,7 @@
         </div>
     </section>
 
-    <!-- CTA Section - FIXED RECAPTCHA -->
+    <!-- CTA Section -->
     <section class="cta-section" id="contact">
         <div class="cta-content">
             <h2>Ready to Elevate Your Project?</h2>
@@ -1204,7 +1231,6 @@
                     <li><a href="weather-tracker.html">Weather Conditions</a></li>
                     <li><a href="airspace-dashboard.html">Airspace Status</a></li>
                     <li><a href="storm-tracker.html">Storm Tracking</a></li>
-                    <li><a href="storm-bulletin-imelda.html">Storm Bulletin</a></li>
                 </ul>
             </div>
         </div>
@@ -1217,28 +1243,77 @@
     </footer>
 
     <script>
-        // Close storm banner
+        // ========================================
+        // STORM ACTIVATION SCRIPT
+        // This automatically shows/hides storm elements based on STORM_ACTIVE toggle
+        // ========================================
+        
+        window.addEventListener('DOMContentLoaded', function() {
+            const stormBanner = document.getElementById('stormBanner');
+            const mainNav = document.getElementById('mainNav');
+            const heroSection = document.getElementById('heroSection');
+            const stormCheckCard = document.getElementById('stormCheckCard');
+            const stormText = document.getElementById('stormText');
+            const bulletinLink = document.getElementById('bulletinLink');
+            
+            if (STORM_ACTIVE) {
+                // Show storm banner
+                stormBanner.classList.add('active');
+                mainNav.classList.add('storm-active');
+                heroSection.classList.add('storm-active');
+                
+                // Update storm text with current storm details
+                stormText.innerHTML = `${STORM_CONFIG.stormName} (${STORM_CONFIG.stormCategory}) & ${STORM_CONFIG.stormName2} approaching ${STORM_CONFIG.region} | POST-STORM DOCUMENTATION SERVICES READY | Book NOW for priority response`;
+                
+                // Update bulletin link
+                bulletinLink.href = STORM_CONFIG.bulletinLink;
+                
+                // Highlight StormCheck card with urgent styling
+                stormCheckCard.style.background = 'rgba(255, 107, 53, 0.05)';
+                stormCheckCard.style.border = '2px solid var(--warning-orange)';
+                
+                // Add URGENT badge to StormCheck card
+                const urgentBadge = document.createElement('span');
+                urgentBadge.style.cssText = 'position: absolute; top: 10px; right: 10px; background: var(--alert-red); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;';
+                urgentBadge.textContent = 'URGENT';
+                stormCheckCard.appendChild(urgentBadge);
+                
+                // Update StormCheck card description
+                const cardDescription = stormCheckCard.querySelector('p[style*="min-height: 60px"]');
+                cardDescription.innerHTML = '<strong>STORM RESPONSE ACTIVE!</strong> Same-day documentation available.';
+                cardDescription.style.color = 'var(--gray-300)';
+                
+                // Update StormCheck card button to link to bulletin
+                const cardButton = stormCheckCard.querySelector('a[href="stormcheck.html"]');
+                cardButton.href = STORM_CONFIG.bulletinLink;
+                cardButton.textContent = 'STORM INFO';
+                cardButton.style.background = 'linear-gradient(135deg, var(--alert-red), var(--warning-orange))';
+                
+                // Check if user previously closed banner
+                if (localStorage.getItem('stormBannerClosed') !== 'true') {
+                    stormBanner.style.display = 'block';
+                }
+            } else {
+                // Storm mode inactive - ensure everything is in normal state
+                stormBanner.classList.remove('active');
+                mainNav.classList.remove('storm-active');
+                heroSection.classList.remove('storm-active');
+            }
+        });
+        
+        // Close storm banner function
         function closeBanner() {
             const banner = document.getElementById('stormBanner');
-            const nav = document.querySelector('nav');
-            const hero = document.querySelector('.hero');
+            const nav = document.getElementById('mainNav');
+            const hero = document.getElementById('heroSection');
             
             banner.style.display = 'none';
-            nav.classList.add('no-banner');
-            if (hero) {
-                hero.style.paddingTop = '80px';
-            }
+            nav.classList.remove('storm-active');
+            hero.classList.remove('storm-active');
             
             // Remember that user closed it
             localStorage.setItem('stormBannerClosed', 'true');
         }
-
-        // Check if banner was previously closed
-        window.addEventListener('DOMContentLoaded', function() {
-            if (localStorage.getItem('stormBannerClosed') === 'true') {
-                closeBanner();
-            }
-        });
     </script>
 </body>
 </html>
