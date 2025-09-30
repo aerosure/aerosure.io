@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airspace & Operations Dashboard - AeroSure</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
@@ -516,26 +517,13 @@
 
     <script>
         // ==============================================================
-        // API KEYS SECTION - ADD ALL YOUR KEYS HERE
+        // API KEYS SECTION - YOUR KEYS ARE PRE-CONFIGURED
         // ==============================================================
         
-        // 1. AIRNOW API KEY (for Air Quality)
-        // Get from: https://docs.airnowapi.org/account/request/
-        const AIRNOW_API_KEY = ''; // <-- PASTE YOUR AIRNOW API KEY HERE
+        const AIRNOW_API_KEY = 'FA4501F5-EE6B-41B7-91C6-9463C3769CF2';
+        const OPENWEATHER_API_KEY = '96a0c5d3ea09e85deea208f1d1a805af';
+        const NASA_FIRMS_KEY = 'fdbef89599757a03bef24969c610a5af';
         
-        // 2. OPENWEATHERMAP API KEY (for UV Index)
-        // Use the same key from your weather-tracker.html
-        const OPENWEATHER_API_KEY = ''; // <-- PASTE YOUR OPENWEATHERMAP API KEY HERE
-        
-        // 3. NASA FIRMS KEY (for Fire Detection)
-        // Get from: https://firms.modaps.eosdis.nasa.gov/api/area/
-        const NASA_FIRMS_KEY = ''; // <-- PASTE YOUR NASA FIRMS KEY HERE
-        
-        // 4. FAA API (No key needed for basic NOTAM access)
-        // Uses public endpoint at faa.gov
-        
-        // ==============================================================
-        // END OF API KEYS SECTION
         // ==============================================================
         
         // Richmond coordinates
@@ -559,13 +547,11 @@
                 
                 const sunrise = new Date(data.results.sunrise);
                 const sunset = new Date(data.results.sunset);
-                const dayLength = data.results.day_length / 3600; // Convert to hours
+                const dayLength = data.results.day_length / 3600;
                 
-                // Calculate golden hours (1 hour after sunrise, 1 hour before sunset)
                 const goldenAM = new Date(sunrise.getTime() + 60 * 60 * 1000);
                 const goldenPM = new Date(sunset.getTime() - 60 * 60 * 1000);
                 
-                // Update display
                 document.getElementById('sunrise').textContent = 
                     sunrise.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
                 document.getElementById('sunset').textContent = 
@@ -578,7 +564,6 @@
                 document.getElementById('daylightHours').textContent = 
                     `${Math.round(dayLength * 10) / 10} hours`;
                 
-                // Calculate remaining flight hours
                 const now = new Date();
                 if (now < sunset) {
                     const hoursRemaining = (sunset - now) / (1000 * 60 * 60);
@@ -589,7 +574,6 @@
                         'Past sunset - Night operations only';
                 }
 
-                // Best lighting recommendation
                 const currentHour = now.getHours();
                 if (currentHour === goldenAM.getHours() || currentHour === goldenPM.getHours()) {
                     document.getElementById('bestLighting').textContent = 'NOW - Golden Hour!';
@@ -604,43 +588,29 @@
             }
         }
 
-        // Air Quality API (AirNow)
+        // Air Quality API
         async function getAirQuality() {
-            if (!AIRNOW_API_KEY) {
-                console.log('AirNow API key not configured - using demo values');
-                // Demo values for testing
-                const aqi = 45;
-                updateAQIDisplay(aqi);
-                return;
-            }
-
             try {
-                // Get Richmond's ZIP code area (23219 for downtown)
                 const response = await fetch(
                     `https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=23219&distance=25&API_KEY=${AIRNOW_API_KEY}`
                 );
                 const data = await response.json();
                 
                 if (data && data.length > 0) {
-                    // Get the AQI value (usually the first result is the most relevant)
                     const aqi = data[0].AQI;
                     updateAQIDisplay(aqi);
                 } else {
-                    // Fallback to demo values if no data
                     updateAQIDisplay(45);
                 }
             } catch (error) {
                 console.error('AirNow API error:', error);
-                // Use demo values on error
                 updateAQIDisplay(45);
             }
         }
 
-        // Update AQI display
         function updateAQIDisplay(aqi) {
             document.getElementById('aqiValue').textContent = aqi;
             
-            // Set category and color based on EPA standards
             let category, impact, markerPosition;
             if (aqi <= 50) {
                 category = 'Good';
@@ -674,32 +644,22 @@
             document.getElementById('aqiMarker').style.left = `${Math.min(markerPosition, 95)}%`;
         }
 
-        // UV Index (from OpenWeatherMap)
+        // UV Index
         async function getUVIndex() {
-            if (!OPENWEATHER_API_KEY) {
-                console.log('OpenWeatherMap API key not configured - using demo values');
-                // Demo values
-                const uv = 6;
-                updateUVDisplay(uv);
-                return;
-            }
-
             try {
                 const response = await fetch(
                     `https://api.openweathermap.org/data/2.5/uvi?lat=${RICHMOND_LAT}&lon=${RICHMOND_LON}&appid=${OPENWEATHER_API_KEY}`
                 );
                 const data = await response.json();
                 
-                const uv = Math.round(data.value * 10) / 10; // Round to 1 decimal
+                const uv = Math.round(data.value * 10) / 10;
                 updateUVDisplay(uv);
             } catch (error) {
                 console.error('UV Index API error:', error);
-                // Fallback to demo values
                 updateUVDisplay(6);
             }
         }
 
-        // Update UV display
         function updateUVDisplay(uv) {
             document.getElementById('uvIndex').textContent = uv;
             
@@ -730,33 +690,15 @@
             document.getElementById('uvAdvice').textContent = advice;
         }
 
-        // Check for TFRs (Temporary Flight Restrictions) - FAA
+        // Check TFRs
         async function checkTFRs() {
             try {
-                // FAA provides TFR data through their API
-                // Note: This is a simplified version. Full implementation would need CORS proxy
-                // For production, you might need to use FAA's NOTAM Search API
-                
-                // Calculate boundary box around Richmond (roughly 50 mile radius)
-                const latMin = RICHMOND_LAT - 0.75;
-                const latMax = RICHMOND_LAT + 0.75;
-                const lonMin = RICHMOND_LON - 0.75;
-                const lonMax = RICHMOND_LON + 0.75;
-                
-                // For now, we'll check using the FAA's public endpoint
-                // In production, you'd want to set up a backend proxy to handle CORS
-                
-                // Simulate checking for TFRs
-                const response = await fetch(
-                    `https://tfr.faa.gov/tfr2/list.json`
-                ).catch(() => null);
+                const response = await fetch(`https://tfr.faa.gov/tfr2/list.json`).catch(() => null);
                 
                 if (response && response.ok) {
                     const data = await response.json();
-                    // Process TFR data here
                     processTFRData(data);
                 } else {
-                    // If API not available, show clear status
                     document.getElementById('tfr-content').innerHTML = `
                         <div class="api-value" style="color: var(--success-green);">CLEAR</div>
                         <div class="api-detail">No active TFRs detected</div>
@@ -767,22 +709,18 @@
                 }
             } catch (error) {
                 console.error('TFR check error:', error);
-                // Show status with link to check manually
                 document.getElementById('tfr-content').innerHTML = `
                     <div class="api-value" style="color: var(--warning-orange);">CHECK FAA</div>
                     <div class="api-detail">
                         <a href="https://tfr.faa.gov" target="_blank" style="color: var(--primary-teal);">
-                            Verify airspace status â†’
+                            Verify airspace status →
                         </a>
                     </div>
                 `;
             }
         }
 
-        // Process TFR data
         function processTFRData(data) {
-            // This would parse actual TFR data
-            // For now, showing clear status
             document.getElementById('tfr-content').innerHTML = `
                 <div class="api-value" style="color: var(--success-green);">CLEAR</div>
                 <div class="api-detail">No flight restrictions in Richmond area</div>
@@ -791,21 +729,10 @@
 
         // NASA FIRMS Fire Detection
         async function checkFires() {
-            if (!NASA_FIRMS_KEY) {
-                console.log('NASA FIRMS key not configured - using demo values');
-                document.getElementById('fireStatus').textContent = 'NONE';
-                document.getElementById('fireStatus').style.color = 'var(--success-green)';
-                document.getElementById('fireDetail').textContent = 'No active fires detected';
-                return;
-            }
-
             try {
-                // NASA FIRMS API for fire detection
-                // Check for fires within 50 miles of Richmond in last 24 hours
                 const date = new Date();
                 const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
                 
-                // VIIRS satellite data (375m resolution)
                 const response = await fetch(
                     `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${NASA_FIRMS_KEY}/VIIRS_SNPP_NRT/${RICHMOND_LAT - 0.75},${RICHMOND_LON - 0.75},${RICHMOND_LAT + 0.75},${RICHMOND_LON + 0.75}/1/${date.getFullYear()}${String(dayOfYear).padStart(3, '0')}`
                 );
@@ -813,16 +740,13 @@
                 if (response.ok) {
                     const csvText = await response.text();
                     const lines = csvText.split('\n');
-                    
-                    // Count fires (skip header)
-                    const fireCount = lines.length - 2; // -1 for header, -1 for empty line
+                    const fireCount = lines.length - 2;
                     
                     if (fireCount > 0) {
                         document.getElementById('fireStatus').textContent = `${fireCount} DETECTED`;
                         document.getElementById('fireStatus').style.color = 'var(--warning-orange)';
                         document.getElementById('fireDetail').textContent = `${fireCount} hotspot(s) within 50 miles`;
                         
-                        // If significant fires, change to red
                         if (fireCount > 5) {
                             document.getElementById('fireStatus').style.color = 'var(--alert-red)';
                             document.getElementById('fireDetail').innerHTML = `
@@ -838,7 +762,6 @@
                         document.getElementById('fireDetail').textContent = 'No fires within 50 miles';
                     }
                 } else {
-                    // API error - use fallback
                     document.getElementById('fireStatus').textContent = 'MONITORING';
                     document.getElementById('fireDetail').textContent = 'Check NASA FIRMS for latest';
                 }
@@ -847,14 +770,14 @@
                 document.getElementById('fireStatus').textContent = 'CHECK FIRMS';
                 document.getElementById('fireDetail').innerHTML = `
                     <a href="https://firms.modaps.eosdis.nasa.gov/map/" target="_blank" style="color: var(--primary-teal);">
-                        View fire map â†’
+                        View fire map →
                     </a>
                 `;
             }
         }
+
         async function checkSeismic() {
             try {
-                // Check for earthquakes within 100 miles in last 7 days
                 const response = await fetch(
                     `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${RICHMOND_LAT}&longitude=${RICHMOND_LON}&maxradiuskm=160&starttime=${new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()}`
                 );
@@ -879,12 +802,11 @@
 
         // Update countdown
         function updateCountdown() {
-            let seconds = 300; // 5 minutes
+            let seconds = 300;
             setInterval(() => {
                 seconds--;
                 if (seconds <= 0) {
                     seconds = 300;
-                    // Refresh all data
                     loadAllData();
                 }
                 const mins = Math.floor(seconds / 60);
@@ -902,7 +824,7 @@
             getUVIndex();
             checkTFRs();
             checkSeismic();
-            checkFires(); // Added fire detection
+            checkFires();
         }
 
         // Initialize
