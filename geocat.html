@@ -748,16 +748,21 @@
         
         // Calculate comprehensive risk score
         function calculateComprehensiveRisk(elevation, atheniumData, earthquakeData, wildfireData) {
-            let baseRisk = 40;
+            let baseRisk = 30; // Start lower
             const perils = {};
             
-            // Elevation factor
+            // Elevation factor (adjusted to be less punitive)
             if (elevation !== null) {
-                if (elevation < 5) baseRisk += 25;
-                else if (elevation < 10) baseRisk += 15;
-                else if (elevation < 25) baseRisk += 8;
-                else if (elevation > 100) baseRisk -= 10;
+                if (elevation < 5) baseRisk += 15;
+                else if (elevation < 10) baseRisk += 10;
+                else if (elevation < 15) baseRisk += 5;
+                else if (elevation > 50) baseRisk -= 5;
             }
+            
+            // Track highest peril scores for composite risk
+            let maxPerilScore = 0;
+            let perilCount = 0;
+            let perilSum = 0;
             
             // Athenium weather factors
             let floodScore = 50;
@@ -774,59 +779,85 @@
                     const pluvial = atheniumData.pluvialRisk || 5;
                     floodScore = Math.max(fluvial, pluvial) * 10;
                     
-                    if (fluvial >= 8) baseRisk += 15;
-                    else if (fluvial >= 6) baseRisk += 10;
-                    else if (fluvial >= 4) baseRisk += 5;
+                    // More nuanced flood risk adjustment
+                    const maxFlood = Math.max(fluvial, pluvial);
+                    if (maxFlood >= 8) baseRisk += 12;
+                    else if (maxFlood >= 6) baseRisk += 8;
+                    else if (maxFlood >= 4) baseRisk += 4;
                     
                     perils.fluvialFlood = { score: fluvial, probability: fluvial * 10 };
                     perils.pluvialFlood = { score: pluvial, probability: pluvial * 10 };
+                    maxPerilScore = Math.max(maxPerilScore, fluvial, pluvial);
+                    perilSum += fluvial + pluvial;
+                    perilCount += 2;
                 }
                 
-                // Weather perils from Athenium
+                // Weather perils from Athenium - adjusted weights
                 if (atheniumData.rainfall !== undefined) {
                     rainfallScore = atheniumData.rainfall * 10;
-                    if (atheniumData.rainfall >= 8) baseRisk += 12;
+                    if (atheniumData.rainfall >= 8) baseRisk += 8;
+                    else if (atheniumData.rainfall >= 6) baseRisk += 5;
+                    else if (atheniumData.rainfall >= 4) baseRisk += 2;
                     perils.rainfall = { 
                         score: atheniumData.rainfall, 
                         probability: atheniumData.rainfallProbability || rainfallScore 
                     };
+                    maxPerilScore = Math.max(maxPerilScore, atheniumData.rainfall);
+                    perilSum += atheniumData.rainfall;
+                    perilCount++;
                 }
                 
                 if (atheniumData.hurricaneWind !== undefined) {
                     hurricaneRisk = atheniumData.hurricaneWind * 10;
-                    if (atheniumData.hurricaneWind >= 8) baseRisk += 15;
-                    else if (atheniumData.hurricaneWind >= 6) baseRisk += 10;
+                    if (atheniumData.hurricaneWind >= 8) baseRisk += 12;
+                    else if (atheniumData.hurricaneWind >= 6) baseRisk += 8;
+                    else if (atheniumData.hurricaneWind >= 4) baseRisk += 4;
                     perils.hurricane = { 
                         score: atheniumData.hurricaneWind, 
                         probability: atheniumData.hurricaneProbability || hurricaneRisk 
                     };
+                    maxPerilScore = Math.max(maxPerilScore, atheniumData.hurricaneWind);
+                    perilSum += atheniumData.hurricaneWind;
+                    perilCount++;
                 }
                 
                 if (atheniumData.tornado !== undefined) {
                     tornadoScore = atheniumData.tornado * 10;
-                    if (atheniumData.tornado >= 6) baseRisk += 8;
+                    if (atheniumData.tornado >= 6) baseRisk += 6;
+                    else if (atheniumData.tornado >= 4) baseRisk += 3;
                     perils.tornado = { 
                         score: atheniumData.tornado, 
                         probability: atheniumData.tornadoProbability || tornadoScore 
                     };
+                    maxPerilScore = Math.max(maxPerilScore, atheniumData.tornado);
+                    perilSum += atheniumData.tornado;
+                    perilCount++;
                 }
                 
                 if (atheniumData.wind !== undefined) {
                     windRisk = atheniumData.wind * 10;
-                    if (atheniumData.wind >= 7) baseRisk += 8;
+                    if (atheniumData.wind >= 7) baseRisk += 6;
+                    else if (atheniumData.wind >= 5) baseRisk += 3;
                     perils.wind = { 
                         score: atheniumData.wind, 
                         probability: atheniumData.windProbability || windRisk 
                     };
+                    maxPerilScore = Math.max(maxPerilScore, atheniumData.wind);
+                    perilSum += atheniumData.wind;
+                    perilCount++;
                 }
                 
                 if (atheniumData.hail !== undefined) {
                     hailScore = atheniumData.hail * 10;
-                    if (atheniumData.hail >= 6) baseRisk += 6;
+                    if (atheniumData.hail >= 6) baseRisk += 5;
+                    else if (atheniumData.hail >= 4) baseRisk += 2;
                     perils.hail = { 
                         score: atheniumData.hail, 
                         probability: atheniumData.hailProbability || hailScore 
                     };
+                    maxPerilScore = Math.max(maxPerilScore, atheniumData.hail);
+                    perilSum += atheniumData.hail;
+                    perilCount++;
                 }
             }
             
@@ -836,44 +867,61 @@
             if (earthquakeData) {
                 earthquakeScore = earthquakeData.score;
                 earthquakeLevel = earthquakeData.riskLevel;
-                if (earthquakeScore >= 7) baseRisk += 10;
-                else if (earthquakeScore >= 5) baseRisk += 5;
+                if (earthquakeScore >= 7) baseRisk += 8;
+                else if (earthquakeScore >= 5) baseRisk += 4;
                 perils.earthquake = { 
                     score: earthquakeScore, 
                     pga: earthquakeData.pga,
                     level: earthquakeLevel
                 };
+                maxPerilScore = Math.max(maxPerilScore, earthquakeScore);
+                perilSum += earthquakeScore;
+                perilCount++;
             }
             
             // Wildfire factor
             let wildfireScore = 0;
             if (wildfireData) {
                 wildfireScore = wildfireData.score;
-                if (wildfireScore >= 7) baseRisk += 8;
-                else if (wildfireScore >= 5) baseRisk += 4;
+                if (wildfireScore >= 7) baseRisk += 6;
+                else if (wildfireScore >= 5) baseRisk += 3;
                 perils.wildfire = { 
                     score: wildfireScore, 
                     level: wildfireData.riskLevel 
                 };
+                maxPerilScore = Math.max(maxPerilScore, wildfireScore);
+                perilSum += wildfireScore;
+                perilCount++;
             }
             
-            // Project type multiplier
+            // Calculate average peril score for context
+            const avgPerilScore = perilCount > 0 ? perilSum / perilCount : 5;
+            
+            // Project type multiplier (reduced impact)
             const projectType = document.getElementById('projectType').value;
             const typeMultipliers = {
-                'marine': 1.25,
-                'bridge': 1.2,
-                'water': 1.15,
-                'infrastructure': 1.1,
-                'healthcare': 1.08,
-                'industrial': 1.05,
+                'marine': 1.15,
+                'bridge': 1.12,
+                'water': 1.10,
+                'infrastructure': 1.08,
+                'healthcare': 1.05,
+                'industrial': 1.03,
                 'commercial': 1.0,
-                'residential': 0.95
+                'residential': 0.98
             };
             
             const constructionType = document.getElementById('constructionType').value;
-            const constructionMultiplier = constructionType === 'new' ? 1.15 : 1.0;
+            const constructionMultiplier = constructionType === 'new' ? 1.08 : 1.0;
             
+            // Apply multipliers but cap the impact
             let finalScore = baseRisk * (typeMultipliers[projectType] || 1.0) * constructionMultiplier;
+            
+            // Apply ceiling based on actual peril data
+            // If average peril is low, don't let score get too high
+            if (avgPerilScore < 4 && finalScore > 60) finalScore = 60;
+            if (avgPerilScore < 5 && finalScore > 70) finalScore = 70;
+            if (maxPerilScore < 7 && finalScore > 75) finalScore = 75;
+            
             finalScore = Math.min(95, Math.max(5, finalScore));
             
             return {
@@ -1087,6 +1135,29 @@
             
             if (perilsDisplayed === 0) {
                 perilAnalysis.innerHTML += '<p style="color: #6b7280; padding: 1rem;">No detailed peril data available. Upload Athenium JSON for comprehensive analysis.</p>';
+            } else if (scsComposite) {
+                // Add SCS summary card
+                const scsItem = document.createElement('div');
+                scsItem.style.cssText = 'background: #f0f9ff; border: 2px solid #0284c7; padding: 1rem; border-radius: 8px; margin-top: 1rem;';
+                
+                let scsScoreClass = 'score-low';
+                const scsNum = parseFloat(scsComposite);
+                if (scsNum >= 8) scsScoreClass = 'score-extreme';
+                else if (scsNum >= 6) scsScoreClass = 'score-high';
+                else if (scsNum >= 4) scsScoreClass = 'score-moderate';
+                
+                scsItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 1rem; color: #0369a1;">⚡ SEVERE CONVECTIVE STORMS (SCS) COMPOSITE</div>
+                            <div style="font-size: 0.85rem; color: #0369a1; margin-top: 0.25rem;">
+                                Aggregate of Tornado + Hail + Wind
+                            </div>
+                        </div>
+                        <div class="peril-score ${scsScoreClass}" style="font-size: 1.3rem;">${scsComposite}/10</div>
+                    </div>
+                `;
+                perilAnalysis.appendChild(scsItem);
             }
             
             // Update recommendations
