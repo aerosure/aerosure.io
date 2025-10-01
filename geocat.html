@@ -42,6 +42,36 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            background: var(--light);
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
         }
 
         .logo {
@@ -371,8 +401,15 @@
 </head>
 <body>
     <div class="header">
-        <div class="logo">GeoCat</div>
-        <div style="color: var(--secondary); font-weight: 600;">NATCAT Risk Intelligence Platform</div>
+        <div>
+            <div class="logo">GeoCat</div>
+            <div style="color: var(--secondary); font-weight: 600;">NATCAT Risk Intelligence Platform</div>
+        </div>
+        <div class="nav-menu">
+            <a href="#" class="nav-link active" onclick="return false;">🏠 Main Analysis</a>
+            <a href="javascript:void(0)" class="nav-link" onclick="openKarstMap()">🕳️ Karst Map</a>
+            <a href="https://www.aerosure.io" class="nav-link" target="_blank">✈️ Aerosure</a>
+        </div>
     </div>
 
     <div class="container">
@@ -449,6 +486,10 @@
                     <input type="checkbox" id="layerWildfire">
                     <label for="layerWildfire">Wildfire Risk</label>
                 </div>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerKarst" checked>
+                    <label for="layerKarst">Karst/Sinkhole Risk</label>
+                </div>
             </div>
 
             <div class="form-group">
@@ -516,6 +557,12 @@
                     <div class="data-card">
                         <h3>WILDFIRE</h3>
                         <div class="value" id="wildfireRisk">--</div>
+                        <div class="label">Risk Score</div>
+                    </div>
+
+                    <div class="data-card">
+                        <h3>KARST/SINKHOLE</h3>
+                        <div class="value" id="karstRisk">--</div>
                         <div class="label">Risk Score</div>
                     </div>
                 </div>
@@ -645,13 +692,21 @@
                     wildfireData = estimateWildfireRisk(lat, lon, atheniumData);
                     if (wildfireData) dataSources.push('Wildfire Analysis');
                 }
+
+                // Get karst/sinkhole data if layer enabled
+                let karstData = null;
+                if (document.getElementById('layerKarst').checked) {
+                    karstData = assessKarstRisk(lat, lon);
+                    if (karstData) dataSources.push('USGS Karst/Sinkhole');
+                }
                 
                 // Calculate comprehensive risk score
                 const riskScore = calculateComprehensiveRisk(
                     elevationData, 
                     atheniumData, 
                     earthquakeData,
-                    wildfireData
+                    wildfireData,
+                    karstData
                 );
                 globalRiskData = riskScore;
                 
@@ -745,9 +800,68 @@
                 riskLevel: score >= 7 ? 'High' : score >= 4 ? 'Moderate' : 'Low'
             };
         }
+
+        // Assess karst/sinkhole risk based on geography and geology
+        function assessKarstRisk(lat, lon) {
+            let score = 0;
+            let riskLevel = 'Very Low';
+            let details = [];
+            
+            // High-risk karst states and regions
+            const karstRegions = [
+                { state: 'FL', name: 'Florida', baseScore: 8, lat: [24, 31], lon: [-87, -80], note: 'Extensive limestone, cover collapse sinkholes common' },
+                { state: 'TN', name: 'Tennessee', baseScore: 7, lat: [35, 37], lon: [-90, -81.5], note: 'Nashville basin, Eastern Highland Rim - active sinkhole development' },
+                { state: 'KY', name: 'Kentucky', baseScore: 7, lat: [36.5, 39.1], lon: [-89.5, -82], note: 'Mammoth Cave region, extensive karst terrain' },
+                { state: 'MO', name: 'Missouri', baseScore: 6, lat: [36, 40.5], lon: [-95.5, -89], note: 'Ozark Plateau karst, Springfield area' },
+                { state: 'PA', name: 'Pennsylvania', baseScore: 6, lat: [39.7, 42], lon: [-80.5, -74.5], note: 'Appalachian karst belt' },
+                { state: 'TX', name: 'Texas', baseScore: 5, lat: [29.5, 33.5], lon: [-101, -94], note: 'Edwards Plateau, Central Texas karst' },
+                { state: 'IN', name: 'Indiana', baseScore: 5, lat: [37.8, 41.8], lon: [-88, -84.8], note: 'Southern Indiana karst belt' },
+                { state: 'AL', name: 'Alabama', baseScore: 5, lat: [30.2, 35], lon: [-88.5, -84.9], note: 'Northern Alabama karst' },
+                { state: 'VA', name: 'Virginia', baseScore: 5, lat: [36.5, 39.5], lon: [-83.7, -75.2], note: 'Shenandoah Valley karst' },
+                { state: 'WV', name: 'West Virginia', baseScore: 5, lat: [37.2, 40.6], lon: [-82.6, -77.7], note: 'Greenbrier Valley karst' }
+            ];
+            
+            // Check if location is in high-risk karst region
+            for (const region of karstRegions) {
+                if (lat >= region.lat[0] && lat <= region.lat[1] && 
+                    lon >= region.lon[0] && lon <= region.lon[1]) {
+                    score = region.baseScore;
+                    details.push(`Located in ${region.name} karst region`);
+                    details.push(region.note);
+                    break;
+                }
+            }
+            
+            // Urban development increases risk (groundwater pumping, construction vibration)
+            // This is a simplified check - real implementation would use land use data
+            if (score > 0) {
+                score += 1; // Assume developed area for now
+                details.push('Urban development may increase sinkhole risk');
+            }
+            
+            // Determine risk level
+            if (score >= 8) {
+                riskLevel = 'Extreme';
+            } else if (score >= 6) {
+                riskLevel = 'High';
+            } else if (score >= 4) {
+                riskLevel = 'Moderate';
+            } else if (score >= 2) {
+                riskLevel = 'Low';
+            } else {
+                riskLevel = 'Very Low';
+            }
+            
+            return {
+                score: Math.min(10, score),
+                riskLevel: riskLevel,
+                details: details,
+                mapLink: score > 0
+            };
+        }
         
         // Calculate comprehensive risk score
-        function calculateComprehensiveRisk(elevation, atheniumData, earthquakeData, wildfireData) {
+        function calculateComprehensiveRisk(elevation, atheniumData, earthquakeData, wildfireData, karstData) {
             let baseRisk = 30; // Start lower
             const perils = {};
             
@@ -893,6 +1007,24 @@
                 perilSum += wildfireScore;
                 perilCount++;
             }
+
+            // Karst/Sinkhole factor
+            let karstScore = 0;
+            if (karstData) {
+                karstScore = karstData.score;
+                if (karstScore >= 7) baseRisk += 8;
+                else if (karstScore >= 5) baseRisk += 5;
+                else if (karstScore >= 3) baseRisk += 2;
+                perils.karst = {
+                    score: karstScore,
+                    level: karstData.riskLevel,
+                    details: karstData.details,
+                    mapLink: karstData.mapLink
+                };
+                maxPerilScore = Math.max(maxPerilScore, karstScore);
+                perilSum += karstScore;
+                perilCount++;
+            }
             
             // Calculate average peril score for context
             const avgPerilScore = perilCount > 0 ? perilSum / perilCount : 5;
@@ -933,6 +1065,7 @@
                 earthquakeRisk: earthquakeLevel,
                 earthquakeScore: earthquakeScore,
                 wildfireScore: wildfireScore,
+                karstScore: karstScore,
                 perils: perils,
                 recommendations: generateRecommendations(finalScore, perils, atheniumData)
             };
@@ -973,6 +1106,17 @@
             
             if (perils.wildfire && perils.wildfire.score >= 7) {
                 recs.push('Wildfire risk HIGH: Enhanced fire prevention protocols and defensible space requirements');
+            }
+
+            if (perils.karst && perils.karst.score >= 7) {
+                recs.push('KARST/SINKHOLE EXTREME: Mandatory geotechnical survey with sinkhole assessment required');
+                recs.push('Consider sinkhole exclusion or require ground stability insurance');
+                recs.push('Monitor for subsidence during and after construction - annual inspections recommended');
+            } else if (perils.karst && perils.karst.score >= 5) {
+                recs.push('Karst risk HIGH: Recommend geotechnical survey including karst evaluation');
+                recs.push('Consider sinkhole sublimit or specific endorsement');
+            } else if (perils.karst && perils.karst.score >= 3) {
+                recs.push('Karst risk MODERATE: Review site geology and consider geotechnical assessment');
             }
             
             if (perils.tornado && perils.tornado.score >= 6) {
@@ -1023,6 +1167,7 @@
             document.getElementById('hurricaneRisk').textContent = Math.round(riskData.hurricaneRisk) + '%';
             document.getElementById('earthquakeRisk').textContent = riskData.earthquakeRisk;
             document.getElementById('wildfireRisk').textContent = riskData.wildfireScore ? riskData.wildfireScore + '/10' : 'N/A';
+            document.getElementById('karstRisk').textContent = riskData.karstScore ? riskData.karstScore + '/10' : 'N/A';
             
             // Update detailed peril analysis
             const perilAnalysis = document.getElementById('perilAnalysis');
@@ -1038,7 +1183,8 @@
                 { key: 'hail', display: 'HAIL', icon: '🧊', scs: true },
                 { key: 'wind', display: 'WIND (NON-HURRICANE)', icon: '💨', scs: true },
                 { key: 'earthquake', display: 'EARTHQUAKE', icon: '📊' },
-                { key: 'wildfire', display: 'WILDFIRE', icon: '🔥' }
+                { key: 'wildfire', display: 'WILDFIRE', icon: '🔥' },
+                { key: 'karst', display: 'KARST/SINKHOLE', icon: '🕳️' }
             ];
             
             let perilsDisplayed = 0;
@@ -1086,6 +1232,15 @@
                             detailText += detailText ? ' | ' : '';
                             detailText += `Level: ${perilData.level}`;
                         }
+                        if (perilDef.key === 'karst' && perilData.details && perilData.details.length > 0) {
+                            detailText = perilData.details.join(' | ');
+                        }
+                        
+                        // Add karst map link if available
+                        let karstMapLink = '';
+                        if (perilDef.key === 'karst' && perilData.mapLink) {
+                            karstMapLink = '<br><a href="geocat_karst_map.html" target="_blank" style="color: #2563eb; font-weight: 600; text-decoration: none;">→ View Detailed Karst Map</a>';
+                        }
                         
                         // Add SCS composite to qualifying perils
                         let displayName = perilDef.display;
@@ -1097,7 +1252,7 @@
                             <div>
                                 <div class="peril-name">${perilDef.icon} ${displayName}</div>
                                 <div style="font-size: 0.85rem; color: #6b7280;">
-                                    ${detailText || 'Score based on analysis'}
+                                    ${detailText || 'Score based on analysis'}${karstMapLink}
                                 </div>
                             </div>
                             <div class="peril-score ${scoreClass}">${score}/10</div>
@@ -1346,6 +1501,11 @@
             document.getElementById('apiKey').value = '';
             document.getElementById('results').style.display = 'none';
             globalRiskData = {};
+        }
+
+        // Open karst map in new window
+        function openKarstMap() {
+            window.open('geocat_karst_map.html', '_blank', 'width=1400,height=900');
         }
     </script>
 </body>
