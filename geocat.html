@@ -1044,6 +1044,7 @@
             let perilsDisplayed = 0;
             let scsScore = 0;
             let scsCount = 0;
+            let scsComposite = null;
             
             if (riskData.perils && Object.keys(riskData.perils).length > 0) {
                 // First pass - calculate SCS composite
@@ -1057,7 +1058,7 @@
                     }
                 });
                 
-                const scsComposite = scsCount > 0 ? (scsScore / scsCount).toFixed(1) : null;
+                scsComposite = scsCount > 0 ? (scsScore / scsCount).toFixed(1) : null;
                 
                 // Second pass - display perils
                 perilOrder.forEach(perilDef => {
