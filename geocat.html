@@ -569,7 +569,8 @@
                 </div>
 
                 <div style="margin-top: 1rem; display: flex; gap: 1rem;">
-                    <button class="btn btn-primary" onclick="downloadPDF()" style="margin: 0;">Download PDF</button>
+                    <button class="btn btn-primary" onclick="openPrintView()" style="margin: 0;">Print Report (Best Quality)</button>
+                    <button class="btn btn-secondary" onclick="downloadPDF()" style="margin: 0;">Quick PDF Export</button>
                     <button class="btn btn-secondary" onclick="exportJSON()" style="margin: 0;">Export JSON</button>
                 </div>
             </div>
@@ -1399,6 +1400,455 @@
 
         function openKarstMap() {
             window.open('geocat_karst_map.html', '_blank', 'width=1400,height=900');
+        }
+
+        function openPrintView() {
+            if (!globalRiskData.score) {
+                alert('Please run analysis first');
+                return;
+            }
+
+            const printWindow = window.open('', '_blank', 'width=1200,height=900');
+            const printContent = generatePrintHTML();
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            
+            // Wait for content to load, then trigger print dialog
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
+        }
+
+        function generatePrintHTML() {
+            const projectName = document.getElementById('projectName').value || 'Unnamed Project';
+            const address = document.getElementById('address').value || 'No address provided';
+            const lat = document.getElementById('latitude').value;
+            const lon = document.getElementById('longitude').value;
+            const projectType = document.getElementById('projectType').value;
+            const projectValue = parseInt(document.getElementById('projectValue').value) || 0;
+            
+            let riskColor = '#10b981';
+            let riskCategory = 'LOW RISK';
+            if (globalRiskData.score > 75) {
+                riskColor = '#ef4444';
+                riskCategory = 'HIGH RISK';
+            } else if (globalRiskData.score > 60) {
+                riskColor = '#f59e0b';
+                riskCategory = 'ELEVATED RISK';
+            } else if (globalRiskData.score > 45) {
+                riskColor = '#3b82f6';
+                riskCategory = 'MODERATE RISK';
+            }
+
+            // Build perils table
+            let perilsHTML = '';
+            const perilOrder = [
+                { key: 'hurricane', display: 'Hurricane', icon: '🌀' },
+                { key: 'fluvialFlood', display: 'Flood - River (Fluvial)', icon: '🌊' },
+                { key: 'pluvialFlood', display: 'Flood - Rainfall (Pluvial)', icon: '💧' },
+                { key: 'rainfall', display: 'Rainfall', icon: '🌧️' },
+                { key: 'tornado', display: 'Tornado', icon: '🌪️' },
+                { key: 'hail', display: 'Hail', icon: '🧊' },
+                { key: 'wind', display: 'Wind (Non-Hurricane)', icon: '💨' },
+                { key: 'earthquake', display: 'Earthquake', icon: '📊' },
+                { key: 'wildfire', display: 'Wildfire', icon: '🔥' },
+                { key: 'karst', display: 'Karst/Sinkhole', icon: '🕳️' }
+            ];
+
+            if (globalRiskData.perils && Object.keys(globalRiskData.perils).length > 0) {
+                perilOrder.forEach(perilDef => {
+                    const perilData = globalRiskData.perils[perilDef.key];
+                    if (perilData && perilData.score !== undefined) {
+                        const score = perilData.score;
+                        let scoreColor = '#10b981';
+                        let scoreLabel = 'Low';
+                        if (score >= 8) {
+                            scoreColor = '#7c3aed';
+                            scoreLabel = 'Extreme';
+                        } else if (score >= 6) {
+                            scoreColor = '#ef4444';
+                            scoreLabel = 'High';
+                        } else if (score >= 4) {
+                            scoreColor = '#f59e0b';
+                            scoreLabel = 'Moderate';
+                        }
+
+                        let detailText = '';
+                        if (perilData.probability) {
+                            detailText = `${perilData.probability.toFixed(1)}% annual probability`;
+                        }
+                        if (perilData.pga) {
+                            detailText = `PGA: ${perilData.pga.toFixed(2)}g`;
+                        }
+                        if (perilData.level) {
+                            detailText = `${perilData.level}`;
+                        }
+
+                        perilsHTML += `
+                            <tr>
+                                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
+                                    <strong>${perilDef.icon} ${perilDef.display}</strong><br>
+                                    <span style="font-size: 0.85rem; color: #6b7280;">${detailText || 'Score based on analysis'}</span>
+                                </td>
+                                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">
+                                    <span style="background: ${scoreColor}; color: white; padding: 4px 12px; border-radius: 4px; font-weight: 700;">${score}/10</span>
+                                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">${scoreLabel}</div>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+            }
+
+            // Build recommendations list
+            let recsHTML = '';
+            globalRiskData.recommendations.forEach(rec => {
+                recsHTML += `<li style="padding: 8px 0; padding-left: 20px; position: relative;">
+                    <span style="position: absolute; left: 0; color: #92400e; font-weight: 700;">→</span>
+                    ${rec}
+                </li>`;
+            });
+
+            return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>GeoCat Risk Assessment - ${projectName}</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .no-print { display: none !important; }
+            .page-break { page-break-after: always; }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: white;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #1e3c72;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        .timestamp {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .risk-score-box {
+            background: linear-gradient(135deg, ${riskColor}, ${riskColor}dd);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .risk-score-value {
+            font-size: 4rem;
+            font-weight: 900;
+            margin: 16px 0;
+        }
+
+        .risk-category {
+            font-size: 1.2rem;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .info-item {
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #1e3c72;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .metric-card {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #1e3c72;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .metric-unit {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th {
+            background: #1e3c72;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .recommendations-box {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .recommendations-box h3 {
+            color: #92400e;
+            margin-bottom: 16px;
+        }
+
+        .recommendations-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .data-sources {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .print-button {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .print-button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="window.print()" class="print-button no-print">🖨️ Print Report</button>
+
+    <div class="header">
+        <div class="logo">GeoCat</div>
+        <div class="subtitle">NATCAT Risk Intelligence Platform</div>
+        <div class="timestamp">Generated: ${new Date().toLocaleString()}</div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Project Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Project Name</div>
+                <div class="info-value">${projectName}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Project Type</div>
+                <div class="info-value">${projectType}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Address</div>
+                <div class="info-value">${address}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Coordinates</div>
+                <div class="info-value">${lat}, ${lon}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Project Value</div>
+                <div class="info-value">${projectValue.toLocaleString()}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Analysis Date</div>
+                <div class="info-value">${new Date().toLocaleDateString()}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Risk Assessment Summary</h2>
+        
+        <div class="risk-score-box">
+            <div style="font-size: 1.2rem; opacity: 0.95;">Composite Risk Score</div>
+            <div class="risk-score-value">${globalRiskData.score}</div>
+            <div class="risk-category">${riskCategory}</div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Elevation</div>
+                <div class="metric-value">${globalRiskData.elevation ? Math.round(globalRiskData.elevation) : 'N/A'}</div>
+                <div class="metric-unit">feet above sea level</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Flood Risk</div>
+                <div class="metric-value">${Math.round(globalRiskData.floodScore)}%</div>
+                <div class="metric-unit">composite score</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Wind Risk</div>
+                <div class="metric-value">${Math.round(globalRiskData.windRisk)}%</div>
+                <div class="metric-unit">annual probability</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Hurricane Risk</div>
+                <div class="metric-value">${Math.round(globalRiskData.hurricaneRisk)}%</div>
+                <div class="metric-unit">annual probability</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Earthquake</div>
+                <div class="metric-value">${globalRiskData.earthquakeRisk}</div>
+                <div class="metric-unit">PGA risk level</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Wildfire</div>
+                <div class="metric-value">${globalRiskData.wildfireScore ? globalRiskData.wildfireScore + '/10' : 'N/A'}</div>
+                <div class="metric-unit">risk score</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Karst/Sinkhole</div>
+                <div class="metric-value">${globalRiskData.karstScore ? globalRiskData.karstScore + '/10' : 'N/A'}</div>
+                <div class="metric-unit">risk score</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2 class="section-title">Detailed Peril Assessment</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Peril</th>
+                    <th style="text-align: center;">Risk Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${perilsHTML}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Underwriting Recommendations</h2>
+        <div class="recommendations-box">
+            <h3>Key Recommendations</h3>
+            <ul>
+                ${recsHTML}
+            </ul>
+        </div>
+    </div>
+
+    <div class="data-sources">
+        <strong>Data Sources:</strong> ${document.getElementById('dataSource').textContent}<br>
+        <strong>Platform:</strong> GeoCat NATCAT Intelligence Platform v2.1<br>
+        <strong>Powered by:</strong> Athenium Climate Intelligence
+    </div>
+
+    <button onclick="window.print()" class="print-button no-print">🖨️ Print Report</button>
+</body>
+</html>
+            `;
         }
     </script>
 </body>
