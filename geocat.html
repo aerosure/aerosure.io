@@ -980,33 +980,113 @@
             const perilAnalysis = document.getElementById('perilAnalysis');
             perilAnalysis.innerHTML = '<h3>Detailed Peril Assessment</h3>';
             
+            // Define peril display order and formatting
+            const perilOrder = [
+                { key: 'hurricane', display: 'HURRICANE', icon: '🌀' },
+                { key: 'fluvialFlood', display: 'FLOOD - RIVER (FLUVIAL)', icon: '🌊' },
+                { key: 'pluvialFlood', display: 'FLOOD - RAINFALL (PLUVIAL)', icon: '💧' },
+                { key: 'rainfall', display: 'RAINFALL', icon: '🌧️' },
+                { key: 'tornado', display: 'TORNADO', icon: '🌪️', scs: true },
+                { key: 'hail', display: 'HAIL', icon: '🧊', scs: true },
+                { key: 'wind', display: 'WIND (NON-HURRICANE)', icon: '💨', scs: true },
+                { key: 'earthquake', display: 'EARTHQUAKE', icon: '📊' },
+                { key: 'wildfire', display: 'WILDFIRE', icon: '🔥' }
+            ];
+            
+            let perilsDisplayed = 0;
+            let scsScore = 0;
+            let scsCount = 0;
+            
             if (riskData.perils && Object.keys(riskData.perils).length > 0) {
-                for (const [perilName, perilData] of Object.entries(riskData.perils)) {
-                    const perilItem = document.createElement('div');
-                    perilItem.className = 'peril-item';
-                    
-                    const score = perilData.score;
-                    let scoreClass = 'score-low';
-                    if (score >= 8) scoreClass = 'score-extreme';
-                    else if (score >= 6) scoreClass = 'score-high';
-                    else if (score >= 4) scoreClass = 'score-moderate';
-                    
-                    perilItem.innerHTML = `
-                        <div>
-                            <div class="peril-name">${perilName.toUpperCase().replace(/([A-Z])/g, ' $1').trim()}</div>
-                            <div style="font-size: 0.85rem; color: #6b7280;">
-                                ${perilData.probability ? `${perilData.probability.toFixed(1)}% annual probability` : ''}
-                                ${perilData.pga ? `PGA: ${perilData.pga.toFixed(2)}g` : ''}
-                                ${perilData.level ? `Level: ${perilData.level}` : ''}
+                // First pass - calculate SCS composite
+                perilOrder.forEach(perilDef => {
+                    if (perilDef.scs) {
+                        const perilData = riskData.perils[perilDef.key];
+                        if (perilData && perilData.score !== undefined) {
+                            scsScore += perilData.score;
+                            scsCount++;
+                        }
+                    }
+                });
+                
+                const scsComposite = scsCount > 0 ? (scsScore / scsCount).toFixed(1) : null;
+                
+                // Second pass - display perils
+                perilOrder.forEach(perilDef => {
+                    const perilData = riskData.perils[perilDef.key];
+                    if (perilData && perilData.score !== undefined) {
+                        const perilItem = document.createElement('div');
+                        perilItem.className = 'peril-item';
+                        
+                        const score = perilData.score;
+                        let scoreClass = 'score-low';
+                        if (score >= 8) scoreClass = 'score-extreme';
+                        else if (score >= 6) scoreClass = 'score-high';
+                        else if (score >= 4) scoreClass = 'score-moderate';
+                        
+                        // Build detail text
+                        let detailText = '';
+                        if (perilData.probability) {
+                            detailText += `${perilData.probability.toFixed(1)}% annual probability`;
+                        }
+                        if (perilData.pga) {
+                            detailText += detailText ? ' | ' : '';
+                            detailText += `PGA: ${perilData.pga.toFixed(2)}g`;
+                        }
+                        if (perilData.level) {
+                            detailText += detailText ? ' | ' : '';
+                            detailText += `Level: ${perilData.level}`;
+                        }
+                        
+                        // Add SCS composite to qualifying perils
+                        let displayName = perilDef.display;
+                        if (perilDef.scs && scsComposite) {
+                            displayName += ` <span style="color: #6b7280; font-weight: normal; font-size: 0.85rem;">(SCS: ${scsComposite}/10)</span>`;
+                        }
+                        
+                        perilItem.innerHTML = `
+                            <div>
+                                <div class="peril-name">${perilDef.icon} ${displayName}</div>
+                                <div style="font-size: 0.85rem; color: #6b7280;">
+                                    ${detailText || 'Score based on analysis'}
+                                </div>
                             </div>
-                        </div>
-                        <div class="peril-score ${scoreClass}">${score}/10</div>
-                    `;
+                            <div class="peril-score ${scoreClass}">${score}/10</div>
+                        `;
+                        
+                        perilAnalysis.appendChild(perilItem);
+                        perilsDisplayed++;
+                    }
+                });
+                
+                // Add SCS summary card if we have SCS perils
+                if (scsComposite) {
+                    const scsItem = document.createElement('div');
+                    scsItem.style.cssText = 'background: #f0f9ff; border: 2px solid #0284c7; padding: 1rem; border-radius: 8px; margin-top: 1rem;';
                     
-                    perilAnalysis.appendChild(perilItem);
+                    let scsScoreClass = 'score-low';
+                    const scsNum = parseFloat(scsComposite);
+                    if (scsNum >= 8) scsScoreClass = 'score-extreme';
+                    else if (scsNum >= 6) scsScoreClass = 'score-high';
+                    else if (scsNum >= 4) scsScoreClass = 'score-moderate';
+                    
+                    scsItem.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 700; font-size: 1rem; color: #0369a1;">⚡ SEVERE CONVECTIVE STORMS (SCS) COMPOSITE</div>
+                                <div style="font-size: 0.85rem; color: #0369a1; margin-top: 0.25rem;">
+                                    Aggregate of Tornado + Hail + Wind
+                                </div>
+                            </div>
+                            <div class="peril-score ${scsScoreClass}" style="font-size: 1.3rem;">${scsComposite}/10</div>
+                        </div>
+                    `;
+                    perilAnalysis.appendChild(scsItem);
                 }
-            } else {
-                perilAnalysis.innerHTML += '<p style="color: #6b7280;">No detailed peril data available. Upload Athenium JSON for comprehensive analysis.</p>';
+            }
+            
+            if (perilsDisplayed === 0) {
+                perilAnalysis.innerHTML += '<p style="color: #6b7280; padding: 1rem;">No detailed peril data available. Upload Athenium JSON for comprehensive analysis.</p>';
             }
             
             // Update recommendations
