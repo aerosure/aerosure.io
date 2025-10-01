@@ -366,14 +366,18 @@
             </div>
 
             <div class="form-group">
-                <label>Construction Phase</label>
-                <select id="phase">
-                    <option value="planning">Planning</option>
-                    <option value="excavation">Excavation</option>
-                    <option value="foundation">Foundation</option>
-                    <option value="vertical">Vertical Construction</option>
-                    <option value="finishing">Finishing</option>
+                <label>Construction Type</label>
+                <select id="constructionType">
+                    <option value="renovation">Renovation/Retrofit</option>
+                    <option value="new">New Construction (Ground-up)</option>
                 </select>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" id="structuralWork" style="width: auto; margin: 0;">
+                    <span style="font-weight: 500;">Includes Structural Work</span>
+                </label>
             </div>
 
             <div class="form-group">
@@ -400,6 +404,15 @@ Example format:
             </div>
 
             <button class="btn btn-primary" onclick="analyzeRisk()">Analyze Risk</button>
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <button class="btn btn-secondary" onclick="resetForm()" style="flex: 1; padding: 0.75rem; background: white; color: var(--primary); border: 2px solid var(--primary); border-radius: 8px; cursor: pointer;">
+                    Clear Form
+                </button>
+                <button class="btn btn-secondary" onclick="exportResults()" style="flex: 1; padding: 0.75rem; background: white; color: var(--primary); border: 2px solid var(--primary); border-radius: 8px; cursor: pointer;">
+                    Export Data
+                </button>
+            </div>
         </div>
 
         <div class="results-panel">
@@ -529,7 +542,8 @@ Example format:
                 const lat = parseFloat(document.getElementById('latitude').value);
                 const lon = parseFloat(document.getElementById('longitude').value);
                 const projectType = document.getElementById('projectType').value;
-                const phase = document.getElementById('phase').value;
+                const constructionType = document.getElementById('constructionType').value;
+                const hasStructuralWork = document.getElementById('structuralWork').checked;
                 const projectValue = parseFloat(document.getElementById('projectValue').value);
                 
                 // Validate inputs
@@ -562,7 +576,8 @@ Example format:
                     athenium: atheniumData,
                     noaa: noaaData,
                     projectType: projectType,
-                    phase: phase,
+                    constructionType: constructionType,
+                    hasStructuralWork: hasStructuralWork,
                     projectValue: projectValue,
                     lat: lat,
                     lon: lon
@@ -590,22 +605,60 @@ Example format:
         // ============================================
         
         async function getElevation(lat, lon) {
+            // Try USGS elevation API with better error handling
             const url = `https://epqs.nationalmap.gov/v1/json?x=${lon}&y=${lat}&units=Feet&output=json`;
+            
+            console.log('Fetching elevation from USGS:', url);
             
             try {
                 const response = await fetch(url);
+                console.log('USGS Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`USGS API returned status ${response.status}`);
+                }
+                
                 const data = await response.json();
+                console.log('USGS Data received:', data);
                 
-                document.getElementById('usgs-status').className = 'api-indicator connected';
+                // Handle new simplified format
+                if (data.value !== undefined) {
+                    const elevation = parseFloat(data.value);
+                    
+                    if (!isNaN(elevation) && elevation > -1000000) {
+                        document.getElementById('usgs-status').className = 'api-indicator connected';
+                        return {
+                            elevation: elevation,
+                            dataSource: data.rasterIdentifier || '3DEP 1/3 arc-second'
+                        };
+                    }
+                }
                 
-                return {
-                    elevation: data.USGS_Elevation_Point_Query_Service.Elevation_Query.Elevation,
-                    dataSource: data.USGS_Elevation_Point_Query_Service.Elevation_Query.Data_Source
-                };
-            } catch (err) {
+                // Try old format just in case
+                if (data.USGS_Elevation_Point_Query_Service && 
+                    data.USGS_Elevation_Point_Query_Service.Elevation_Query) {
+                    
+                    const elevation = data.USGS_Elevation_Point_Query_Service.Elevation_Query.Elevation;
+                    
+                    if (elevation && elevation !== -1000000) {
+                        document.getElementById('usgs-status').className = 'api-indicator connected';
+                        return {
+                            elevation: elevation,
+                            dataSource: data.USGS_Elevation_Point_Query_Service.Elevation_Query.Data_Source
+                        };
+                    }
+                }
+                
+                console.warn('USGS returned no valid elevation data');
                 document.getElementById('usgs-status').className = 'api-indicator pending';
-                console.warn('USGS elevation fetch failed:', err);
-                return { elevation: null, dataSource: 'Error' };
+                return { elevation: null, dataSource: 'No data available' };
+                
+            } catch (err) {
+                console.error('USGS elevation fetch failed:', err);
+                document.getElementById('usgs-status').className = 'api-indicator pending';
+                
+                // Return null but don't crash
+                return { elevation: null, dataSource: 'Error: ' + err.message };
             }
         }
         
@@ -642,27 +695,27 @@ Example format:
         // ============================================
         
         function calculateRiskScore(data) {
-            // Phase multipliers
-            const phaseMultipliers = {
-                planning: 1.0,
-                excavation: 1.4,
-                foundation: 1.3,
-                vertical: 1.2,
-                finishing: 1.1
+            // Construction type multipliers (simplified)
+            const constructionMultipliers = {
+                renovation: 1.0,
+                new: 1.15  // New construction has excavation/foundation risk
             };
             
-            // Project type risk factors
+            // Add 0.05 if structural work is included
+            const structuralAdjustment = data.hasStructuralWork ? 0.05 : 0;
+            
+            // Project type risk factors (reduced impact)
             const projectTypeFactors = {
-                bridge: 1.5,
-                marine: 1.4,
-                water: 1.3,
-                infrastructure: 1.2,
+                bridge: 1.25,
+                marine: 1.2,
+                water: 1.15,
+                infrastructure: 1.1,
                 commercial: 1.0,
-                residential: 0.9
+                residential: 0.95
             };
             
             // Start with base risk
-            let baseRisk = 50;
+            let baseRisk = 40; // Start lower
             let dataQuality = 0;
             let dataSources = [];
             
@@ -671,9 +724,10 @@ Example format:
             if (elevation !== null) {
                 dataSources.push('USGS Elevation');
                 dataQuality += 20;
-                if (elevation < 10) baseRisk += 30;
-                else if (elevation < 50) baseRisk += 10;
-                else baseRisk -= 10;
+                if (elevation < 5) baseRisk += 20;      // Very low elevation
+                else if (elevation < 10) baseRisk += 10; // Low elevation  
+                else if (elevation < 25) baseRisk += 5;  // Moderate elevation
+                else if (elevation > 50) baseRisk -= 5;  // High elevation
             }
             
             // Process Athenium data if available
@@ -686,25 +740,31 @@ Example format:
                 dataSources.push('Athenium Risk Intelligence');
                 dataQuality += 50;
                 
-                floodScore = data.athenium.floodScore || 50;
-                fluvialRisk = data.athenium.fluvialRisk || 5;
-                pluvialRisk = data.athenium.pluvialRisk || 5;
-                surgeRisk = data.athenium.surgeRisk || 0;
+                // Use actual Athenium risk scores (already 0-10 scale)
+                fluvialRisk = parseFloat(data.athenium.fluvialRisk) || 5;
+                pluvialRisk = parseFloat(data.athenium.pluvialRisk) || 5;
+                surgeRisk = parseFloat(data.athenium.surgeRisk) || 0;
                 
-                // Adjust base risk based on Athenium scores
-                if (floodScore > 75) baseRisk += 25;
-                else if (floodScore > 50) baseRisk += 15;
-                else if (floodScore > 25) baseRisk += 5;
+                // Calculate composite flood score based on components
+                floodScore = Math.max(fluvialRisk, pluvialRisk, surgeRisk) * 10;
                 
-                // Additional adjustments for specific flood types
-                if (fluvialRisk >= 8) baseRisk += 10;
-                if (pluvialRisk >= 8) baseRisk += 10;
-                if (surgeRisk >= 7) baseRisk += 15;
+                // More nuanced risk adjustments based on 0-10 scale
+                if (fluvialRisk >= 8) baseRisk += 15;
+                else if (fluvialRisk >= 6) baseRisk += 8;
+                else if (fluvialRisk >= 4) baseRisk += 4;
+                
+                if (pluvialRisk >= 8) baseRisk += 12;
+                else if (pluvialRisk >= 6) baseRisk += 6;
+                else if (pluvialRisk >= 4) baseRisk += 3;
+                
+                if (surgeRisk >= 7) baseRisk += 20;
+                else if (surgeRisk >= 5) baseRisk += 10;
+                else if (surgeRisk >= 3) baseRisk += 5;
             } else {
                 // Estimate flood risk based on elevation if no Athenium data
                 if (elevation !== null && elevation < 20) {
-                    floodScore = 70;
-                    baseRisk += 15;
+                    floodScore = 60;
+                    baseRisk += 10;
                 }
             }
             
@@ -714,23 +774,26 @@ Example format:
                 dataSources.push('NOAA Weather Data');
                 dataQuality += 20;
                 
-                if (windRisk > 75) baseRisk += 10;
-                else if (windRisk > 50) baseRisk += 5;
+                if (windRisk > 75) baseRisk += 8;
+                else if (windRisk > 50) baseRisk += 4;
             }
             
-            // Add location-based adjustments
+            // Add location-based adjustments (reduced impact)
             if (Math.abs(data.lon + 80) < 5) { // Near coast
-                baseRisk += 10;
+                baseRisk += 5;
                 dataQuality += 10;
                 dataSources.push('Coastal Proximity Analysis');
             }
             
-            // Apply multipliers
-            const phaseMultiplier = phaseMultipliers[data.phase] || 1.0;
+            // Apply multipliers (with cap to prevent extreme scores)
+            const constructionMultiplier = (constructionMultipliers[data.constructionType] || 1.0) + structuralAdjustment;
             const typeMultiplier = projectTypeFactors[data.projectType] || 1.0;
             
-            // Calculate final score
-            let finalScore = Math.min(100, Math.max(0, baseRisk * phaseMultiplier * typeMultiplier));
+            // Calculate final score with proper scaling
+            let finalScore = baseRisk * constructionMultiplier * typeMultiplier;
+            
+            // Ensure score stays within 0-100 range
+            finalScore = Math.min(95, Math.max(5, finalScore));
             
             return {
                 score: Math.round(finalScore),
@@ -754,40 +817,56 @@ Example format:
         function generateRecommendations(score, data) {
             const recommendations = [];
             
-            // Overall risk recommendations
+            // Overall risk recommendations (adjusted thresholds)
             if (score > 75) {
-                recommendations.push('🔴 HIGH RISK: Comprehensive flood coverage mandatory');
-                recommendations.push('🔴 Require elevated construction standards (min +3ft BFE)');
-                recommendations.push('🔴 Weekly inspection schedule during critical phases');
-                recommendations.push('🔴 Consider declining or 2x premium load');
-            } else if (score > 50) {
-                recommendations.push('🟡 MODERATE RISK: Enhanced flood sublimits recommended');
-                recommendations.push('🟡 Monthly inspection schedule required');
-                recommendations.push('🟡 Monitor weather patterns closely during foundation phase');
-                recommendations.push('🟡 Standard premium with 25-50% CAT load');
+                recommendations.push('🔴 HIGH RISK: Comprehensive CAT coverage required');
+                recommendations.push('🔴 Consider additional sublimits or exclusions');
+                recommendations.push('🔴 Weekly inspection schedule mandatory');
+                recommendations.push('🔴 Premium load 50-75% above standard');
+            } else if (score > 60) {
+                recommendations.push('🟡 MODERATE-HIGH: Enhanced monitoring required');
+                recommendations.push('🟡 Flood sublimits recommended at 50% of TIV');
+                recommendations.push('🟡 Bi-weekly inspections during critical phases');
+                recommendations.push('🟡 Premium load 25-40% above standard');
+            } else if (score > 45) {
+                recommendations.push('🟢 MODERATE: Standard CAT sublimits appropriate');
+                recommendations.push('🟢 Monthly inspection schedule recommended');
+                recommendations.push('🟢 Monitor weather during foundation/excavation');
+                recommendations.push('🟢 Standard to +15% premium adjustment');
+            } else if (score > 30) {
+                recommendations.push('✅ LOW-MODERATE: Standard coverage terms');
+                recommendations.push('✅ Quarterly inspections sufficient');
+                recommendations.push('✅ Normal construction monitoring');
+                recommendations.push('✅ Competitive premium available');
             } else {
-                recommendations.push('🟢 LOW RISK: Standard coverage appropriate');
-                recommendations.push('🟢 Quarterly inspections sufficient');
-                recommendations.push('🟢 Standard construction practices acceptable');
-                recommendations.push('🟢 Competitive premium positioning available');
+                recommendations.push('✅ LOW RISK: Minimal CAT exposure');
+                recommendations.push('✅ Semi-annual inspections adequate');
+                recommendations.push('✅ Standard policy terms apply');
+                recommendations.push('✅ Consider premium credits');
             }
             
-            // Phase-specific recommendations
-            if (data.phase === 'excavation' || data.phase === 'foundation') {
-                recommendations.push('⚠️ CRITICAL PHASE: Double monitoring frequency');
-                recommendations.push('⚠️ Require dewatering plan and backup pumps');
+            // Construction-specific recommendations
+            if (data.constructionType === 'new') {
+                recommendations.push('🏗️ NEW CONSTRUCTION: Monitor excavation/foundation phases closely');
+                if (data.athenium && data.athenium.pluvialRisk > 5) {
+                    recommendations.push('🏗️ Dewatering plan essential during excavation');
+                }
+            }
+            
+            if (data.hasStructuralWork) {
+                recommendations.push('⚠️ STRUCTURAL WORK: Enhanced inspection protocol required');
             }
             
             // Athenium-specific insights
             if (data.athenium) {
-                if (data.athenium.fluvialRisk >= 8) {
-                    recommendations.push('💧 HIGH FLUVIAL: Monitor upstream conditions');
+                if (data.athenium.fluvialRisk >= 7) {
+                    recommendations.push('💧 FLUVIAL RISK: Monitor upstream precipitation');
                 }
-                if (data.athenium.pluvialRisk >= 7) {
-                    recommendations.push('🌧️ HIGH PLUVIAL: Ensure adequate site drainage');
+                if (data.athenium.pluvialRisk >= 6) {
+                    recommendations.push('🌧️ PLUVIAL RISK: Ensure adequate drainage systems');
                 }
-                if (data.athenium.surgeRisk >= 6) {
-                    recommendations.push('🌊 SURGE EXPOSURE: Track tropical weather closely');
+                if (data.athenium.surgeRisk >= 5) {
+                    recommendations.push('🌊 SURGE RISK: Hurricane preparedness plan required');
                 }
             } else {
                 recommendations.push('📊 Get Athenium data from Claude for enhanced accuracy');
@@ -822,13 +901,19 @@ Example format:
             // Set risk category and color
             let category, color;
             if (riskData.score > 75) {
-                category = 'HIGH RISK - PROCEED WITH CAUTION';
+                category = 'HIGH RISK - ENHANCED TERMS REQUIRED';
                 color = '#ef4444';
-            } else if (riskData.score > 50) {
-                category = 'MODERATE RISK - ENHANCED MONITORING';
-                color = '#f59e0b';
+            } else if (riskData.score > 60) {
+                category = 'MODERATE-HIGH RISK - MONITOR CLOSELY';
+                color = '#f97316';
+            } else if (riskData.score > 45) {
+                category = 'MODERATE RISK - STANDARD PLUS';
+                color = '#eab308';
+            } else if (riskData.score > 30) {
+                category = 'LOW-MODERATE - STANDARD TERMS';
+                color = '#84cc16';
             } else {
-                category = 'LOW RISK - STANDARD TERMS';
+                category = 'LOW RISK - PREFERRED TERMS';
                 color = '#10b981';
             }
             
@@ -885,9 +970,81 @@ Example format:
             document.getElementById('projectValue').value = '5000000';
             
             // Show version info
-            console.log('GeoCat v1.0 - Hybrid Athenium Integration');
+            console.log('GeoCat v2.0 - Hybrid Athenium Integration');
             console.log('Get Athenium data through Claude, paste JSON in purple section');
         });
+        
+        // Reset form function
+        function resetForm() {
+            document.getElementById('projectName').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('latitude').value = '';
+            document.getElementById('longitude').value = '';
+            document.getElementById('projectType').selectedIndex = 0;
+            document.getElementById('constructionType').selectedIndex = 0;
+            document.getElementById('structuralWork').checked = false;
+            document.getElementById('projectValue').value = '';
+            document.getElementById('atheniumData').value = '';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            
+            // Reset API indicators
+            document.getElementById('athenium-status').className = 'api-indicator manual';
+            document.getElementById('usgs-status').className = 'api-indicator pending';
+            document.getElementById('noaa-status').className = 'api-indicator pending';
+        }
+        
+        // Export results function
+        function exportResults() {
+            const results = document.getElementById('results');
+            if (results.style.display === 'none') {
+                alert('Please run an analysis first before exporting');
+                return;
+            }
+            
+            // Gather all the data
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                project: {
+                    name: document.getElementById('projectName').value,
+                    address: document.getElementById('address').value,
+                    latitude: document.getElementById('latitude').value,
+                    longitude: document.getElementById('longitude').value,
+                    type: document.getElementById('projectType').value,
+                    construction: document.getElementById('constructionType').value,
+                    structuralWork: document.getElementById('structuralWork').checked,
+                    value: document.getElementById('projectValue').value
+                },
+                riskScore: {
+                    composite: document.getElementById('riskScore').textContent,
+                    category: document.getElementById('riskCategory').textContent,
+                    floodRisk: document.getElementById('floodRisk').textContent,
+                    elevation: document.getElementById('elevation').textContent,
+                    fluvialRisk: document.getElementById('fluvialRisk').textContent,
+                    pluvialRisk: document.getElementById('pluvialRisk').textContent,
+                    surgeRisk: document.getElementById('surgeRisk').textContent,
+                    windRisk: document.getElementById('windRisk').textContent
+                },
+                dataQuality: document.getElementById('dataQuality').textContent,
+                recommendations: Array.from(document.getElementById('recommendations').children)
+                    .map(li => li.textContent),
+                atheniumData: document.getElementById('atheniumData').value || 'Not provided'
+            };
+            
+            // Create and download JSON file
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `GeoCat_${exportData.project.name.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert('Data exported successfully!');
+        }
     </script>
 </body>
 </html>
