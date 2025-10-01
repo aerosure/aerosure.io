@@ -450,6 +450,40 @@
             </div>
 
             <div class="form-group">
+                <label>Structural Complexity</label>
+                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                    <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
+                        <input type="radio" name="structuralWork" id="nonStructural" value="non-structural" checked style="width: auto; margin-right: 0.5rem;">
+                        Non-Structural
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
+                        <input type="radio" name="structuralWork" id="structural" value="structural" style="width: auto; margin-right: 0.5rem;">
+                        Structural Work
+                    </label>
+                </div>
+                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">
+                    Structural: foundation, framing, load-bearing modifications, shoring
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Active Operations On-Site</label>
+                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                    <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
+                        <input type="radio" name="activeOps" id="activeOpsNo" value="no" checked style="width: auto; margin-right: 0.5rem;">
+                        No Active Operations
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
+                        <input type="radio" name="activeOps" id="activeOpsYes" value="yes" style="width: auto; margin-right: 0.5rem;">
+                        Active Operations
+                    </label>
+                </div>
+                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">
+                    Does project involve construction within/adjacent to operating facility?
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label>Project Value ($)</label>
                 <input type="number" id="projectValue" placeholder="Enter total insured value">
             </div>
@@ -992,7 +1026,15 @@
             const constructionType = document.getElementById('constructionType').value;
             const constructionMultiplier = constructionType === 'new' ? 1.08 : 1.0;
             
-            let finalScore = baseRisk * (typeMultipliers[projectType] || 1.0) * constructionMultiplier;
+            // Structural work increases collapse/engineering risk
+            const structuralWork = document.querySelector('input[name="structuralWork"]:checked').value === 'structural';
+            const structuralMultiplier = structuralWork ? 1.15 : 1.0;
+            
+            // Active operations significantly increase risk
+            const activeOps = document.querySelector('input[name="activeOps"]:checked').value === 'yes';
+            const activeOpsMultiplier = activeOps ? 1.25 : 1.0;
+            
+            let finalScore = baseRisk * (typeMultipliers[projectType] || 1.0) * constructionMultiplier * structuralMultiplier * activeOpsMultiplier;
             
             if (avgPerilScore < 4 && finalScore > 60) finalScore = 60;
             if (avgPerilScore < 5 && finalScore > 70) finalScore = 70;
@@ -1018,6 +1060,10 @@
         function generateRecommendations(score, perils, atheniumData) {
             const recs = [];
             
+            // Check for active operations and structural work
+            const activeOps = document.querySelector('input[name="activeOps"]:checked').value === 'yes';
+            const structuralWork = document.querySelector('input[name="structuralWork"]:checked').value === 'structural';
+            
             if (score > 75) {
                 recs.push('HIGH RISK: Comprehensive coverage with enhanced sublimits required');
                 recs.push('Weekly site inspections and real-time monitoring recommended');
@@ -1030,6 +1076,20 @@
                 recs.push('LOW RISK: Competitive pricing available with standard terms');
                 recs.push('Quarterly inspections sufficient');
                 recs.push('Lower deductibles may be appropriate (1-2%)');
+            }
+            
+            // Structural work specific recommendations
+            if (structuralWork) {
+                recs.push('STRUCTURAL WORK: Require PE-stamped structural drawings and shoring plans');
+                recs.push('Daily monitoring during excavation/demolition phases - collapse exposure elevated');
+                recs.push('Verify contractor has structural engineering experience and adequate equipment');
+            }
+            
+            // Active operations specific recommendations
+            if (activeOps) {
+                recs.push('ACTIVE OPERATIONS: Consider excluding existing structure from coverage');
+                recs.push('Business interruption exposure - require hot work permits and fire watch protocols');
+                recs.push('Contamination risk for sensitive operations (medical, food, electronics) - enhanced protection protocols required');
             }
             
             if (perils.hurricane && perils.hurricane.score >= 7) {
