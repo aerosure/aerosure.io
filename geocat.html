@@ -443,13 +443,13 @@
 
             <div class="form-group">
                 <label>Construction Type</label>
-                <select id="constructionType">
-                    <option value="renovation">Renovation/Retrofit</option>
+                <select id="constructionType" onchange="toggleRenovationOptions()">
+                    <option value="renovation">Renovation/Rehab</option>
                     <option value="new">New Construction</option>
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="structuralComplexityGroup">
                 <label>Structural Complexity</label>
                 <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
                     <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
@@ -466,7 +466,7 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="activeOpsGroup">
                 <label>Active Operations On-Site</label>
                 <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
                     <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
@@ -618,7 +618,41 @@
         
         window.addEventListener('DOMContentLoaded', function() {
             console.log('GeoCat NATCAT Platform initialized');
+            toggleRenovationOptions(); // Initialize on load
         });
+
+        function toggleRenovationOptions() {
+            const constructionType = document.getElementById('constructionType').value;
+            const isRenovation = constructionType === 'renovation';
+            
+            // Get the radio buttons
+            const structuralRadios = document.querySelectorAll('input[name="structuralWork"]');
+            const activeOpsRadios = document.querySelectorAll('input[name="activeOps"]');
+            
+            // Get the form groups
+            const structuralGroup = document.getElementById('structuralComplexityGroup');
+            const activeOpsGroup = document.getElementById('activeOpsGroup');
+            
+            if (isRenovation) {
+                // Enable for renovation/rehab
+                structuralRadios.forEach(radio => radio.disabled = false);
+                activeOpsRadios.forEach(radio => radio.disabled = false);
+                structuralGroup.style.opacity = '1';
+                activeOpsGroup.style.opacity = '1';
+            } else {
+                // Disable for new construction and reset to defaults
+                structuralRadios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.value === 'non-structural') radio.checked = true;
+                });
+                activeOpsRadios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.value === 'no') radio.checked = true;
+                });
+                structuralGroup.style.opacity = '0.5';
+                activeOpsGroup.style.opacity = '0.5';
+            }
+        }
 
         async function geocodeAddress() {
             const address = document.getElementById('address').value;
