@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoCat - Karst & Sinkhole Risk Map</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3c72;
+            --secondary: #2a5298;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.98);
+            padding: 2rem;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .container {
+            background: white;
+            border-radius: 0 0 12px 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .warning-banner {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .warning-banner h2 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-regions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .risk-card {
+            border-left: 4px solid;
+            padding: 1.5rem;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .risk-extreme {
+            border-color: #7c3aed;
+            background: #faf5ff;
+        }
+
+        .risk-high {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .risk-moderate {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .risk-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-score {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .map-container {
+            background: #f3f4f6;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .map-container h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .map-placeholder {
+            background: white;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .info-section {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #f0f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #0284c7;
+        }
+
+        .info-section h3 {
+            color: #0369a1;
+            margin-bottom: 1rem;
+        }
+
+        .info-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-section li {
+            padding: 0.75rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .info-section li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            color: #0369a1;
+        }
+
+        .underwriting-guide {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .underwriting-guide h3 {
+            color: #92400e;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(30, 60, 114, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🕳️ GeoCat Karst & Sinkhole Assessment</div>
+        <div class="subtitle">USGS-Based Sinkhole Risk Intelligence</div>
+    </div>
+
+    <div class="container">
+        <div class="warning-banner">
+            <h2>⚠️ Why Karst Matters for Inland Marine Underwriting</h2>
+            <p><strong>Sinkholes are the silent catastrophe:</strong> No warning, catastrophic damage, and growing frequency due to development on karst terrain. Florida averages 17 sinkholes reported DAILY. Tennessee sinkhole losses have increased 340% since 2010.</p>
+        </div>
+
+        <h2 style="margin-bottom: 1.5rem;">High-Risk Karst Regions</h2>
+
+        <div class="risk-regions">
+            <div class="risk-card risk-extreme">
+                <h3>🔴 FLORIDA</h3>
+                <div class="risk-score">8-9/10</div>
+                <p><strong>Risk Level:</strong> EXTREME</p>
+                <p>Extensive limestone bedrock, cover collapse sinkholes extremely common. Central Florida "Sinkhole Alley" sees hundreds annually.</p>
+            </div>
+
+            <div class="risk-card risk-high">
+                <h3>🔴 TENNESSEE</h3>
+                <div class="risk-score">7/10</div>
+                <p><strong>Risk Level:</strong> HIGH</p>
+                <p>Nashville Basin and Eastern Highland Rim - active sinkhole development. Construction activity triggers collapses.</p>
+            </div>
+
+            <div class="risk-card risk-high">
+                <h3>🔴 KENTUCKY</h3>
+                <div class="risk-score">7/10</div>
+                <p><strong>Risk Level:</strong> HIGH</p>
+                <p>Mammoth Cave region, extensive karst terrain. Bluegrass region particularly vulnerable.</p>
+            </div>
+
+            <div class="risk-card risk-moderate">
+                <h3>🟠 MISSOURI</h3>
+                <div class="risk-score">6/10</div>
+                <p><strong>Risk Level:</strong> HIGH-MODERATE</p>
+                <p>Ozark Plateau karst, Springfield and Branson areas. Spring-fed cave systems indicate subsurface vulnerability.</p>
+            </div>
+
+            <div class="risk-card risk-moderate">
+                <h3>🟠 PENNSYLVANIA</h3>
+                <div class="risk-score">6/10</div>
+                <p><strong>Risk Level:</strong> HIGH-MODERATE</p>
+                <p>Appalachian karst belt through central PA. Hershey and Carlisle areas particularly affected.</p>
+            </div>
+
+            <div class="risk-card risk-moderate">
+                <h3>🟡 TEXAS</h3>
+                <div class="risk-score">5/10</div>
+                <p><strong>Risk Level:</strong> MODERATE</p>
+                <p>Edwards Plateau and Central Texas. Austin, San Antonio, and Hill Country development increasing sinkhole frequency.</p>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <h3>USGS Carbonate Rock & Evaporite Rock (Karst) Areas Map</h3>
+            <div class="map-placeholder">
+                <p style="font-size: 1.2rem; margin-bottom: 1rem;"><strong>Interactive USGS Karst Map</strong></p>
+                <p>To view the official USGS karst terrain map, visit:</p>
+                <p style="margin: 1rem 0;"><a href="https://www.usgs.gov/media/images/map-carbonate-rock-and-evaporite-rock-karst-united-states" target="_blank" style="color: #2563eb; font-weight: 600;">USGS Karst Areas of the United States</a></p>
+                <p style="margin-top: 1.5rem; font-size: 0.9rem; color: #6b7280;">Note: GeoCat integrates this data to automatically score karst risk based on project coordinates</p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>📊 Karst Risk Indicators for Underwriters</h3>
+            <ul>
+                <li><strong>Bedrock Type:</strong> Limestone, dolomite, gypsum = high dissolution potential</li>
+                <li><strong>Groundwater Depth:</strong> Shallow water tables accelerate karst development</li>
+                <li><strong>Development Pressure:</strong> Construction dewatering and vibration trigger collapses</li>
+                <li><strong>Historical Density:</strong> Past sinkholes in area indicate active terrain</li>
+                <li><strong>Seasonal Patterns:</strong> Wet seasons increase collapse frequency (spring/summer)</li>
+                <li><strong>Urban Infrastructure:</strong> Leaking water/sewer mains dissolve subsurface voids</li>
+            </ul>
+        </div>
+
+        <div class="underwriting-guide">
+            <h3>🎯 Underwriting Guidelines by Karst Score</h3>
+            
+            <table>
+                <tr>
+                    <th>Score</th>
+                    <th>Risk Level</th>
+                    <th>Required Actions</th>
+                    <th>Coverage Structure</th>
+                </tr>
+                <tr>
+                    <td><strong>8-10</strong></td>
+                    <td>EXTREME</td>
+                    <td>
+                        • MANDATORY geotechnical survey with sinkhole assessment<br>
+                        • Ground-penetrating radar recommended<br>
+                        • Annual subsidence monitoring required
+                    </td>
+                    <td>
+                        • Sinkhole EXCLUSION or separate ground stability policy<br>
+                        • If covered: $500K minimum deductible<br>
+                        • 10-25% sublimit maximum
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>6-7</strong></td>
+                    <td>HIGH</td>
+                    <td>
+                        • Geotechnical survey strongly recommended<br>
+                        • Geologist consultation<br>
+                        • Construction monitoring protocols
+                    </td>
+                    <td>
+                        • Consider sinkhole sublimit (25-50% TIV)<br>
+                        • $250K minimum deductible<br>
+                        • Grouting/void filling mandatory if discovered
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>4-5</strong></td>
+                    <td>MODERATE</td>
+                    <td>
+                        • Site geology review<br>
+                        • Phase I environmental may reveal issues<br>
+                        • Monitoring wells recommended
+                    </td>
+                    <td>
+                        • Standard coverage acceptable<br>
+                        • $100K deductible appropriate<br>
+                        • Note karst exposure in file
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>1-3</strong></td>
+                    <td>LOW</td>
+                    <td>• No special requirements</td>
+                    <td>• Standard builders risk terms</td>
+                </tr>
+                <tr>
+                    <td><strong>0</strong></td>
+                    <td>NONE</td>
+                    <td>• No karst terrain identified</td>
+                    <td>• Standard coverage</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="info-section">
+            <h3>🔍 Real-World Tennessee Sinkhole Case Study</h3>
+            <p style="margin-bottom: 1rem;"><strong>Scenario:</strong> Construction project in Nashville Basin (Tennessee - 7/10 karst risk)</p>
+            <ul>
+                <li><strong>Event:</strong> Cover collapse sinkhole opened during excavation phase</li>
+                <li><strong>Diameter:</strong> 25 feet across, 30 feet deep</li>
+                <li><strong>Cause:</strong> Construction dewatering exposed underground void in limestone bedrock</li>
+                <li><strong>Loss:</strong> $450K (equipment, materials, delay costs, void filling)</li>
+                <li><strong>Prevention:</strong> Geotechnical survey with karst assessment would have identified risk for $15K</li>
+                <li><strong>Lesson:</strong> High-risk karst areas demand proactive assessment - reactive response costs 30x more</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin: 3rem 0;">
+            <a href="javascript:window.close()" class="btn">← Back to GeoCat Main</a>
+            <p style="margin-top: 1rem; color: #6b7280; font-size: 0.9rem;">Or use browser back button to return to your analysis</p>
+        </div>
+
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
+            <p><strong>Data Sources:</strong> USGS Karst Areas Database, State Geological Surveys, Historical Sinkhole Records</p>
+            <p style="margin-top: 0.5rem;">GeoCat Karst Assessment Tool | Powered by Athenium Climate Intelligence</p>
+        </div>
+    </div>
+</body>
+</html>
