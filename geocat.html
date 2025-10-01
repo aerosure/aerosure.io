@@ -53,7 +53,7 @@
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1800px;
             margin: 2rem auto;
             padding: 0 2rem;
             display: grid;
@@ -67,6 +67,8 @@
             padding: 2rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             height: fit-content;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .results-panel {
@@ -86,6 +88,7 @@
             margin-bottom: 0.5rem;
             font-weight: 600;
             color: var(--dark);
+            font-size: 0.9rem;
         }
 
         input, select, textarea {
@@ -102,8 +105,10 @@
         }
 
         textarea {
-            min-height: 120px;
+            min-height: 100px;
             resize: vertical;
+            font-family: monospace;
+            font-size: 0.85rem;
         }
 
         .btn {
@@ -138,9 +143,18 @@
             background: var(--light);
         }
 
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
         #map {
             width: 100%;
-            height: 400px;
+            height: 500px;
             border-radius: 8px;
             margin-bottom: 2rem;
             border: 2px solid #e5e7eb;
@@ -187,6 +201,12 @@
             color: var(--dark);
         }
 
+        .data-card .label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
         .loading {
             display: none;
             text-align: center;
@@ -212,38 +232,134 @@
             to { transform: rotate(360deg); }
         }
 
-        .report-section {
-            display: none;
+        .hazard-layers {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .hazard-layers h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            color: var(--secondary);
+        }
+
+        .layer-toggle {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .layer-toggle:hover {
+            background: #e5e7eb;
+        }
+
+        .layer-toggle input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        .layer-toggle label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .peril-analysis {
             background: white;
-            padding: 3rem;
-            margin-top: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
         }
 
-        .report-section.visible {
-            display: block;
+        .peril-analysis h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
         }
 
-        .report-header {
-            text-align: center;
-            border-bottom: 3px solid var(--primary);
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .report-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .report-item {
+        .peril-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--light);
+            border-radius: 6px;
+        }
+
+        .peril-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .peril-score {
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .score-low { background: #10b981; }
+        .score-moderate { background: #f59e0b; }
+        .score-high { background: #ef4444; }
+        .score-extreme { background: #7c3aed; }
+
+        .recommendations {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .recommendations h3 {
+            color: #92400e;
+            margin-bottom: 1rem;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendations li {
             padding: 0.5rem 0;
-            border-bottom: 1px solid #f3f4f6;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .recommendations li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            color: #92400e;
+        }
+
+        .athenium-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .data-source-indicator {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            font-style: italic;
         }
 
         @media (max-width: 1200px) {
@@ -251,29 +367,12 @@
                 grid-template-columns: 1fr;
             }
         }
-
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .report-section, .report-section * {
-                visibility: visible;
-            }
-            .report-section {
-                position: absolute;
-                left: 0;
-                top: 0;
-            }
-            .btn-group {
-                display: none !important;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="logo">GeoCat</div>
-        <div style="color: var(--secondary);">NATCAT Risk Intelligence Platform</div>
+        <div style="color: var(--secondary); font-weight: 600;">NATCAT Risk Intelligence Platform</div>
     </div>
 
     <div class="container">
@@ -288,27 +387,30 @@
             <div class="form-group">
                 <label>Address</label>
                 <input type="text" id="address" placeholder="Enter full address">
+                <button class="btn btn-secondary" onclick="geocodeAddress()" style="margin-top: 0.5rem;">Find Coordinates</button>
             </div>
 
             <div class="form-group">
                 <label>Latitude</label>
-                <input type="number" id="latitude" step="0.000001" placeholder="e.g., 25.7617">
+                <input type="number" id="latitude" step="0.000001" placeholder="e.g., 34.9224">
             </div>
 
             <div class="form-group">
                 <label>Longitude</label>
-                <input type="number" id="longitude" step="0.000001" placeholder="e.g., -80.1918">
+                <input type="number" id="longitude" step="0.000001" placeholder="e.g., -82.2425">
             </div>
 
             <div class="form-group">
                 <label>Project Type</label>
                 <select id="projectType">
-                    <option value="commercial">Commercial</option>
-                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial Construction</option>
+                    <option value="residential">Residential Construction</option>
                     <option value="infrastructure">Infrastructure</option>
-                    <option value="bridge">Bridge</option>
-                    <option value="marine">Marine/Port</option>
+                    <option value="bridge">Bridge Construction</option>
+                    <option value="marine">Marine/Port Facility</option>
                     <option value="water">Water/Wastewater</option>
+                    <option value="healthcare">Healthcare Facility</option>
+                    <option value="industrial">Industrial Facility</option>
                 </select>
             </div>
 
@@ -322,7 +424,31 @@
 
             <div class="form-group">
                 <label>Project Value ($)</label>
-                <input type="number" id="projectValue" placeholder="Enter project value">
+                <input type="number" id="projectValue" placeholder="Enter total insured value">
+            </div>
+
+            <div class="hazard-layers">
+                <h4>Analysis Layers</h4>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerElevation" checked>
+                    <label for="layerElevation">Elevation Analysis</label>
+                </div>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerFlood" checked>
+                    <label for="layerFlood">Flood Risk</label>
+                </div>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerWeather" checked>
+                    <label for="layerWeather">Weather Perils</label>
+                </div>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerEarthquake">
+                    <label for="layerEarthquake">Earthquake (USGS)</label>
+                </div>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerWildfire">
+                    <label for="layerWildfire">Wildfire Risk</label>
+                </div>
             </div>
 
             <div class="form-group">
@@ -331,18 +457,19 @@
             </div>
 
             <div class="form-group">
-                <label>Athenium Data (Manual)</label>
-                <textarea id="atheniumData" placeholder="Paste JSON data from Claude if no API key"></textarea>
+                <label>Athenium Data (Manual JSON)</label>
+                <textarea id="atheniumData" placeholder="Paste JSON data from Claude/Athenium analysis"></textarea>
             </div>
 
             <button class="btn btn-primary" onclick="analyzeRisk()">Analyze Risk</button>
+            <button class="btn btn-success" onclick="generateReport()">Generate Report</button>
             <button class="btn btn-secondary" onclick="resetForm()">Clear Form</button>
         </div>
 
         <div class="results-panel">
             <div id="loading" class="loading">
                 <div class="spinner"></div>
-                <p>Analyzing risk factors...</p>
+                <p>Analyzing risk factors across multiple data sources...</p>
             </div>
 
             <div id="results" style="display: none;">
@@ -352,116 +479,64 @@
                     <div style="font-size: 1.2rem; opacity: 0.9;">Composite Risk Score</div>
                     <div class="risk-score" id="riskScore">--</div>
                     <div id="riskCategory" style="font-size: 1rem;">--</div>
+                    <div class="data-source-indicator" id="dataSource">Data sources loading...</div>
                 </div>
 
                 <div class="data-grid">
                     <div class="data-card">
                         <h3>ELEVATION</h3>
                         <div class="value" id="elevation">--</div>
-                        <div style="font-size: 0.9rem; color: #6b7280;">feet above sea level</div>
+                        <div class="label">feet above sea level</div>
                     </div>
                     
                     <div class="data-card">
                         <h3>FLOOD RISK</h3>
                         <div class="value" id="floodRisk">--</div>
-                        <div style="font-size: 0.9rem; color: #6b7280;">Composite Score</div>
+                        <div class="label">Composite Score</div>
                     </div>
                     
                     <div class="data-card">
                         <h3>WIND RISK</h3>
                         <div class="value" id="windRisk">--</div>
-                        <div style="font-size: 0.9rem; color: #6b7280;">Annual Probability</div>
+                        <div class="label">Annual Probability</div>
                     </div>
                     
                     <div class="data-card">
+                        <h3>HURRICANE</h3>
+                        <div class="value" id="hurricaneRisk">--</div>
+                        <div class="label">Annual Probability</div>
+                    </div>
+
+                    <div class="data-card">
                         <h3>EARTHQUAKE</h3>
                         <div class="value" id="earthquakeRisk">--</div>
-                        <div style="font-size: 0.9rem; color: #6b7280;">PGA Risk Level</div>
+                        <div class="label">PGA Risk Level</div>
+                    </div>
+
+                    <div class="data-card">
+                        <h3>WILDFIRE</h3>
+                        <div class="value" id="wildfireRisk">--</div>
+                        <div class="label">Risk Score</div>
                     </div>
                 </div>
 
-                <div style="background: var(--light); padding: 1.5rem; border-radius: 8px;">
-                    <h3 style="margin-bottom: 1rem;">Recommendations</h3>
-                    <ul id="recommendations" style="list-style: none; padding: 0;">
-                        <li>Loading...</li>
+                <div class="peril-analysis" id="perilAnalysis">
+                    <h3>Detailed Peril Assessment</h3>
+                    <!-- Dynamically populated -->
+                </div>
+
+                <div class="recommendations">
+                    <h3>Underwriting Recommendations</h3>
+                    <ul id="recommendations">
+                        <li>Loading recommendations...</li>
                     </ul>
                 </div>
 
                 <div style="margin-top: 1rem; display: flex; gap: 1rem;">
-                    <button class="btn btn-primary" onclick="generatePDF()" style="margin: 0;">Download PDF</button>
-                    <button class="btn btn-secondary" onclick="showReport()" style="margin: 0;">View Report</button>
+                    <button class="btn btn-primary" onclick="downloadPDF()" style="margin: 0;">Download PDF</button>
+                    <button class="btn btn-secondary" onclick="exportJSON()" style="margin: 0;">Export JSON</button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Report Section -->
-    <div id="reportSection" class="report-section">
-        <div class="report-header">
-            <h1 style="color: var(--primary);">GeoCat Risk Assessment Report</h1>
-            <p id="reportDate" style="color: #6b7280; margin-top: 0.5rem;"></p>
-        </div>
-        
-        <div class="report-grid">
-            <div>
-                <h3 style="color: var(--secondary); margin-bottom: 1rem;">Project Information</h3>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Project Name:</span>
-                    <span id="rptProjectName">--</span>
-                </div>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Address:</span>
-                    <span id="rptAddress">--</span>
-                </div>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Coordinates:</span>
-                    <span id="rptCoords">--</span>
-                </div>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Type:</span>
-                    <span id="rptType">--</span>
-                </div>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Value:</span>
-                    <span id="rptValue">--</span>
-                </div>
-            </div>
-            
-            <div>
-                <h3 style="color: var(--secondary); margin-bottom: 1rem;">Risk Assessment</h3>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Risk Score:</span>
-                    <span id="rptScore" style="font-weight: 700; font-size: 1.2rem;">--</span>
-                </div>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Elevation:</span>
-                    <span id="rptElevation">--</span>
-                </div>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Flood Risk:</span>
-                    <span id="rptFlood">--</span>
-                </div>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Wind Risk:</span>
-                    <span id="rptWind">--</span>
-                </div>
-                <div class="report-item">
-                    <span style="font-weight: 600;">Earthquake:</span>
-                    <span id="rptEarthquake">--</span>
-                </div>
-            </div>
-        </div>
-        
-        <div style="background: #fef3c7; border: 1px solid #fbbf24; padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
-            <h3 style="color: #92400e;">Underwriting Recommendations</h3>
-            <ul id="rptRecommendations" style="list-style: none; padding: 0; margin-top: 1rem;">
-                <li>--</li>
-            </ul>
-        </div>
-        
-        <div class="btn-group" style="display: flex; gap: 1rem; margin-top: 2rem;">
-            <button class="btn btn-primary" onclick="window.print()" style="margin: 0;">Print Report</button>
-            <button class="btn btn-secondary" onclick="closeReport()" style="margin: 0;">Back to Results</button>
         </div>
     </div>
 
@@ -470,15 +545,38 @@
         let map = null;
         let marker = null;
         let globalRiskData = {};
+        let hazardLayers = {};
         
         // Initialize on load
         window.addEventListener('DOMContentLoaded', function() {
-            // Set test values
-            document.getElementById('projectName').value = 'Test Project';
-            document.getElementById('latitude').value = '25.7617';
-            document.getElementById('longitude').value = '-80.1918';
-            document.getElementById('projectValue').value = '5000000';
+            console.log('GeoCat NATCAT Platform initialized');
         });
+
+        // Geocode address to coordinates
+        async function geocodeAddress() {
+            const address = document.getElementById('address').value;
+            if (!address) {
+                alert('Please enter an address');
+                return;
+            }
+
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    document.getElementById('latitude').value = parseFloat(data[0].lat).toFixed(6);
+                    document.getElementById('longitude').value = parseFloat(data[0].lon).toFixed(6);
+                    alert('Coordinates found!');
+                } else {
+                    alert('Address not found. Please try a different format.');
+                }
+            } catch (error) {
+                console.error('Geocoding error:', error);
+                alert('Error finding coordinates. Please enter manually.');
+            }
+        }
         
         // Main analysis function
         async function analyzeRisk() {
@@ -501,37 +599,65 @@
                 if (!map) {
                     map = L.map('map').setView([lat, lon], 13);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: 'OpenStreetMap'
+                        attribution: '© OpenStreetMap contributors'
                     }).addTo(map);
                 } else {
                     map.setView([lat, lon], 13);
                     if (marker) map.removeLayer(marker);
                 }
                 
-                marker = L.marker([lat, lon]).addTo(map);
-                
-                // Get elevation data
-                const elevationData = await getElevation(lat, lon);
-                
-                // Get or parse Athenium data
+                marker = L.marker([lat, lon]).addTo(map)
+                    .bindPopup(`<b>${document.getElementById('projectName').value || 'Project Location'}</b><br>Lat: ${lat}<br>Lon: ${lon}`)
+                    .openPopup();
+
+                // Collect data from multiple sources
+                const dataSources = [];
+                let elevationData = null;
                 let atheniumData = null;
-                const apiKey = document.getElementById('apiKey').value;
+                let earthquakeData = null;
+                let wildfireData = null;
+
+                // Get elevation if layer enabled
+                if (document.getElementById('layerElevation').checked) {
+                    elevationData = await getElevation(lat, lon);
+                    if (elevationData !== null) dataSources.push('USGS Elevation');
+                }
+
+                // Get Athenium data if available
                 const manualData = document.getElementById('atheniumData').value;
-                
-                if (apiKey) {
-                    // Would call Athenium API here
-                    console.log('API key provided, would fetch data');
-                } else if (manualData) {
+                if (manualData) {
                     try {
                         atheniumData = JSON.parse(manualData);
+                        dataSources.push('Athenium NATCAT');
                     } catch (e) {
-                        console.warn('Invalid JSON data');
+                        console.warn('Invalid Athenium JSON data');
                     }
                 }
+
+                // Get earthquake data if layer enabled
+                if (document.getElementById('layerEarthquake').checked) {
+                    earthquakeData = await getEarthquakeRisk(lat, lon);
+                    if (earthquakeData) dataSources.push('USGS Earthquake');
+                }
+
+                // Get wildfire data if layer enabled (simulated for now)
+                if (document.getElementById('layerWildfire').checked) {
+                    wildfireData = estimateWildfireRisk(lat, lon, atheniumData);
+                    if (wildfireData) dataSources.push('Wildfire Analysis');
+                }
                 
-                // Calculate risk score
-                const riskScore = calculateRisk(elevationData, atheniumData);
+                // Calculate comprehensive risk score
+                const riskScore = calculateComprehensiveRisk(
+                    elevationData, 
+                    atheniumData, 
+                    earthquakeData,
+                    wildfireData
+                );
                 globalRiskData = riskScore;
+                
+                // Update data source indicator
+                document.getElementById('dataSource').textContent = 
+                    `Data sources: ${dataSources.join(', ') || 'Manual input only'}`;
                 
                 // Update UI
                 updateResults(riskScore);
@@ -557,51 +683,189 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 
-                if (data.value !== undefined) {
+                if (data.value !== undefined && data.value !== null) {
                     return parseFloat(data.value);
                 }
-                
                 return null;
             } catch (error) {
                 console.error('Elevation fetch error:', error);
                 return null;
             }
         }
+
+        // Get earthquake risk from USGS
+        async function getEarthquakeRisk(lat, lon) {
+            try {
+                // USGS Earthquake Hazards Program API
+                // Get seismic hazard for location (PGA - Peak Ground Acceleration)
+                const url = `https://earthquake.usgs.gov/ws/designmaps/asce7-16.json?latitude=${lat}&longitude=${lon}&riskCategory=III&siteClass=D&title=GeoCat`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.response && data.response.data) {
+                    const pga = data.response.data.pga;
+                    return {
+                        pga: pga,
+                        riskLevel: pga > 0.4 ? 'High' : pga > 0.2 ? 'Moderate' : pga > 0.1 ? 'Low' : 'Very Low',
+                        score: Math.min(10, Math.round(pga * 20))
+                    };
+                }
+                return null;
+            } catch (error) {
+                console.error('Earthquake data fetch error:', error);
+                return null;
+            }
+        }
+
+        // Estimate wildfire risk (enhanced with regional intelligence)
+        function estimateWildfireRisk(lat, lon, atheniumData) {
+            // Basic wildfire risk estimation based on location and Athenium data
+            let score = 5; // baseline
+            
+            // Western US has higher wildfire risk
+            if (lon < -100) {
+                score += 2;
+            }
+            
+            // Use Athenium wildfire data if available
+            if (atheniumData && atheniumData.wildfireScore) {
+                score = atheniumData.wildfireScore;
+            }
+            
+            // Adjust based on project type (vegetation-adjacent projects)
+            const projectType = document.getElementById('projectType').value;
+            if (projectType === 'infrastructure' || projectType === 'water') {
+                score -= 1;
+            }
+            
+            score = Math.max(0, Math.min(10, score));
+            
+            return {
+                score: score,
+                riskLevel: score >= 7 ? 'High' : score >= 4 ? 'Moderate' : 'Low'
+            };
+        }
         
-        // Calculate risk score
-        function calculateRisk(elevation, atheniumData) {
+        // Calculate comprehensive risk score
+        function calculateComprehensiveRisk(elevation, atheniumData, earthquakeData, wildfireData) {
             let baseRisk = 40;
+            const perils = {};
             
             // Elevation factor
             if (elevation !== null) {
-                if (elevation < 5) baseRisk += 20;
-                else if (elevation < 10) baseRisk += 10;
-                else if (elevation < 25) baseRisk += 5;
-                else if (elevation > 50) baseRisk -= 5;
+                if (elevation < 5) baseRisk += 25;
+                else if (elevation < 10) baseRisk += 15;
+                else if (elevation < 25) baseRisk += 8;
+                else if (elevation > 100) baseRisk -= 10;
             }
             
-            // Athenium factors
+            // Athenium weather factors
             let floodScore = 50;
             let windRisk = 50;
+            let hurricaneRisk = 0;
+            let rainfallScore = 50;
+            let tornadoScore = 50;
+            let hailScore = 50;
             
             if (atheniumData) {
-                const fluvial = atheniumData.fluvialRisk || 5;
-                const pluvial = atheniumData.pluvialRisk || 5;
-                floodScore = Math.max(fluvial, pluvial) * 10;
+                // Flood analysis
+                if (atheniumData.fluvialRisk !== undefined) {
+                    const fluvial = atheniumData.fluvialRisk;
+                    const pluvial = atheniumData.pluvialRisk || 5;
+                    floodScore = Math.max(fluvial, pluvial) * 10;
+                    
+                    if (fluvial >= 8) baseRisk += 15;
+                    else if (fluvial >= 6) baseRisk += 10;
+                    else if (fluvial >= 4) baseRisk += 5;
+                    
+                    perils.fluvialFlood = { score: fluvial, probability: fluvial * 10 };
+                    perils.pluvialFlood = { score: pluvial, probability: pluvial * 10 };
+                }
                 
-                if (fluvial >= 7) baseRisk += 10;
-                if (pluvial >= 7) baseRisk += 10;
+                // Weather perils from Athenium
+                if (atheniumData.rainfall !== undefined) {
+                    rainfallScore = atheniumData.rainfall * 10;
+                    if (atheniumData.rainfall >= 8) baseRisk += 12;
+                    perils.rainfall = { 
+                        score: atheniumData.rainfall, 
+                        probability: atheniumData.rainfallProbability || rainfallScore 
+                    };
+                }
                 
-                windRisk = atheniumData.windScore || 50;
+                if (atheniumData.hurricaneWind !== undefined) {
+                    hurricaneRisk = atheniumData.hurricaneWind * 10;
+                    if (atheniumData.hurricaneWind >= 8) baseRisk += 15;
+                    else if (atheniumData.hurricaneWind >= 6) baseRisk += 10;
+                    perils.hurricane = { 
+                        score: atheniumData.hurricaneWind, 
+                        probability: atheniumData.hurricaneProbability || hurricaneRisk 
+                    };
+                }
+                
+                if (atheniumData.tornado !== undefined) {
+                    tornadoScore = atheniumData.tornado * 10;
+                    if (atheniumData.tornado >= 6) baseRisk += 8;
+                    perils.tornado = { 
+                        score: atheniumData.tornado, 
+                        probability: atheniumData.tornadoProbability || tornadoScore 
+                    };
+                }
+                
+                if (atheniumData.wind !== undefined) {
+                    windRisk = atheniumData.wind * 10;
+                    if (atheniumData.wind >= 7) baseRisk += 8;
+                    perils.wind = { 
+                        score: atheniumData.wind, 
+                        probability: atheniumData.windProbability || windRisk 
+                    };
+                }
+                
+                if (atheniumData.hail !== undefined) {
+                    hailScore = atheniumData.hail * 10;
+                    if (atheniumData.hail >= 6) baseRisk += 6;
+                    perils.hail = { 
+                        score: atheniumData.hail, 
+                        probability: atheniumData.hailProbability || hailScore 
+                    };
+                }
+            }
+            
+            // Earthquake factor
+            let earthquakeScore = 0;
+            let earthquakeLevel = 'N/A';
+            if (earthquakeData) {
+                earthquakeScore = earthquakeData.score;
+                earthquakeLevel = earthquakeData.riskLevel;
+                if (earthquakeScore >= 7) baseRisk += 10;
+                else if (earthquakeScore >= 5) baseRisk += 5;
+                perils.earthquake = { 
+                    score: earthquakeScore, 
+                    pga: earthquakeData.pga,
+                    level: earthquakeLevel
+                };
+            }
+            
+            // Wildfire factor
+            let wildfireScore = 0;
+            if (wildfireData) {
+                wildfireScore = wildfireData.score;
+                if (wildfireScore >= 7) baseRisk += 8;
+                else if (wildfireScore >= 5) baseRisk += 4;
+                perils.wildfire = { 
+                    score: wildfireScore, 
+                    level: wildfireData.riskLevel 
+                };
             }
             
             // Project type multiplier
             const projectType = document.getElementById('projectType').value;
             const typeMultipliers = {
-                'bridge': 1.25,
-                'marine': 1.2,
+                'marine': 1.25,
+                'bridge': 1.2,
                 'water': 1.15,
                 'infrastructure': 1.1,
+                'healthcare': 1.08,
+                'industrial': 1.05,
                 'commercial': 1.0,
                 'residential': 0.95
             };
@@ -617,153 +881,306 @@
                 elevation: elevation,
                 floodScore: floodScore,
                 windRisk: windRisk,
-                earthquakeRisk: 'Low',
-                recommendations: generateRecommendations(finalScore)
+                hurricaneRisk: hurricaneRisk,
+                earthquakeRisk: earthquakeLevel,
+                earthquakeScore: earthquakeScore,
+                wildfireScore: wildfireScore,
+                perils: perils,
+                recommendations: generateRecommendations(finalScore, perils, atheniumData)
             };
         }
         
-        // Generate recommendations
-        function generateRecommendations(score) {
+        // Generate recommendations based on comprehensive analysis
+        function generateRecommendations(score, perils, atheniumData) {
             const recs = [];
             
+            // Overall risk level recommendations
             if (score > 75) {
-                recs.push('High Risk: Comprehensive coverage required');
-                recs.push('Weekly inspections recommended');
-                recs.push('Consider additional sublimits');
+                recs.push('HIGH RISK: Comprehensive coverage with enhanced sublimits required');
+                recs.push('Weekly site inspections and real-time monitoring recommended');
+                recs.push('Consider 5% or higher deductibles for CAT perils');
             } else if (score > 50) {
-                recs.push('Moderate Risk: Enhanced monitoring needed');
-                recs.push('Monthly inspections recommended');
-                recs.push('Standard sublimits appropriate');
+                recs.push('MODERATE RISK: Standard coverage with appropriate sublimits');
+                recs.push('Monthly inspections and quarterly risk reviews recommended');
+                recs.push('Standard deductible structure appropriate (3-5%)');
             } else {
-                recs.push('Low Risk: Standard coverage appropriate');
+                recs.push('LOW RISK: Competitive pricing available with standard terms');
                 recs.push('Quarterly inspections sufficient');
-                recs.push('Competitive pricing available');
+                recs.push('Lower deductibles may be appropriate (1-2%)');
+            }
+            
+            // Peril-specific recommendations
+            if (perils.hurricane && perils.hurricane.score >= 7) {
+                recs.push('Hurricane exposure HIGH: 5% windstorm deductible recommended, hurricane preparedness plan required');
+            }
+            
+            if (perils.fluvialFlood && perils.fluvialFlood.score >= 7) {
+                recs.push('Flood exposure EXTREME: Flood sublimit should be 25-50% of TIV with minimum $100K deductible');
+                recs.push('Site-specific flood mitigation plan and LAIIER water detection system recommended');
+            }
+            
+            if (perils.earthquake && perils.earthquake.score >= 7) {
+                recs.push('Earthquake risk HIGH: Consider earthquake sublimit of 50% TIV with appropriate deductible');
+            }
+            
+            if (perils.wildfire && perils.wildfire.score >= 7) {
+                recs.push('Wildfire risk HIGH: Enhanced fire prevention protocols and defensible space requirements');
+            }
+            
+            if (perils.tornado && perils.tornado.score >= 6) {
+                recs.push('Tornado exposure MODERATE-HIGH: Shelter-in-place protocols and severe weather monitoring required');
+            }
+            
+            // Athenium-specific insights
+            if (atheniumData) {
+                if (atheniumData.elevation !== undefined && atheniumData.elevation < 15) {
+                    recs.push('LOW ELEVATION ALERT: Site is within potential flood zone - verify FEMA maps and require flood certificate');
+                }
+                
+                if (atheniumData.heightAboveWater !== undefined && atheniumData.heightAboveWater < 10) {
+                    recs.push('CRITICAL: Site is less than 10 feet above nearest water body - enhanced flood controls mandatory');
+                }
             }
             
             return recs;
         }
         
-        // Update results display
+        // Update results display with comprehensive data
         function updateResults(riskData) {
+            // Main risk score
             document.getElementById('riskScore').textContent = riskData.score;
-            document.getElementById('elevation').textContent = riskData.elevation ? Math.round(riskData.elevation) : 'N/A';
-            document.getElementById('floodRisk').textContent = riskData.floodScore + '%';
-            document.getElementById('windRisk').textContent = riskData.windRisk + '%';
-            document.getElementById('earthquakeRisk').textContent = riskData.earthquakeRisk;
             
-            // Risk category
+            // Risk category with color coding
             let category = 'LOW RISK';
             let color = '#10b981';
             
             if (riskData.score > 75) {
                 category = 'HIGH RISK';
                 color = '#ef4444';
-            } else if (riskData.score > 50) {
-                category = 'MODERATE RISK';
+            } else if (riskData.score > 60) {
+                category = 'ELEVATED RISK';
                 color = '#f59e0b';
+            } else if (riskData.score > 45) {
+                category = 'MODERATE RISK';
+                color = '#3b82f6';
             }
             
             document.getElementById('riskCategory').textContent = category;
             document.querySelector('.risk-score-container').style.background = `linear-gradient(135deg, ${color}, ${color}dd)`;
             
-            // Recommendations
+            // Update data cards
+            document.getElementById('elevation').textContent = riskData.elevation ? Math.round(riskData.elevation) : 'N/A';
+            document.getElementById('floodRisk').textContent = Math.round(riskData.floodScore) + '%';
+            document.getElementById('windRisk').textContent = Math.round(riskData.windRisk) + '%';
+            document.getElementById('hurricaneRisk').textContent = Math.round(riskData.hurricaneRisk) + '%';
+            document.getElementById('earthquakeRisk').textContent = riskData.earthquakeRisk;
+            document.getElementById('wildfireRisk').textContent = riskData.wildfireScore ? riskData.wildfireScore + '/10' : 'N/A';
+            
+            // Update detailed peril analysis
+            const perilAnalysis = document.getElementById('perilAnalysis');
+            perilAnalysis.innerHTML = '<h3>Detailed Peril Assessment</h3>';
+            
+            if (riskData.perils && Object.keys(riskData.perils).length > 0) {
+                for (const [perilName, perilData] of Object.entries(riskData.perils)) {
+                    const perilItem = document.createElement('div');
+                    perilItem.className = 'peril-item';
+                    
+                    const score = perilData.score;
+                    let scoreClass = 'score-low';
+                    if (score >= 8) scoreClass = 'score-extreme';
+                    else if (score >= 6) scoreClass = 'score-high';
+                    else if (score >= 4) scoreClass = 'score-moderate';
+                    
+                    perilItem.innerHTML = `
+                        <div>
+                            <div class="peril-name">${perilName.toUpperCase().replace(/([A-Z])/g, ' $1').trim()}</div>
+                            <div style="font-size: 0.85rem; color: #6b7280;">
+                                ${perilData.probability ? `${perilData.probability.toFixed(1)}% annual probability` : ''}
+                                ${perilData.pga ? `PGA: ${perilData.pga.toFixed(2)}g` : ''}
+                                ${perilData.level ? `Level: ${perilData.level}` : ''}
+                            </div>
+                        </div>
+                        <div class="peril-score ${scoreClass}">${score}/10</div>
+                    `;
+                    
+                    perilAnalysis.appendChild(perilItem);
+                }
+            } else {
+                perilAnalysis.innerHTML += '<p style="color: #6b7280;">No detailed peril data available. Upload Athenium JSON for comprehensive analysis.</p>';
+            }
+            
+            // Update recommendations
             const recList = document.getElementById('recommendations');
             recList.innerHTML = '';
             riskData.recommendations.forEach(rec => {
                 const li = document.createElement('li');
-                li.style.padding = '0.5rem 0';
                 li.textContent = rec;
                 recList.appendChild(li);
             });
         }
         
-        // Show report
-        function showReport() {
-            const reportSection = document.getElementById('reportSection');
-            reportSection.classList.add('visible');
+        // Generate comprehensive report
+        function generateReport() {
+            if (!globalRiskData.score) {
+                alert('Please run analysis first');
+                return;
+            }
             
-            // Populate report
-            document.getElementById('reportDate').textContent = new Date().toLocaleString();
-            document.getElementById('rptProjectName').textContent = document.getElementById('projectName').value;
-            document.getElementById('rptAddress').textContent = document.getElementById('address').value || 'N/A';
-            document.getElementById('rptCoords').textContent = document.getElementById('latitude').value + ', ' + document.getElementById('longitude').value;
-            document.getElementById('rptType').textContent = document.getElementById('projectType').value;
-            document.getElementById('rptValue').textContent = '$' + parseInt(document.getElementById('projectValue').value).toLocaleString();
+            // Create detailed report object
+            const report = {
+                metadata: {
+                    projectName: document.getElementById('projectName').value || 'Unnamed Project',
+                    address: document.getElementById('address').value || 'No address provided',
+                    coordinates: {
+                        latitude: document.getElementById('latitude').value,
+                        longitude: document.getElementById('longitude').value
+                    },
+                    projectType: document.getElementById('projectType').value,
+                    constructionType: document.getElementById('constructionType').value,
+                    projectValue: document.getElementById('projectValue').value,
+                    analysisDate: new Date().toISOString(),
+                    platform: 'GeoCat NATCAT Intelligence Platform'
+                },
+                riskAssessment: globalRiskData,
+                dataSources: document.getElementById('dataSource').textContent
+            };
             
-            document.getElementById('rptScore').textContent = globalRiskData.score;
-            document.getElementById('rptElevation').textContent = globalRiskData.elevation ? Math.round(globalRiskData.elevation) + ' ft' : 'N/A';
-            document.getElementById('rptFlood').textContent = globalRiskData.floodScore + '%';
-            document.getElementById('rptWind').textContent = globalRiskData.windRisk + '%';
-            document.getElementById('rptEarthquake').textContent = globalRiskData.earthquakeRisk;
-            
-            const rptRecList = document.getElementById('rptRecommendations');
-            rptRecList.innerHTML = '';
-            globalRiskData.recommendations.forEach(rec => {
-                const li = document.createElement('li');
-                li.style.padding = '0.5rem 0';
-                li.textContent = rec;
-                rptRecList.appendChild(li);
-            });
-            
-            reportSection.scrollIntoView({ behavior: 'smooth' });
+            console.log('Report generated:', report);
+            alert('Report ready! Use Download PDF or Export JSON buttons.');
         }
         
-        // Close report
-        function closeReport() {
-            document.getElementById('reportSection').classList.remove('visible');
-        }
-        
-        // Generate PDF
-        function generatePDF() {
+        // Download PDF report
+        function downloadPDF() {
+            if (!globalRiskData.score) {
+                alert('Please run analysis first');
+                return;
+            }
+            
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
             // Title
             doc.setFontSize(20);
-            doc.text('GeoCat Risk Assessment Report', 105, 20, { align: 'center' });
+            doc.setFont(undefined, 'bold');
+            doc.text('GeoCat NATCAT Risk Assessment', 105, 20, { align: 'center' });
             
-            // Date
             doc.setFontSize(10);
-            doc.text('Generated: ' + new Date().toLocaleString(), 105, 30, { align: 'center' });
+            doc.setFont(undefined, 'normal');
+            doc.text('NATCAT Risk Intelligence Platform', 105, 28, { align: 'center' });
+            doc.text('Generated: ' + new Date().toLocaleString(), 105, 34, { align: 'center' });
             
             // Project info
             doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
             let y = 50;
             
-            doc.text('Project: ' + document.getElementById('projectName').value, 20, y);
-            y += 10;
-            doc.text('Location: ' + document.getElementById('latitude').value + ', ' + document.getElementById('longitude').value, 20, y);
-            y += 10;
-            doc.text('Value: $' + parseInt(document.getElementById('projectValue').value).toLocaleString(), 20, y);
-            y += 20;
+            doc.text('PROJECT INFORMATION', 20, y);
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(10);
+            y += 8;
+            
+            doc.text('Project: ' + (document.getElementById('projectName').value || 'N/A'), 20, y);
+            y += 6;
+            doc.text('Address: ' + (document.getElementById('address').value || 'N/A'), 20, y);
+            y += 6;
+            doc.text('Coordinates: ' + document.getElementById('latitude').value + ', ' + document.getElementById('longitude').value, 20, y);
+            y += 6;
+            doc.text('Type: ' + document.getElementById('projectType').value, 20, y);
+            y += 6;
+            doc.text('Value: $' + (parseInt(document.getElementById('projectValue').value) || 0).toLocaleString(), 20, y);
+            y += 12;
             
             // Risk score
-            doc.setFontSize(16);
-            doc.text('Risk Score: ' + globalRiskData.score, 20, y);
-            y += 15;
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('RISK ASSESSMENT', 20, y);
+            y += 8;
             
-            // Details
-            doc.setFontSize(11);
+            doc.setFontSize(16);
+            doc.text('Composite Risk Score: ' + globalRiskData.score, 20, y);
+            y += 10;
+            
+            // Risk factors
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
             doc.text('Elevation: ' + (globalRiskData.elevation ? Math.round(globalRiskData.elevation) + ' ft' : 'N/A'), 20, y);
-            y += 8;
-            doc.text('Flood Risk: ' + globalRiskData.floodScore + '%', 20, y);
-            y += 8;
-            doc.text('Wind Risk: ' + globalRiskData.windRisk + '%', 20, y);
-            y += 15;
+            y += 6;
+            doc.text('Flood Risk: ' + Math.round(globalRiskData.floodScore) + '%', 20, y);
+            y += 6;
+            doc.text('Wind Risk: ' + Math.round(globalRiskData.windRisk) + '%', 20, y);
+            y += 6;
+            doc.text('Hurricane Risk: ' + Math.round(globalRiskData.hurricaneRisk) + '%', 20, y);
+            y += 6;
+            doc.text('Earthquake: ' + globalRiskData.earthquakeRisk, 20, y);
+            y += 6;
+            doc.text('Wildfire: ' + (globalRiskData.wildfireScore ? globalRiskData.wildfireScore + '/10' : 'N/A'), 20, y);
+            y += 12;
             
             // Recommendations
             doc.setFontSize(12);
-            doc.text('Recommendations:', 20, y);
-            y += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text('UNDERWRITING RECOMMENDATIONS', 20, y);
+            y += 8;
             
-            doc.setFontSize(10);
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
             globalRiskData.recommendations.forEach(rec => {
-                doc.text('- ' + rec, 25, y);
-                y += 8;
+                const lines = doc.splitTextToSize('• ' + rec, 170);
+                lines.forEach(line => {
+                    if (y > 280) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(line, 20, y);
+                    y += 5;
+                });
             });
             
+            // Data sources
+            y += 8;
+            doc.setFontSize(8);
+            doc.setTextColor(100);
+            doc.text(document.getElementById('dataSource').textContent, 20, y);
+            
             // Save
-            doc.save('GeoCat_Report_' + document.getElementById('projectName').value + '.pdf');
+            const projectName = document.getElementById('projectName').value || 'Project';
+            doc.save('GeoCat_Report_' + projectName.replace(/[^a-z0-9]/gi, '_') + '.pdf');
+        }
+        
+        // Export JSON data
+        function exportJSON() {
+            if (!globalRiskData.score) {
+                alert('Please run analysis first');
+                return;
+            }
+            
+            const exportData = {
+                metadata: {
+                    projectName: document.getElementById('projectName').value || 'Unnamed Project',
+                    address: document.getElementById('address').value,
+                    coordinates: {
+                        latitude: parseFloat(document.getElementById('latitude').value),
+                        longitude: parseFloat(document.getElementById('longitude').value)
+                    },
+                    projectType: document.getElementById('projectType').value,
+                    constructionType: document.getElementById('constructionType').value,
+                    projectValue: parseInt(document.getElementById('projectValue').value) || 0,
+                    analysisDate: new Date().toISOString(),
+                    platform: 'GeoCat NATCAT Intelligence Platform v2.0'
+                },
+                riskAssessment: globalRiskData,
+                dataSources: document.getElementById('dataSource').textContent
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'GeoCat_Analysis_' + (exportData.metadata.projectName.replace(/[^a-z0-9]/gi, '_')) + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
         
         // Reset form
@@ -776,6 +1193,7 @@
             document.getElementById('atheniumData').value = '';
             document.getElementById('apiKey').value = '';
             document.getElementById('results').style.display = 'none';
+            globalRiskData = {};
         }
     </script>
 </body>
