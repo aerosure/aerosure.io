@@ -307,35 +307,35 @@
             </div>
 
             <div class="form-group" id="structuralComplexityGroup">
-                <label style="opacity: 0.5;">Structural Complexity</label>
-                <div style="display: flex; gap: 1rem; margin-top: 0.5rem; opacity: 0.5;">
+                <label>Structural Complexity</label>
+                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
                     <label style="display: flex; align-items: center; font-weight: normal;">
-                        <input type="radio" name="structuralWork" value="non-structural" checked disabled style="width: auto; margin-right: 0.5rem;">
+                        <input type="radio" name="structuralWork" value="non-structural" checked style="width: auto; margin-right: 0.5rem;">
                         Non-Structural
                     </label>
                     <label style="display: flex; align-items: center; font-weight: normal;">
-                        <input type="radio" name="structuralWork" value="structural" disabled style="width: auto; margin-right: 0.5rem;">
+                        <input type="radio" name="structuralWork" value="structural" style="width: auto; margin-right: 0.5rem;">
                         Structural Work
                     </label>
                 </div>
-                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem; opacity: 0.5;">
+                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">
                     Structural: foundation, framing, load-bearing modifications, shoring
                 </div>
             </div>
 
             <div class="form-group" id="activeOpsGroup">
-                <label style="opacity: 0.5;">Active Operations On-Site</label>
-                <div style="display: flex; gap: 1rem; margin-top: 0.5rem; opacity: 0.5;">
+                <label>Active Operations On-Site</label>
+                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
                     <label style="display: flex; align-items: center; font-weight: normal;">
-                        <input type="radio" name="activeOps" value="no" checked disabled style="width: auto; margin-right: 0.5rem;">
+                        <input type="radio" name="activeOps" value="no" checked style="width: auto; margin-right: 0.5rem;">
                         No Active Operations
                     </label>
                     <label style="display: flex; align-items: center; font-weight: normal;">
-                        <input type="radio" name="activeOps" value="yes" disabled style="width: auto; margin-right: 0.5rem;">
+                        <input type="radio" name="activeOps" value="yes" style="width: auto; margin-right: 0.5rem;">
                         Active Operations
                     </label>
                 </div>
-                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem; opacity: 0.5;">
+                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">
                     Does project involve construction within/adjacent to operating facility?
                 </div>
             </div>
@@ -891,6 +891,11 @@
             
             globalRiskData = {};
         }
+        
+        // Run on page load to set initial state
+        window.addEventListener('DOMContentLoaded', function() {
+            toggleConstructionFields();
+        });
     </script>
 </body>
 </html>
