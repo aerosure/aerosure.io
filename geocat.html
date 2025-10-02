@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoCat - NATCAT Risk Intelligence Platform</title>
+    <title>CatZone - NATCAT Risk Intelligence Platform</title>
     
-    <!-- External Libraries -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -25,7 +24,6 @@
             --danger: #ef4444;
             --dark: #1f2937;
             --light: #f3f4f6;
-            --white: #ffffff;
         }
 
         body {
@@ -42,36 +40,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .nav-link {
-            padding: 0.5rem 1rem;
-            background: var(--light);
-            color: var(--primary);
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-
-        .nav-link:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .nav-link.active {
-            background: var(--primary);
-            color: white;
         }
 
         .logo {
@@ -82,12 +50,27 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .nav-menu {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            background: var(--light);
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
         .container {
             max-width: 1800px;
             margin: 2rem auto;
             padding: 0 2rem;
             display: grid;
-            grid-template-columns: 400px 1fr;
+            grid-template-columns: 420px 1fr;
             gap: 2rem;
         }
 
@@ -106,7 +89,6 @@
             border-radius: 12px;
             padding: 2rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            min-height: 600px;
         }
 
         .form-group {
@@ -117,7 +99,6 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
-            color: var(--dark);
             font-size: 0.9rem;
         }
 
@@ -129,14 +110,8 @@
             font-size: 1rem;
         }
 
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
         textarea {
-            min-height: 100px;
-            resize: vertical;
+            min-height: 120px;
             font-family: monospace;
             font-size: 0.85rem;
         }
@@ -149,7 +124,6 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
             margin-bottom: 0.5rem;
         }
 
@@ -158,28 +132,29 @@
             color: white;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(30, 60, 114, 0.3);
-        }
-
         .btn-secondary {
             background: white;
             color: var(--primary);
             border: 2px solid var(--primary);
         }
 
-        .btn-secondary:hover {
-            background: var(--light);
+        .hazard-layers {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
         }
 
-        .btn-success {
-            background: var(--success);
-            color: white;
+        .layer-toggle {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        .btn-success:hover {
-            background: #059669;
+        .layer-toggle input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
         }
 
         #map {
@@ -187,7 +162,31 @@
             height: 500px;
             border-radius: 8px;
             margin-bottom: 2rem;
-            border: 2px solid #e5e7eb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid var(--light);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .risk-score-container {
@@ -228,132 +227,13 @@
         .data-card .value {
             font-size: 1.8rem;
             font-weight: 700;
-            color: var(--dark);
         }
-
-        .data-card .label {
-            font-size: 0.85rem;
-            color: #6b7280;
-            margin-top: 0.25rem;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 3rem;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            border: 3px solid var(--light);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .hazard-layers {
-            background: #f9fafb;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .hazard-layers h4 {
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
-            color: var(--secondary);
-        }
-
-        .layer-toggle {
-            display: flex;
-            align-items: center;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-
-        .layer-toggle:hover {
-            background: #e5e7eb;
-        }
-
-        .layer-toggle input[type="checkbox"] {
-            width: auto;
-            margin-right: 0.5rem;
-        }
-
-        .layer-toggle label {
-            margin: 0;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.85rem;
-        }
-
-        .peril-analysis {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .peril-analysis h3 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            color: var(--secondary);
-        }
-
-        .peril-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            background: var(--light);
-            border-radius: 6px;
-        }
-
-        .peril-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .peril-score {
-            font-weight: 700;
-            font-size: 1.1rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            color: white;
-        }
-
-        .score-low { background: #10b981; }
-        .score-moderate { background: #f59e0b; }
-        .score-high { background: #ef4444; }
-        .score-extreme { background: #7c3aed; }
 
         .recommendations {
             background: #fef3c7;
             border: 2px solid #fbbf24;
             border-radius: 8px;
             padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .recommendations h3 {
-            color: #92400e;
-            margin-bottom: 1rem;
         }
 
         .recommendations ul {
@@ -363,42 +243,19 @@
 
         .recommendations li {
             padding: 0.5rem 0;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-
-        .recommendations li:before {
-            content: "→";
-            position: absolute;
-            left: 0;
-            font-weight: 700;
-            color: #92400e;
-        }
-
-        .data-source-indicator {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-top: 0.5rem;
-            font-style: italic;
-        }
-
-        @media (max-width: 1200px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <div>
-            <div class="logo">GeoCat</div>
+            <div class="logo">CatZone</div>
             <div style="color: var(--secondary); font-weight: 600;">NATCAT Risk Intelligence Platform</div>
         </div>
         <div class="nav-menu">
-            <a href="#" class="nav-link active" onclick="return false;">🏠 Main Analysis</a>
-            <a href="javascript:void(0)" class="nav-link" onclick="openKarstMap()">🕳️ Karst Map</a>
-            <a href="https://www.aerosure.io" class="nav-link" target="_blank">✈️ Aerosure</a>
+            <a href="#" class="nav-link">Main Analysis</a>
+            <a href="javascript:void(0)" class="nav-link" onclick="alert('Karst Map Integration Coming Soon')">Karst Map</a>
+            <a href="https://www.aerosure.io" class="nav-link" target="_blank">External Tools</a>
         </div>
     </div>
 
@@ -443,21 +300,21 @@
 
             <div class="form-group">
                 <label>Construction Type</label>
-                <select id="constructionType" onchange="toggleRenovationOptions()">
-                    <option value="renovation">Renovation/Rehab</option>
+                <select id="constructionType">
                     <option value="new">New Construction</option>
+                    <option value="renovation">Renovation/Rehab</option>
                 </select>
             </div>
 
-            <div class="form-group" id="structuralComplexityGroup">
+            <div class="form-group">
                 <label>Structural Complexity</label>
                 <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                    <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
-                        <input type="radio" name="structuralWork" id="nonStructural" value="non-structural" checked style="width: auto; margin-right: 0.5rem;">
+                    <label style="display: flex; align-items: center; font-weight: normal;">
+                        <input type="radio" name="structuralWork" value="non-structural" checked style="width: auto; margin-right: 0.5rem;">
                         Non-Structural
                     </label>
-                    <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
-                        <input type="radio" name="structuralWork" id="structural" value="structural" style="width: auto; margin-right: 0.5rem;">
+                    <label style="display: flex; align-items: center; font-weight: normal;">
+                        <input type="radio" name="structuralWork" value="structural" style="width: auto; margin-right: 0.5rem;">
                         Structural Work
                     </label>
                 </div>
@@ -466,15 +323,15 @@
                 </div>
             </div>
 
-            <div class="form-group" id="activeOpsGroup">
+            <div class="form-group">
                 <label>Active Operations On-Site</label>
                 <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                    <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
-                        <input type="radio" name="activeOps" id="activeOpsNo" value="no" checked style="width: auto; margin-right: 0.5rem;">
+                    <label style="display: flex; align-items: center; font-weight: normal;">
+                        <input type="radio" name="activeOps" value="no" checked style="width: auto; margin-right: 0.5rem;">
                         No Active Operations
                     </label>
-                    <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;">
-                        <input type="radio" name="activeOps" id="activeOpsYes" value="yes" style="width: auto; margin-right: 0.5rem;">
+                    <label style="display: flex; align-items: center; font-weight: normal;">
+                        <input type="radio" name="activeOps" value="yes" style="width: auto; margin-right: 0.5rem;">
                         Active Operations
                     </label>
                 </div>
@@ -504,7 +361,7 @@
                 </div>
                 <div class="layer-toggle">
                     <input type="checkbox" id="layerEarthquake">
-                    <label for="layerEarthquake">Earthquake (USGS)</label>
+                    <label for="layerEarthquake">Earthquake</label>
                 </div>
                 <div class="layer-toggle">
                     <input type="checkbox" id="layerWildfire">
@@ -512,7 +369,7 @@
                 </div>
                 <div class="layer-toggle">
                     <input type="checkbox" id="layerKarst" checked>
-                    <label for="layerKarst">Karst/Sinkhole Risk</label>
+                    <label for="layerKarst">Karst/Sinkhole</label>
                 </div>
             </div>
 
@@ -523,89 +380,66 @@
 
             <div class="form-group">
                 <label>Athenium Data (Manual JSON)</label>
-                <textarea id="atheniumData" placeholder="Paste JSON data from Claude/Athenium analysis"></textarea>
+                <textarea id="atheniumData" placeholder="Paste JSON data from Athenium"></textarea>
             </div>
 
             <button class="btn btn-primary" onclick="analyzeRisk()">Analyze Risk</button>
-            <button class="btn btn-success" onclick="generateReport()">Generate Report</button>
             <button class="btn btn-secondary" onclick="resetForm()">Clear Form</button>
         </div>
 
         <div class="results-panel">
             <div id="loading" class="loading">
                 <div class="spinner"></div>
-                <p>Analyzing risk factors across multiple data sources...</p>
+                <p>Analyzing risk factors...</p>
             </div>
 
             <div id="results" style="display: none;">
                 <div id="map"></div>
                 
                 <div class="risk-score-container">
-                    <div style="font-size: 1.2rem; opacity: 0.9;">Composite Risk Score</div>
+                    <div style="font-size: 1.2rem;">Composite Risk Score</div>
                     <div class="risk-score" id="riskScore">--</div>
-                    <div id="riskCategory" style="font-size: 1rem;">--</div>
-                    <div class="data-source-indicator" id="dataSource">Data sources loading...</div>
+                    <div id="riskCategory">--</div>
                 </div>
 
                 <div class="data-grid">
                     <div class="data-card">
                         <h3>ELEVATION</h3>
                         <div class="value" id="elevation">--</div>
-                        <div class="label">feet above sea level</div>
                     </div>
-                    
                     <div class="data-card">
                         <h3>FLOOD RISK</h3>
                         <div class="value" id="floodRisk">--</div>
-                        <div class="label">Composite Score</div>
                     </div>
-                    
                     <div class="data-card">
                         <h3>WIND RISK</h3>
                         <div class="value" id="windRisk">--</div>
-                        <div class="label">Annual Probability</div>
                     </div>
-                    
                     <div class="data-card">
                         <h3>HURRICANE</h3>
                         <div class="value" id="hurricaneRisk">--</div>
-                        <div class="label">Annual Probability</div>
                     </div>
-
                     <div class="data-card">
-                        <h3>EARTHQUAKE</h3>
-                        <div class="value" id="earthquakeRisk">--</div>
-                        <div class="label">PGA Risk Level</div>
+                        <h3>TORNADO</h3>
+                        <div class="value" id="tornadoRisk">--</div>
                     </div>
-
+                    <div class="data-card">
+                        <h3>HAIL</h3>
+                        <div class="value" id="hailRisk">--</div>
+                    </div>
                     <div class="data-card">
                         <h3>WILDFIRE</h3>
                         <div class="value" id="wildfireRisk">--</div>
-                        <div class="label">Risk Score</div>
                     </div>
-
                     <div class="data-card">
-                        <h3>KARST/SINKHOLE</h3>
+                        <h3>KARST</h3>
                         <div class="value" id="karstRisk">--</div>
-                        <div class="label">Risk Score</div>
                     </div>
-                </div>
-
-                <div class="peril-analysis" id="perilAnalysis">
-                    <h3>Detailed Peril Assessment</h3>
                 </div>
 
                 <div class="recommendations">
-                    <h3>Underwriting Recommendations</h3>
-                    <ul id="recommendations">
-                        <li>Loading recommendations...</li>
-                    </ul>
-                </div>
-
-                <div style="margin-top: 1rem; display: flex; gap: 1rem;">
-                    <button class="btn btn-primary" onclick="openPrintView()" style="margin: 0;">Print Report (Best Quality)</button>
-                    <button class="btn btn-secondary" onclick="downloadPDF()" style="margin: 0;">Quick PDF Export</button>
-                    <button class="btn btn-secondary" onclick="exportJSON()" style="margin: 0;">Export JSON</button>
+                    <h3>Recommendations</h3>
+                    <ul id="recommendations"></ul>
                 </div>
             </div>
         </div>
@@ -616,44 +450,6 @@
         let marker = null;
         let globalRiskData = {};
         
-        window.addEventListener('DOMContentLoaded', function() {
-            console.log('GeoCat NATCAT Platform initialized');
-            toggleRenovationOptions(); // Initialize on load
-        });
-
-        function toggleRenovationOptions() {
-            const constructionType = document.getElementById('constructionType').value;
-            const isRenovation = constructionType === 'renovation';
-            
-            // Get the radio buttons
-            const structuralRadios = document.querySelectorAll('input[name="structuralWork"]');
-            const activeOpsRadios = document.querySelectorAll('input[name="activeOps"]');
-            
-            // Get the form groups
-            const structuralGroup = document.getElementById('structuralComplexityGroup');
-            const activeOpsGroup = document.getElementById('activeOpsGroup');
-            
-            if (isRenovation) {
-                // Enable for renovation/rehab
-                structuralRadios.forEach(radio => radio.disabled = false);
-                activeOpsRadios.forEach(radio => radio.disabled = false);
-                structuralGroup.style.opacity = '1';
-                activeOpsGroup.style.opacity = '1';
-            } else {
-                // Disable for new construction and reset to defaults
-                structuralRadios.forEach(radio => {
-                    radio.disabled = true;
-                    if (radio.value === 'non-structural') radio.checked = true;
-                });
-                activeOpsRadios.forEach(radio => {
-                    radio.disabled = true;
-                    if (radio.value === 'no') radio.checked = true;
-                });
-                structuralGroup.style.opacity = '0.5';
-                activeOpsGroup.style.opacity = '0.5';
-            }
-        }
-
         async function geocodeAddress() {
             const address = document.getElementById('address').value;
             if (!address) {
@@ -670,12 +466,10 @@
                     document.getElementById('latitude').value = parseFloat(data[0].lat).toFixed(6);
                     document.getElementById('longitude').value = parseFloat(data[0].lon).toFixed(6);
                     alert('Coordinates found!');
-                } else {
-                    alert('Address not found. Please try a different format.');
                 }
             } catch (error) {
                 console.error('Geocoding error:', error);
-                alert('Error finding coordinates. Please enter manually.');
+                alert('Error finding coordinates');
             }
         }
         
@@ -696,66 +490,37 @@
                 
                 if (!map) {
                     map = L.map('map').setView([lat, lon], 13);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors'
-                    }).addTo(map);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                 } else {
                     map.setView([lat, lon], 13);
                     if (marker) map.removeLayer(marker);
                 }
                 
-                marker = L.marker([lat, lon]).addTo(map)
-                    .bindPopup(`<b>${document.getElementById('projectName').value || 'Project Location'}</b><br>Lat: ${lat}<br>Lon: ${lon}`)
-                    .openPopup();
+                marker = L.marker([lat, lon]).addTo(map);
 
-                const dataSources = [];
                 let elevationData = null;
                 let atheniumData = null;
-                let earthquakeData = null;
-                let wildfireData = null;
+                let karstData = null;
 
                 if (document.getElementById('layerElevation').checked) {
                     elevationData = await getElevation(lat, lon);
-                    if (elevationData !== null) dataSources.push('USGS Elevation');
                 }
 
                 const manualData = document.getElementById('atheniumData').value;
                 if (manualData) {
                     try {
                         atheniumData = JSON.parse(manualData);
-                        dataSources.push('Athenium NATCAT');
                     } catch (e) {
-                        console.warn('Invalid Athenium JSON data');
+                        console.warn('Invalid JSON');
                     }
                 }
 
-                if (document.getElementById('layerEarthquake').checked) {
-                    earthquakeData = await getEarthquakeRisk(lat, lon);
-                    if (earthquakeData) dataSources.push('USGS Earthquake');
-                }
-
-                if (document.getElementById('layerWildfire').checked) {
-                    wildfireData = estimateWildfireRisk(lat, lon, atheniumData);
-                    if (wildfireData) dataSources.push('Wildfire Analysis');
-                }
-
-                let karstData = null;
                 if (document.getElementById('layerKarst').checked) {
                     karstData = assessKarstRisk(lat, lon);
-                    if (karstData) dataSources.push('USGS Karst/Sinkhole');
                 }
                 
-                const riskScore = calculateComprehensiveRisk(
-                    elevationData, 
-                    atheniumData, 
-                    earthquakeData,
-                    wildfireData,
-                    karstData
-                );
+                const riskScore = calculateRisk(elevationData, atheniumData, karstData);
                 globalRiskData = riskScore;
-                
-                document.getElementById('dataSource').textContent = 
-                    `Data sources: ${dataSources.join(', ') || 'Manual input only'}`;
                 
                 updateResults(riskScore);
                 
@@ -784,298 +549,88 @@
                 }
                 return null;
             } catch (error) {
-                console.error('Elevation fetch error:', error);
+                console.error('Elevation error:', error);
                 return null;
             }
-        }
-
-        async function getEarthquakeRisk(lat, lon) {
-            try {
-                const url = `https://earthquake.usgs.gov/ws/designmaps/asce7-16.json?latitude=${lat}&longitude=${lon}&riskCategory=III&siteClass=D&title=GeoCat`;
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data.response && data.response.data) {
-                    const pga = data.response.data.pga;
-                    
-                    // CORRECTED SCORING: Realistic earthquake risk tiers
-                    let score, riskLevel;
-                    if (pga >= 0.8) {
-                        score = 10;
-                        riskLevel = 'Extreme';
-                    } else if (pga >= 0.6) {
-                        score = 8;
-                        riskLevel = 'High';
-                    } else if (pga >= 0.5) {
-                        score = 7;
-                        riskLevel = 'High';
-                    } else if (pga >= 0.4) {
-                        score = 6;
-                        riskLevel = 'Moderate-High';
-                    } else if (pga >= 0.3) {
-                        score = 5;
-                        riskLevel = 'Moderate';
-                    } else if (pga >= 0.2) {
-                        score = 4;
-                        riskLevel = 'Moderate-Low';
-                    } else if (pga >= 0.1) {
-                        score = 2;
-                        riskLevel = 'Low';
-                    } else {
-                        score = 1;
-                        riskLevel = 'Very Low';
-                    }
-                    
-                    return {
-                        pga: pga,
-                        riskLevel: riskLevel,
-                        score: score
-                    };
-                }
-                return null;
-            } catch (error) {
-                console.error('Earthquake data fetch error:', error);
-                return null;
-            }
-        }
-
-        function estimateWildfireRisk(lat, lon, atheniumData) {
-            let score = 5;
-            
-            if (lon < -100) {
-                score += 2;
-            }
-            
-            if (atheniumData && atheniumData.wildfireScore) {
-                score = atheniumData.wildfireScore;
-            }
-            
-            const projectType = document.getElementById('projectType').value;
-            if (projectType === 'infrastructure' || projectType === 'water') {
-                score -= 1;
-            }
-            
-            score = Math.max(0, Math.min(10, score));
-            
-            return {
-                score: score,
-                riskLevel: score >= 7 ? 'High' : score >= 4 ? 'Moderate' : 'Low'
-            };
         }
 
         function assessKarstRisk(lat, lon) {
-            let score = 0;
-            let riskLevel = 'Very Low';
-            let details = [];
-            
             const karstRegions = [
-                { state: 'FL', name: 'Florida', baseScore: 8, lat: [24, 31], lon: [-87, -80], note: 'Extensive limestone, cover collapse sinkholes common' },
-                { state: 'TN', name: 'Tennessee', baseScore: 8, lat: [35, 37], lon: [-90, -81.5], note: 'Nashville basin, Eastern Highland Rim - active sinkhole development. Knoxville area in karst belt' },
-                { state: 'KY', name: 'Kentucky', baseScore: 7, lat: [36.5, 39.1], lon: [-89.5, -82], note: 'Mammoth Cave region, extensive karst terrain' },
-                { state: 'MO', name: 'Missouri', baseScore: 6, lat: [36, 40.5], lon: [-95.5, -89], note: 'Ozark Plateau karst, Springfield area' },
-                { state: 'PA', name: 'Pennsylvania', baseScore: 6, lat: [39.7, 42], lon: [-80.5, -74.5], note: 'Appalachian karst belt' },
-                { state: 'TX', name: 'Texas', baseScore: 5, lat: [29.5, 33.5], lon: [-101, -94], note: 'Edwards Plateau, Central Texas karst' },
-                { state: 'IN', name: 'Indiana', baseScore: 5, lat: [37.8, 41.8], lon: [-88, -84.8], note: 'Southern Indiana karst belt' },
-                { state: 'AL', name: 'Alabama', baseScore: 5, lat: [30.2, 35], lon: [-88.5, -84.9], note: 'Northern Alabama karst' },
-                { state: 'VA', name: 'Virginia', baseScore: 5, lat: [36.5, 39.5], lon: [-83.7, -75.2], note: 'Shenandoah Valley karst' },
-                { state: 'WV', name: 'West Virginia', baseScore: 5, lat: [37.2, 40.6], lon: [-82.6, -77.7], note: 'Greenbrier Valley karst' }
+                { name: 'Florida', baseScore: 8, lat: [24, 31], lon: [-87, -80] },
+                { name: 'Tennessee', baseScore: 8, lat: [35, 37], lon: [-90, -81.5] },
+                { name: 'Kentucky', baseScore: 7, lat: [36.5, 39.1], lon: [-89.5, -82] }
             ];
             
             for (const region of karstRegions) {
                 if (lat >= region.lat[0] && lat <= region.lat[1] && 
                     lon >= region.lon[0] && lon <= region.lon[1]) {
-                    score = region.baseScore;
-                    details.push(`Located in ${region.name} karst region`);
-                    details.push(region.note);
-                    break;
+                    return {
+                        score: region.baseScore,
+                        region: region.name
+                    };
                 }
             }
             
-            if (score > 0) {
-                score += 1;
-                details.push('Urban development may increase sinkhole risk');
-            }
-            
-            if (score >= 8) {
-                riskLevel = 'Extreme';
-            } else if (score >= 6) {
-                riskLevel = 'High';
-            } else if (score >= 4) {
-                riskLevel = 'Moderate';
-            } else if (score >= 2) {
-                riskLevel = 'Low';
-            } else {
-                riskLevel = 'Very Low';
-            }
-            
-            return {
-                score: Math.min(10, score),
-                riskLevel: riskLevel,
-                details: details,
-                mapLink: score > 0
-            };
+            return { score: 0, region: 'None' };
         }
         
-        function calculateComprehensiveRisk(elevation, atheniumData, earthquakeData, wildfireData, karstData) {
+        function calculateRisk(elevation, atheniumData, karstData) {
             let baseRisk = 30;
-            const perils = {};
             
             if (elevation !== null) {
-                if (elevation < 5) baseRisk += 15;
-                else if (elevation < 10) baseRisk += 10;
-                else if (elevation < 15) baseRisk += 5;
+                if (elevation < 10) baseRisk += 15;
                 else if (elevation > 50) baseRisk -= 5;
             }
             
-            let maxPerilScore = 0;
-            let perilCount = 0;
-            let perilSum = 0;
-            
-            let floodScore = 50;
-            let windRisk = 50;
-            let hurricaneRisk = 0;
-            let rainfallScore = 50;
-            let tornadoScore = 50;
-            let hailScore = 50;
+            let floodScore = 5;
+            let hurricaneRisk = 5;
+            let windRisk = 5;
+            let tornadoRisk = 5;
+            let hailRisk = 5;
+            let wildfireRisk = 5;
+            let karstScore = 0;
             
             if (atheniumData) {
                 if (atheniumData.fluvialRisk !== undefined) {
                     const fluvial = atheniumData.fluvialRisk;
                     const pluvial = atheniumData.pluvialRisk || 5;
-                    floodScore = Math.max(fluvial, pluvial) * 10;
-                    
-                    const maxFlood = Math.max(fluvial, pluvial);
-                    if (maxFlood >= 8) baseRisk += 12;
-                    else if (maxFlood >= 6) baseRisk += 8;
-                    else if (maxFlood >= 4) baseRisk += 4;
-                    
-                    perils.fluvialFlood = { score: fluvial, probability: fluvial * 10 };
-                    perils.pluvialFlood = { score: pluvial, probability: pluvial * 10 };
-                    maxPerilScore = Math.max(maxPerilScore, fluvial, pluvial);
-                    perilSum += fluvial + pluvial;
-                    perilCount += 2;
-                }
-                
-                if (atheniumData.rainfall !== undefined) {
-                    rainfallScore = atheniumData.rainfall * 10;
-                    if (atheniumData.rainfall >= 8) baseRisk += 8;
-                    else if (atheniumData.rainfall >= 6) baseRisk += 5;
-                    else if (atheniumData.rainfall >= 4) baseRisk += 2;
-                    perils.rainfall = { 
-                        score: atheniumData.rainfall, 
-                        probability: atheniumData.rainfallProbability || rainfallScore 
-                    };
-                    maxPerilScore = Math.max(maxPerilScore, atheniumData.rainfall);
-                    perilSum += atheniumData.rainfall;
-                    perilCount++;
+                    floodScore = Math.max(fluvial, pluvial);
+                    if (Math.max(fluvial, pluvial) >= 7) baseRisk += 12;
                 }
                 
                 if (atheniumData.hurricaneWind !== undefined) {
-                    hurricaneRisk = atheniumData.hurricaneWind * 10;
-                    if (atheniumData.hurricaneWind >= 8) baseRisk += 12;
-                    else if (atheniumData.hurricaneWind >= 6) baseRisk += 8;
-                    else if (atheniumData.hurricaneWind >= 4) baseRisk += 4;
-                    perils.hurricane = { 
-                        score: atheniumData.hurricaneWind, 
-                        probability: atheniumData.hurricaneProbability || hurricaneRisk 
-                    };
-                    maxPerilScore = Math.max(maxPerilScore, atheniumData.hurricaneWind);
-                    perilSum += atheniumData.hurricaneWind;
-                    perilCount++;
-                }
-                
-                if (atheniumData.tornado !== undefined) {
-                    tornadoScore = atheniumData.tornado * 10;
-                    if (atheniumData.tornado >= 6) baseRisk += 6;
-                    else if (atheniumData.tornado >= 4) baseRisk += 3;
-                    perils.tornado = { 
-                        score: atheniumData.tornado, 
-                        probability: atheniumData.tornadoProbability || tornadoScore 
-                    };
-                    maxPerilScore = Math.max(maxPerilScore, atheniumData.tornado);
-                    perilSum += atheniumData.tornado;
-                    perilCount++;
+                    hurricaneRisk = atheniumData.hurricaneWind;
+                    if (hurricaneRisk >= 7) baseRisk += 10;
                 }
                 
                 if (atheniumData.wind !== undefined) {
-                    windRisk = atheniumData.wind * 10;
-                    if (atheniumData.wind >= 7) baseRisk += 6;
-                    else if (atheniumData.wind >= 5) baseRisk += 3;
-                    perils.wind = { 
-                        score: atheniumData.wind, 
-                        probability: atheniumData.windProbability || windRisk 
-                    };
-                    maxPerilScore = Math.max(maxPerilScore, atheniumData.wind);
-                    perilSum += atheniumData.wind;
-                    perilCount++;
+                    windRisk = atheniumData.wind;
+                    if (windRisk >= 6) baseRisk += 5;
+                }
+                
+                if (atheniumData.tornado !== undefined) {
+                    tornadoRisk = atheniumData.tornado;
+                    if (tornadoRisk >= 6) baseRisk += 5;
                 }
                 
                 if (atheniumData.hail !== undefined) {
-                    hailScore = atheniumData.hail * 10;
-                    if (atheniumData.hail >= 6) baseRisk += 5;
-                    else if (atheniumData.hail >= 4) baseRisk += 2;
-                    perils.hail = { 
-                        score: atheniumData.hail, 
-                        probability: atheniumData.hailProbability || hailScore 
-                    };
-                    maxPerilScore = Math.max(maxPerilScore, atheniumData.hail);
-                    perilSum += atheniumData.hail;
-                    perilCount++;
+                    hailRisk = atheniumData.hail;
+                    if (hailRisk >= 6) baseRisk += 4;
+                }
+                
+                if (atheniumData.wildfire !== undefined) {
+                    wildfireRisk = atheniumData.wildfire;
+                    if (wildfireRisk >= 7) baseRisk += 6;
                 }
             }
             
-            let earthquakeScore = 0;
-            let earthquakeLevel = 'N/A';
-            if (earthquakeData) {
-                earthquakeScore = earthquakeData.score;
-                earthquakeLevel = earthquakeData.riskLevel;
-                if (earthquakeScore >= 7) baseRisk += 8;
-                else if (earthquakeScore >= 5) baseRisk += 4;
-                perils.earthquake = { 
-                    score: earthquakeScore, 
-                    pga: earthquakeData.pga,
-                    level: earthquakeLevel
-                };
-                maxPerilScore = Math.max(maxPerilScore, earthquakeScore);
-                perilSum += earthquakeScore;
-                perilCount++;
-            }
-            
-            let wildfireScore = 0;
-            if (wildfireData) {
-                wildfireScore = wildfireData.score;
-                if (wildfireScore >= 7) baseRisk += 6;
-                else if (wildfireScore >= 5) baseRisk += 3;
-                perils.wildfire = { 
-                    score: wildfireScore, 
-                    level: wildfireData.riskLevel 
-                };
-                maxPerilScore = Math.max(maxPerilScore, wildfireScore);
-                perilSum += wildfireScore;
-                perilCount++;
-            }
-
-            let karstScore = 0;
             if (karstData) {
                 karstScore = karstData.score;
                 if (karstScore >= 7) baseRisk += 8;
-                else if (karstScore >= 5) baseRisk += 5;
-                else if (karstScore >= 3) baseRisk += 2;
-                perils.karst = {
-                    score: karstScore,
-                    level: karstData.riskLevel,
-                    details: karstData.details,
-                    mapLink: karstData.mapLink
-                };
-                maxPerilScore = Math.max(maxPerilScore, karstScore);
-                perilSum += karstScore;
-                perilCount++;
             }
             
-            const avgPerilScore = perilCount > 0 ? perilSum / perilCount : 5;
-            
             const projectType = document.getElementById('projectType').value;
-            const typeMultipliers = {
+            const multipliers = {
                 'marine': 1.15,
                 'bridge': 1.12,
                 'water': 1.10,
@@ -1086,115 +641,46 @@
                 'residential': 0.98
             };
             
-            const constructionType = document.getElementById('constructionType').value;
-            const constructionMultiplier = constructionType === 'new' ? 1.08 : 1.0;
-            
-            // Structural work increases collapse/engineering risk
-            const structuralWork = document.querySelector('input[name="structuralWork"]:checked').value === 'structural';
-            const structuralMultiplier = structuralWork ? 1.15 : 1.0;
-            
-            // Active operations significantly increase risk
-            const activeOps = document.querySelector('input[name="activeOps"]:checked').value === 'yes';
-            const activeOpsMultiplier = activeOps ? 1.25 : 1.0;
-            
-            let finalScore = baseRisk * (typeMultipliers[projectType] || 1.0) * constructionMultiplier * structuralMultiplier * activeOpsMultiplier;
-            
-            if (avgPerilScore < 4 && finalScore > 60) finalScore = 60;
-            if (avgPerilScore < 5 && finalScore > 70) finalScore = 70;
-            if (maxPerilScore < 7 && finalScore > 75) finalScore = 75;
-            
+            let finalScore = baseRisk * (multipliers[projectType] || 1.0);
             finalScore = Math.min(95, Math.max(5, finalScore));
             
             return {
                 score: Math.round(finalScore),
                 elevation: elevation,
                 floodScore: floodScore,
-                windRisk: windRisk,
                 hurricaneRisk: hurricaneRisk,
-                earthquakeRisk: earthquakeLevel,
-                earthquakeScore: earthquakeScore,
-                wildfireScore: wildfireScore,
+                windRisk: windRisk,
+                tornadoRisk: tornadoRisk,
+                hailRisk: hailRisk,
+                wildfireRisk: wildfireRisk,
                 karstScore: karstScore,
-                perils: perils,
-                recommendations: generateRecommendations(finalScore, perils, atheniumData)
+                recommendations: generateRecommendations(finalScore, floodScore, hurricaneRisk, karstScore)
             };
         }
         
-        function generateRecommendations(score, perils, atheniumData) {
+        function generateRecommendations(score, flood, hurricane, karst) {
             const recs = [];
             
-            // Check for active operations and structural work
-            const activeOps = document.querySelector('input[name="activeOps"]:checked').value === 'yes';
-            const structuralWork = document.querySelector('input[name="structuralWork"]:checked').value === 'structural';
-            
             if (score > 75) {
-                recs.push('HIGH RISK: Comprehensive coverage with enhanced sublimits required');
-                recs.push('Weekly site inspections and real-time monitoring recommended');
-                recs.push('Consider 5% or higher deductibles for CAT perils');
+                recs.push('HIGH RISK: Enhanced coverage required');
+                recs.push('Weekly inspections recommended');
             } else if (score > 50) {
-                recs.push('MODERATE RISK: Standard coverage with appropriate sublimits');
-                recs.push('Monthly inspections and quarterly risk reviews recommended');
-                recs.push('Standard deductible structure appropriate (3-5%)');
+                recs.push('MODERATE RISK: Standard coverage appropriate');
+                recs.push('Monthly inspections sufficient');
             } else {
-                recs.push('LOW RISK: Competitive pricing available with standard terms');
-                recs.push('Quarterly inspections sufficient');
-                recs.push('Lower deductibles may be appropriate (1-2%)');
+                recs.push('LOW RISK: Competitive pricing available');
             }
             
-            // Structural work specific recommendations
-            if (structuralWork) {
-                recs.push('STRUCTURAL WORK: Require PE-stamped structural drawings and shoring plans');
-                recs.push('Daily monitoring during excavation/demolition phases - collapse exposure elevated');
-                recs.push('Verify contractor has structural engineering experience and adequate equipment');
+            if (hurricane >= 7) {
+                recs.push('Hurricane exposure HIGH: 5% windstorm deductible');
             }
             
-            // Active operations specific recommendations
-            if (activeOps) {
-                recs.push('ACTIVE OPERATIONS: Consider excluding existing structure from coverage');
-                recs.push('Business interruption exposure - require hot work permits and fire watch protocols');
-                recs.push('Contamination risk for sensitive operations (medical, food, electronics) - enhanced protection protocols required');
-            }
-            
-            if (perils.hurricane && perils.hurricane.score >= 7) {
-                recs.push('Hurricane exposure HIGH: 5% windstorm deductible recommended, hurricane preparedness plan required');
-            }
-            
-            if (perils.fluvialFlood && perils.fluvialFlood.score >= 7) {
-                recs.push('Flood exposure EXTREME: Flood sublimit should be 25-50% of TIV with minimum $100K deductible');
-                recs.push('Site-specific flood mitigation plan and LAIIER water detection system recommended');
-            }
-            
-            if (perils.earthquake && perils.earthquake.score >= 7) {
-                recs.push('Earthquake risk HIGH: Consider earthquake sublimit of 50% TIV with appropriate deductible');
-            }
-            
-            if (perils.wildfire && perils.wildfire.score >= 7) {
-                recs.push('Wildfire risk HIGH: Enhanced fire prevention protocols and defensible space requirements');
+            if (flood >= 7) {
+                recs.push('Flood exposure HIGH: Enhanced sublimits required');
             }
 
-            if (perils.karst && perils.karst.score >= 7) {
-                recs.push('KARST/SINKHOLE EXTREME: Mandatory geotechnical survey with sinkhole assessment required');
-                recs.push('Consider sinkhole exclusion or require ground stability insurance');
-                recs.push('Monitor for subsidence during and after construction - annual inspections recommended');
-            } else if (perils.karst && perils.karst.score >= 5) {
-                recs.push('Karst risk HIGH: Recommend geotechnical survey including karst evaluation');
-                recs.push('Consider sinkhole sublimit or specific endorsement');
-            } else if (perils.karst && perils.karst.score >= 3) {
-                recs.push('Karst risk MODERATE: Review site geology and consider geotechnical assessment');
-            }
-            
-            if (perils.tornado && perils.tornado.score >= 6) {
-                recs.push('Tornado exposure MODERATE-HIGH: Shelter-in-place protocols and severe weather monitoring required');
-            }
-            
-            if (atheniumData) {
-                if (atheniumData.elevation !== undefined && atheniumData.elevation < 15) {
-                    recs.push('LOW ELEVATION ALERT: Site is within potential flood zone - verify FEMA maps and require flood certificate');
-                }
-                
-                if (atheniumData.heightAboveWater !== undefined && atheniumData.heightAboveWater < 10) {
-                    recs.push('CRITICAL: Site is less than 10 feet above nearest water body - enhanced flood controls mandatory');
-                }
+            if (karst >= 7) {
+                recs.push('KARST EXTREME: Mandatory geotechnical survey');
             }
             
             return recs;
@@ -1209,141 +695,22 @@
             if (riskData.score > 75) {
                 category = 'HIGH RISK';
                 color = '#ef4444';
-            } else if (riskData.score > 60) {
-                category = 'ELEVATED RISK';
-                color = '#f59e0b';
-            } else if (riskData.score > 45) {
+            } else if (riskData.score > 50) {
                 category = 'MODERATE RISK';
-                color = '#3b82f6';
+                color = '#f59e0b';
             }
             
             document.getElementById('riskCategory').textContent = category;
             document.querySelector('.risk-score-container').style.background = `linear-gradient(135deg, ${color}, ${color}dd)`;
             
-            document.getElementById('elevation').textContent = riskData.elevation ? Math.round(riskData.elevation) : 'N/A';
-            document.getElementById('floodRisk').textContent = Math.round(riskData.floodScore) + '%';
-            document.getElementById('windRisk').textContent = Math.round(riskData.windRisk) + '%';
-            document.getElementById('hurricaneRisk').textContent = Math.round(riskData.hurricaneRisk) + '%';
-            document.getElementById('earthquakeRisk').textContent = riskData.earthquakeRisk;
-            document.getElementById('wildfireRisk').textContent = riskData.wildfireScore ? riskData.wildfireScore + '/10' : 'N/A';
-            document.getElementById('karstRisk').textContent = riskData.karstScore ? riskData.karstScore + '/10' : 'N/A';
-            
-            const perilAnalysis = document.getElementById('perilAnalysis');
-            perilAnalysis.innerHTML = '<h3>Detailed Peril Assessment</h3>';
-            
-            const perilOrder = [
-                { key: 'hurricane', display: 'HURRICANE', icon: '🌀' },
-                { key: 'fluvialFlood', display: 'FLOOD - RIVER (FLUVIAL)', icon: '🌊' },
-                { key: 'pluvialFlood', display: 'FLOOD - RAINFALL (PLUVIAL)', icon: '💧' },
-                { key: 'rainfall', display: 'RAINFALL', icon: '🌧️' },
-                { key: 'tornado', display: 'TORNADO', icon: '🌪️', scs: true },
-                { key: 'hail', display: 'HAIL', icon: '🧊', scs: true },
-                { key: 'wind', display: 'WIND (NON-HURRICANE)', icon: '💨', scs: true },
-                { key: 'earthquake', display: 'EARTHQUAKE', icon: '📊' },
-                { key: 'wildfire', display: 'WILDFIRE', icon: '🔥' },
-                { key: 'karst', display: 'KARST/SINKHOLE', icon: '🕳️' }
-            ];
-            
-            let perilsDisplayed = 0;
-            let scsScore = 0;
-            let scsCount = 0;
-            let scsComposite = null;
-            
-            if (riskData.perils && Object.keys(riskData.perils).length > 0) {
-                perilOrder.forEach(perilDef => {
-                    if (perilDef.scs) {
-                        const perilData = riskData.perils[perilDef.key];
-                        if (perilData && perilData.score !== undefined) {
-                            scsScore += perilData.score;
-                            scsCount++;
-                        }
-                    }
-                });
-                
-                scsComposite = scsCount > 0 ? (scsScore / scsCount).toFixed(1) : null;
-                
-                perilOrder.forEach(perilDef => {
-                    const perilData = riskData.perils[perilDef.key];
-                    if (perilData && perilData.score !== undefined) {
-                        const perilItem = document.createElement('div');
-                        perilItem.className = 'peril-item';
-                        
-                        const score = perilData.score;
-                        let scoreClass = 'score-low';
-                        if (score >= 8) scoreClass = 'score-extreme';
-                        else if (score >= 6) scoreClass = 'score-high';
-                        else if (score >= 4) scoreClass = 'score-moderate';
-                        
-                        let detailText = '';
-                        if (perilData.probability) {
-                            detailText += `${perilData.probability.toFixed(1)}% annual probability`;
-                        }
-                        if (perilData.pga) {
-                            detailText += detailText ? ' | ' : '';
-                            detailText += `PGA: ${perilData.pga.toFixed(2)}g`;
-                        }
-                        if (perilData.level) {
-                            detailText += detailText ? ' | ' : '';
-                            detailText += `Level: ${perilData.level}`;
-                        }
-                        if (perilDef.key === 'karst' && perilData.details && perilData.details.length > 0) {
-                            detailText = perilData.details.join(' | ');
-                        }
-                        
-                        let karstMapLink = '';
-                        if (perilDef.key === 'karst' && perilData.mapLink) {
-                            karstMapLink = '<br><a href="javascript:openKarstMap()" style="color: #2563eb; font-weight: 600; text-decoration: none;">→ View Detailed Karst Map</a>';
-                        }
-                        
-                        let displayName = perilDef.icon + ' ' + perilDef.display;
-                        if (perilDef.scs && scsComposite) {
-                            displayName += ` <span style="color: #6b7280; font-weight: normal; font-size: 0.85rem;">(SCS: ${scsComposite}/10)</span>`;
-                        }
-                        
-                        perilItem.innerHTML = `
-                            <div>
-                                <div class="peril-name">${displayName}</div>
-                                <div style="font-size: 0.85rem; color: #6b7280;">
-                                    ${detailText || 'Score based on analysis'}${karstMapLink}
-                                </div>
-                            </div>
-                            <div class="peril-score ${scoreClass}">${score}/10</div>
-                        `;
-                        
-                        perilAnalysis.appendChild(perilItem);
-                        perilsDisplayed++;
-                    }
-                });
-                
-                // FIX: Only add SCS summary card ONCE at the end
-                if (scsComposite) {
-                    const scsItem = document.createElement('div');
-                    scsItem.style.cssText = 'background: #f0f9ff; border: 2px solid #0284c7; padding: 1rem; border-radius: 8px; margin-top: 1rem;';
-                    
-                    let scsScoreClass = 'score-low';
-                    const scsNum = parseFloat(scsComposite);
-                    if (scsNum >= 8) scsScoreClass = 'score-extreme';
-                    else if (scsNum >= 6) scsScoreClass = 'score-high';
-                    else if (scsNum >= 4) scsScoreClass = 'score-moderate';
-                    
-                    scsItem.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-weight: 700; font-size: 1rem; color: #0369a1;">⚡ SEVERE CONVECTIVE STORMS (SCS) COMPOSITE</div>
-                                <div style="font-size: 0.85rem; color: #0369a1; margin-top: 0.25rem;">
-                                    Aggregate of Tornado + Hail + Wind
-                                </div>
-                            </div>
-                            <div class="peril-score ${scsScoreClass}" style="font-size: 1.3rem;">${scsComposite}/10</div>
-                        </div>
-                    `;
-                    perilAnalysis.appendChild(scsItem);
-                }
-            }
-            
-            if (perilsDisplayed === 0) {
-                perilAnalysis.innerHTML += '<p style="color: #6b7280; padding: 1rem;">No detailed peril data available. Upload Athenium JSON for comprehensive analysis.</p>';
-            }
+            document.getElementById('elevation').textContent = riskData.elevation ? Math.round(riskData.elevation) + ' ft' : 'N/A';
+            document.getElementById('floodRisk').textContent = riskData.floodScore + '/10';
+            document.getElementById('windRisk').textContent = riskData.windRisk + '/10';
+            document.getElementById('hurricaneRisk').textContent = riskData.hurricaneRisk + '/10';
+            document.getElementById('tornadoRisk').textContent = riskData.tornadoRisk + '/10';
+            document.getElementById('hailRisk').textContent = riskData.hailRisk + '/10';
+            document.getElementById('wildfireRisk').textContent = riskData.wildfireRisk + '/10';
+            document.getElementById('karstRisk').textContent = riskData.karstScore + '/10';
             
             const recList = document.getElementById('recommendations');
             recList.innerHTML = '';
@@ -1354,161 +721,6 @@
             });
         }
         
-        function generateReport() {
-            if (!globalRiskData.score) {
-                alert('Please run analysis first');
-                return;
-            }
-            
-            const report = {
-                metadata: {
-                    projectName: document.getElementById('projectName').value || 'Unnamed Project',
-                    address: document.getElementById('address').value || 'No address provided',
-                    coordinates: {
-                        latitude: document.getElementById('latitude').value,
-                        longitude: document.getElementById('longitude').value
-                    },
-                    projectType: document.getElementById('projectType').value,
-                    constructionType: document.getElementById('constructionType').value,
-                    projectValue: document.getElementById('projectValue').value,
-                    analysisDate: new Date().toISOString(),
-                    platform: 'GeoCat NATCAT Intelligence Platform'
-                },
-                riskAssessment: globalRiskData,
-                dataSources: document.getElementById('dataSource').textContent
-            };
-            
-            console.log('Report generated:', report);
-            alert('Report ready! Use Download PDF or Export JSON buttons.');
-        }
-        
-        function downloadPDF() {
-            if (!globalRiskData.score) {
-                alert('Please run analysis first');
-                return;
-            }
-            
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            doc.setFontSize(20);
-            doc.setFont(undefined, 'bold');
-            doc.text('GeoCat NATCAT Risk Assessment', 105, 20, { align: 'center' });
-            
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text('NATCAT Risk Intelligence Platform', 105, 28, { align: 'center' });
-            doc.text('Generated: ' + new Date().toLocaleString(), 105, 34, { align: 'center' });
-            
-            doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
-            let y = 50;
-            
-            doc.text('PROJECT INFORMATION', 20, y);
-            doc.setFont(undefined, 'normal');
-            doc.setFontSize(10);
-            y += 8;
-            
-            doc.text('Project: ' + (document.getElementById('projectName').value || 'N/A'), 20, y);
-            y += 6;
-            doc.text('Address: ' + (document.getElementById('address').value || 'N/A'), 20, y);
-            y += 6;
-            doc.text('Coordinates: ' + document.getElementById('latitude').value + ', ' + document.getElementById('longitude').value, 20, y);
-            y += 6;
-            doc.text('Type: ' + document.getElementById('projectType').value, 20, y);
-            y += 6;
-            doc.text('Value: $' + (parseInt(document.getElementById('projectValue').value) || 0).toLocaleString(), 20, y);
-            y += 12;
-            
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text('RISK ASSESSMENT', 20, y);
-            y += 8;
-            
-            doc.setFontSize(16);
-            doc.text('Composite Risk Score: ' + globalRiskData.score, 20, y);
-            y += 10;
-            
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text('Elevation: ' + (globalRiskData.elevation ? Math.round(globalRiskData.elevation) + ' ft' : 'N/A'), 20, y);
-            y += 6;
-            doc.text('Flood Risk: ' + Math.round(globalRiskData.floodScore) + '%', 20, y);
-            y += 6;
-            doc.text('Wind Risk: ' + Math.round(globalRiskData.windRisk) + '%', 20, y);
-            y += 6;
-            doc.text('Hurricane Risk: ' + Math.round(globalRiskData.hurricaneRisk) + '%', 20, y);
-            y += 6;
-            doc.text('Earthquake: ' + globalRiskData.earthquakeRisk, 20, y);
-            y += 6;
-            doc.text('Wildfire: ' + (globalRiskData.wildfireScore ? globalRiskData.wildfireScore + '/10' : 'N/A'), 20, y);
-            y += 6;
-            doc.text('Karst/Sinkhole: ' + (globalRiskData.karstScore ? globalRiskData.karstScore + '/10' : 'N/A'), 20, y);
-            y += 12;
-            
-            doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
-            doc.text('UNDERWRITING RECOMMENDATIONS', 20, y);
-            y += 8;
-            
-            doc.setFontSize(9);
-            doc.setFont(undefined, 'normal');
-            globalRiskData.recommendations.forEach(rec => {
-                const lines = doc.splitTextToSize('• ' + rec, 170);
-                lines.forEach(line => {
-                    if (y > 280) {
-                        doc.addPage();
-                        y = 20;
-                    }
-                    doc.text(line, 20, y);
-                    y += 5;
-                });
-            });
-            
-            y += 8;
-            doc.setFontSize(8);
-            doc.setTextColor(100);
-            doc.text(document.getElementById('dataSource').textContent, 20, y);
-            
-            const projectName = document.getElementById('projectName').value || 'Project';
-            doc.save('GeoCat_Report_' + projectName.replace(/[^a-z0-9]/gi, '_') + '.pdf');
-        }
-        
-        function exportJSON() {
-            if (!globalRiskData.score) {
-                alert('Please run analysis first');
-                return;
-            }
-            
-            const exportData = {
-                metadata: {
-                    projectName: document.getElementById('projectName').value || 'Unnamed Project',
-                    address: document.getElementById('address').value,
-                    coordinates: {
-                        latitude: parseFloat(document.getElementById('latitude').value),
-                        longitude: parseFloat(document.getElementById('longitude').value)
-                    },
-                    projectType: document.getElementById('projectType').value,
-                    constructionType: document.getElementById('constructionType').value,
-                    projectValue: parseInt(document.getElementById('projectValue').value) || 0,
-                    analysisDate: new Date().toISOString(),
-                    platform: 'GeoCat NATCAT Intelligence Platform v2.1'
-                },
-                riskAssessment: globalRiskData,
-                dataSources: document.getElementById('dataSource').textContent
-            };
-            
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'GeoCat_Analysis_' + (exportData.metadata.projectName.replace(/[^a-z0-9]/gi, '_')) + '.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-        
         function resetForm() {
             document.getElementById('projectName').value = '';
             document.getElementById('address').value = '';
@@ -1516,462 +728,8 @@
             document.getElementById('longitude').value = '';
             document.getElementById('projectValue').value = '';
             document.getElementById('atheniumData').value = '';
-            document.getElementById('apiKey').value = '';
             document.getElementById('results').style.display = 'none';
             globalRiskData = {};
-        }
-
-        function openKarstMap() {
-            window.open('geocat_karst_map.html', '_blank', 'width=1400,height=900');
-        }
-
-        function openPrintView() {
-            if (!globalRiskData.score) {
-                alert('Please run analysis first');
-                return;
-            }
-
-            const printWindow = window.open('', '_blank', 'width=1200,height=900');
-            const printContent = generatePrintHTML();
-            printWindow.document.write(printContent);
-            printWindow.document.close();
-            
-            // Wait for content to load, then trigger print dialog
-            setTimeout(() => {
-                printWindow.print();
-            }, 500);
-        }
-
-        function generatePrintHTML() {
-            const projectName = document.getElementById('projectName').value || 'Unnamed Project';
-            const address = document.getElementById('address').value || 'No address provided';
-            const lat = document.getElementById('latitude').value;
-            const lon = document.getElementById('longitude').value;
-            const projectType = document.getElementById('projectType').value;
-            const projectValue = parseInt(document.getElementById('projectValue').value) || 0;
-            
-            let riskColor = '#10b981';
-            let riskCategory = 'LOW RISK';
-            if (globalRiskData.score > 75) {
-                riskColor = '#ef4444';
-                riskCategory = 'HIGH RISK';
-            } else if (globalRiskData.score > 60) {
-                riskColor = '#f59e0b';
-                riskCategory = 'ELEVATED RISK';
-            } else if (globalRiskData.score > 45) {
-                riskColor = '#3b82f6';
-                riskCategory = 'MODERATE RISK';
-            }
-
-            // Build perils table
-            let perilsHTML = '';
-            const perilOrder = [
-                { key: 'hurricane', display: 'Hurricane', icon: '🌀' },
-                { key: 'fluvialFlood', display: 'Flood - River (Fluvial)', icon: '🌊' },
-                { key: 'pluvialFlood', display: 'Flood - Rainfall (Pluvial)', icon: '💧' },
-                { key: 'rainfall', display: 'Rainfall', icon: '🌧️' },
-                { key: 'tornado', display: 'Tornado', icon: '🌪️' },
-                { key: 'hail', display: 'Hail', icon: '🧊' },
-                { key: 'wind', display: 'Wind (Non-Hurricane)', icon: '💨' },
-                { key: 'earthquake', display: 'Earthquake', icon: '📊' },
-                { key: 'wildfire', display: 'Wildfire', icon: '🔥' },
-                { key: 'karst', display: 'Karst/Sinkhole', icon: '🕳️' }
-            ];
-
-            if (globalRiskData.perils && Object.keys(globalRiskData.perils).length > 0) {
-                perilOrder.forEach(perilDef => {
-                    const perilData = globalRiskData.perils[perilDef.key];
-                    if (perilData && perilData.score !== undefined) {
-                        const score = perilData.score;
-                        let scoreColor = '#10b981';
-                        let scoreLabel = 'Low';
-                        if (score >= 8) {
-                            scoreColor = '#7c3aed';
-                            scoreLabel = 'Extreme';
-                        } else if (score >= 6) {
-                            scoreColor = '#ef4444';
-                            scoreLabel = 'High';
-                        } else if (score >= 4) {
-                            scoreColor = '#f59e0b';
-                            scoreLabel = 'Moderate';
-                        }
-
-                        let detailText = '';
-                        if (perilData.probability) {
-                            detailText = `${perilData.probability.toFixed(1)}% annual probability`;
-                        }
-                        if (perilData.pga) {
-                            detailText = `PGA: ${perilData.pga.toFixed(2)}g`;
-                        }
-                        if (perilData.level) {
-                            detailText = `${perilData.level}`;
-                        }
-
-                        perilsHTML += `
-                            <tr>
-                                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
-                                    <strong>${perilDef.icon} ${perilDef.display}</strong><br>
-                                    <span style="font-size: 0.85rem; color: #6b7280;">${detailText || 'Score based on analysis'}</span>
-                                </td>
-                                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">
-                                    <span style="background: ${scoreColor}; color: white; padding: 4px 12px; border-radius: 4px; font-weight: 700;">${score}/10</span>
-                                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">${scoreLabel}</div>
-                                </td>
-                            </tr>
-                        `;
-                    }
-                });
-            }
-
-            // Build recommendations list
-            let recsHTML = '';
-            globalRiskData.recommendations.forEach(rec => {
-                recsHTML += `<li style="padding: 8px 0; padding-left: 20px; position: relative;">
-                    <span style="position: absolute; left: 0; color: #92400e; font-weight: 700;">→</span>
-                    ${rec}
-                </li>`;
-            });
-
-            return `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>GeoCat Risk Assessment - ${projectName}</title>
-    <style>
-        @media print {
-            body { margin: 0; }
-            .no-print { display: none !important; }
-            .page-break { page-break-after: always; }
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #1f2937;
-            background: white;
-            padding: 40px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #1e3c72;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            color: #6b7280;
-            font-size: 1rem;
-        }
-
-        .timestamp {
-            color: #9ca3af;
-            font-size: 0.85rem;
-            margin-top: 8px;
-        }
-
-        .section {
-            margin-bottom: 32px;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e3c72;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .risk-score-box {
-            background: linear-gradient(135deg, ${riskColor}, ${riskColor}dd);
-            color: white;
-            padding: 24px;
-            border-radius: 12px;
-            text-align: center;
-            margin: 24px 0;
-        }
-
-        .risk-score-value {
-            font-size: 4rem;
-            font-weight: 900;
-            margin: 16px 0;
-        }
-
-        .risk-category {
-            font-size: 1.2rem;
-            font-weight: 600;
-            opacity: 0.95;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .info-item {
-            padding: 12px;
-            background: #f9fafb;
-            border-radius: 8px;
-            border-left: 4px solid #1e3c72;
-        }
-
-        .info-label {
-            font-size: 0.85rem;
-            color: #6b7280;
-            margin-bottom: 4px;
-        }
-
-        .info-value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin: 24px 0;
-        }
-
-        .metric-card {
-            background: #f9fafb;
-            padding: 16px;
-            border-radius: 8px;
-            border-left: 4px solid #1e3c72;
-            text-align: center;
-        }
-
-        .metric-label {
-            font-size: 0.85rem;
-            color: #6b7280;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .metric-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .metric-unit {
-            font-size: 0.85rem;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-        }
-
-        th {
-            background: #1e3c72;
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        tr:hover {
-            background: #f9fafb;
-        }
-
-        .recommendations-box {
-            background: #fef3c7;
-            border: 2px solid #fbbf24;
-            border-radius: 12px;
-            padding: 24px;
-            margin: 24px 0;
-        }
-
-        .recommendations-box h3 {
-            color: #92400e;
-            margin-bottom: 16px;
-        }
-
-        .recommendations-box ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .data-sources {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 2px solid #e5e7eb;
-            text-align: center;
-            color: #6b7280;
-            font-size: 0.85rem;
-        }
-
-        .print-button {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 20px auto;
-            display: block;
-        }
-
-        .print-button:hover {
-            opacity: 0.9;
-        }
-    </style>
-</head>
-<body>
-    <button onclick="window.print()" class="print-button no-print">🖨️ Print Report</button>
-
-    <div class="header">
-        <div class="logo">GeoCat</div>
-        <div class="subtitle">NATCAT Risk Intelligence Platform</div>
-        <div class="timestamp">Generated: ${new Date().toLocaleString()}</div>
-    </div>
-
-    <div class="section">
-        <h2 class="section-title">Project Information</h2>
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-label">Project Name</div>
-                <div class="info-value">${projectName}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Project Type</div>
-                <div class="info-value">${projectType}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Address</div>
-                <div class="info-value">${address}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Coordinates</div>
-                <div class="info-value">${lat}, ${lon}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Project Value</div>
-                <div class="info-value">${projectValue.toLocaleString()}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Analysis Date</div>
-                <div class="info-value">${new Date().toLocaleDateString()}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2 class="section-title">Risk Assessment Summary</h2>
-        
-        <div class="risk-score-box">
-            <div style="font-size: 1.2rem; opacity: 0.95;">Composite Risk Score</div>
-            <div class="risk-score-value">${globalRiskData.score}</div>
-            <div class="risk-category">${riskCategory}</div>
-        </div>
-
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-label">Elevation</div>
-                <div class="metric-value">${globalRiskData.elevation ? Math.round(globalRiskData.elevation) : 'N/A'}</div>
-                <div class="metric-unit">feet above sea level</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Flood Risk</div>
-                <div class="metric-value">${Math.round(globalRiskData.floodScore)}%</div>
-                <div class="metric-unit">composite score</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Wind Risk</div>
-                <div class="metric-value">${Math.round(globalRiskData.windRisk)}%</div>
-                <div class="metric-unit">annual probability</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Hurricane Risk</div>
-                <div class="metric-value">${Math.round(globalRiskData.hurricaneRisk)}%</div>
-                <div class="metric-unit">annual probability</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Earthquake</div>
-                <div class="metric-value">${globalRiskData.earthquakeRisk}</div>
-                <div class="metric-unit">PGA risk level</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Wildfire</div>
-                <div class="metric-value">${globalRiskData.wildfireScore ? globalRiskData.wildfireScore + '/10' : 'N/A'}</div>
-                <div class="metric-unit">risk score</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Karst/Sinkhole</div>
-                <div class="metric-value">${globalRiskData.karstScore ? globalRiskData.karstScore + '/10' : 'N/A'}</div>
-                <div class="metric-unit">risk score</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="section page-break">
-        <h2 class="section-title">Detailed Peril Assessment</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Peril</th>
-                    <th style="text-align: center;">Risk Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${perilsHTML}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="section">
-        <h2 class="section-title">Underwriting Recommendations</h2>
-        <div class="recommendations-box">
-            <h3>Key Recommendations</h3>
-            <ul>
-                ${recsHTML}
-            </ul>
-        </div>
-    </div>
-
-    <div class="data-sources">
-        <strong>Data Sources:</strong> ${document.getElementById('dataSource').textContent}<br>
-        <strong>Platform:</strong> GeoCat NATCAT Intelligence Platform v2.1<br>
-        <strong>Powered by:</strong> Athenium Climate Intelligence
-    </div>
-
-    <button onclick="window.print()" class="print-button no-print">🖨️ Print Report</button>
-</body>
-</html>
-            `;
         }
     </script>
 </body>
