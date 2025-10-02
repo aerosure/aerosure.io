@@ -374,11 +374,6 @@
             </div>
 
             <div class="form-group">
-                <label>Athenium API Key (Optional)</label>
-                <input type="password" id="apiKey" placeholder="Enter if available">
-            </div>
-
-            <div class="form-group">
                 <label>Athenium Data (Manual JSON)</label>
                 <textarea id="atheniumData" placeholder="Paste JSON data from Athenium"></textarea>
             </div>
@@ -556,16 +551,25 @@
 
         function assessKarstRisk(lat, lon) {
             const karstRegions = [
-                { name: 'Florida', baseScore: 8, lat: [24, 31], lon: [-87, -80] },
-                { name: 'Tennessee', baseScore: 8, lat: [35, 37], lon: [-90, -81.5] },
-                { name: 'Kentucky', baseScore: 7, lat: [36.5, 39.1], lon: [-89.5, -82] }
+                { name: 'Florida Central (Sinkhole Alley)', score: 9, lat: [27.5, 29.5], lon: [-82.5, -81] },
+                { name: 'Florida North', score: 8, lat: [29.5, 31], lon: [-85, -82] },
+                { name: 'Tennessee (Nashville Basin/Highland Rim)', score: 8, lat: [35, 36.5], lon: [-87.5, -85] },
+                { name: 'Tennessee East (Knoxville)', score: 7, lat: [35.5, 36.5], lon: [-85, -82] },
+                { name: 'Kentucky (Mammoth Cave region)', score: 7, lat: [36.5, 38], lon: [-87, -85] },
+                { name: 'Missouri (Ozark Plateau)', score: 6, lat: [36, 38.5], lon: [-94, -90] },
+                { name: 'Pennsylvania (Appalachian karst)', score: 6, lat: [39.5, 42], lon: [-80, -75] },
+                { name: 'Texas (Edwards Plateau)', score: 5, lat: [29, 31], lon: [-101, -98] },
+                { name: 'Indiana', score: 5, lat: [38, 40], lon: [-87.5, -85] },
+                { name: 'Alabama', score: 5, lat: [32, 35], lon: [-88, -85] },
+                { name: 'Virginia (Shenandoah Valley)', score: 5, lat: [37, 39.5], lon: [-80, -78] },
+                { name: 'West Virginia', score: 5, lat: [37.5, 40.5], lon: [-82.5, -77.5] }
             ];
             
             for (const region of karstRegions) {
                 if (lat >= region.lat[0] && lat <= region.lat[1] && 
                     lon >= region.lon[0] && lon <= region.lon[1]) {
                     return {
-                        score: region.baseScore,
+                        score: region.score,
                         region: region.name
                     };
                 }
@@ -591,37 +595,71 @@
             let karstScore = 0;
             
             if (atheniumData) {
-                if (atheniumData.fluvialRisk !== undefined) {
-                    const fluvial = atheniumData.fluvialRisk;
-                    const pluvial = atheniumData.pluvialRisk || 5;
+                // Handle both object format and array format from Athenium API
+                let dataArray = Array.isArray(atheniumData) ? atheniumData : null;
+                
+                // Flood risk - check multiple possible field names
+                if (atheniumData.fluvialRisk !== undefined || atheniumData.riverFloodRiskScore !== undefined) {
+                    const fluvial = atheniumData.fluvialRisk || parseFloat(atheniumData.riverFloodRiskScore) || 0;
+                    const pluvial = atheniumData.pluvialRisk || parseFloat(atheniumData.flashFloodRiskScore) || 5;
                     floodScore = Math.max(fluvial, pluvial);
                     if (Math.max(fluvial, pluvial) >= 7) baseRisk += 12;
                 }
                 
+                // Hurricane risk
                 if (atheniumData.hurricaneWind !== undefined) {
                     hurricaneRisk = atheniumData.hurricaneWind;
-                    if (hurricaneRisk >= 7) baseRisk += 10;
+                } else if (dataArray) {
+                    const hurricaneData = dataArray.find(p => p.peril === 'HURRICANE_WIND');
+                    if (hurricaneData && hurricaneData.riskScore !== undefined) {
+                        hurricaneRisk = hurricaneData.riskScore;
+                    }
                 }
+                if (hurricaneRisk >= 7) baseRisk += 10;
                 
+                // Wind risk
                 if (atheniumData.wind !== undefined) {
                     windRisk = atheniumData.wind;
-                    if (windRisk >= 6) baseRisk += 5;
+                } else if (dataArray) {
+                    const windData = dataArray.find(p => p.peril === 'WIND');
+                    if (windData && windData.riskScore !== undefined) {
+                        windRisk = windData.riskScore;
+                    }
                 }
+                if (windRisk >= 6) baseRisk += 5;
                 
+                // Tornado risk
                 if (atheniumData.tornado !== undefined) {
                     tornadoRisk = atheniumData.tornado;
-                    if (tornadoRisk >= 6) baseRisk += 5;
+                } else if (dataArray) {
+                    const tornadoData = dataArray.find(p => p.peril === 'TORNADO');
+                    if (tornadoData && tornadoData.riskScore !== undefined) {
+                        tornadoRisk = tornadoData.riskScore;
+                    }
                 }
+                if (tornadoRisk >= 6) baseRisk += 5;
                 
+                // Hail risk
                 if (atheniumData.hail !== undefined) {
                     hailRisk = atheniumData.hail;
-                    if (hailRisk >= 6) baseRisk += 4;
+                } else if (dataArray) {
+                    const hailData = dataArray.find(p => p.peril === 'HAIL');
+                    if (hailData && hailData.riskScore !== undefined) {
+                        hailRisk = hailData.riskScore;
+                    }
                 }
+                if (hailRisk >= 6) baseRisk += 4;
                 
+                // Wildfire risk
                 if (atheniumData.wildfire !== undefined) {
                     wildfireRisk = atheniumData.wildfire;
-                    if (wildfireRisk >= 7) baseRisk += 6;
+                } else if (dataArray) {
+                    const wildfireData = dataArray.find(p => p.peril === 'WILDFIRE');
+                    if (wildfireData && wildfireData.riskScore !== undefined) {
+                        wildfireRisk = wildfireData.riskScore;
+                    }
                 }
+                if (wildfireRisk >= 7) baseRisk += 6;
             }
             
             if (karstData) {
@@ -729,6 +767,13 @@
             document.getElementById('projectValue').value = '';
             document.getElementById('atheniumData').value = '';
             document.getElementById('results').style.display = 'none';
+            
+            // PRIORITY 3 FIX: Clean up map marker
+            if (marker && map) {
+                map.removeLayer(marker);
+                marker = null;
+            }
+            
             globalRiskData = {};
         }
     </script>
