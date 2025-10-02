@@ -254,7 +254,7 @@
         </div>
         <div class="nav-menu">
             <a href="#" class="nav-link">Main Analysis</a>
-            <a href="javascript:void(0)" class="nav-link" onclick="alert('Karst Map Integration Coming Soon')">Karst Map</a>
+            <a href="karst_map.html" class="nav-link">Karst Map</a>
             <a href="https://www.aerosure.io" class="nav-link" target="_blank">External Tools</a>
         </div>
     </div>
@@ -360,11 +360,11 @@
                     <label for="layerWeather">Weather Perils</label>
                 </div>
                 <div class="layer-toggle">
-                    <input type="checkbox" id="layerEarthquake">
-                    <label for="layerEarthquake">Earthquake</label>
+                    <input type="checkbox" id="layerEarthquake" checked>
+                    <label for="layerEarthquake">Earthquake (USGS)</label>
                 </div>
                 <div class="layer-toggle">
-                    <input type="checkbox" id="layerWildfire">
+                    <input type="checkbox" id="layerWildfire" checked>
                     <label for="layerWildfire">Wildfire Risk</label>
                 </div>
                 <div class="layer-toggle">
@@ -421,6 +421,10 @@
                     <div class="data-card">
                         <h3>HAIL</h3>
                         <div class="value" id="hailRisk">--</div>
+                    </div>
+                    <div class="data-card">
+                        <h3>EARTHQUAKE</h3>
+                        <div class="value" id="earthquakeRisk">--</div>
                     </div>
                     <div class="data-card">
                         <h3>WILDFIRE</h3>
@@ -496,6 +500,8 @@
                 let elevationData = null;
                 let atheniumData = null;
                 let karstData = null;
+                let earthquakeData = null;
+                let wildfireData = null;
 
                 if (document.getElementById('layerElevation').checked) {
                     elevationData = await getElevation(lat, lon);
@@ -513,8 +519,16 @@
                 if (document.getElementById('layerKarst').checked) {
                     karstData = assessKarstRisk(lat, lon);
                 }
+
+                if (document.getElementById('layerEarthquake').checked) {
+                    earthquakeData = await getEarthquakeRisk(lat, lon);
+                }
+
+                if (document.getElementById('layerWildfire').checked) {
+                    wildfireData = assessWildfireRisk(lat, lon, atheniumData);
+                }
                 
-                const riskScore = calculateRisk(elevationData, atheniumData, karstData);
+                const riskScore = calculateRisk(elevationData, atheniumData, karstData, earthquakeData, wildfireData);
                 globalRiskData = riskScore;
                 
                 updateResults(riskScore);
@@ -549,6 +563,74 @@
             }
         }
 
+        async function getEarthquakeRisk(lat, lon) {
+            try {
+                const url = `https://earthquake.usgs.gov/ws/designmaps/asce7-16.json?latitude=${lat}&longitude=${lon}&riskCategory=III&siteClass=D&title=Project`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data && data.response && data.response.data) {
+                    const pga = data.response.data.pga || 0;
+                    
+                    let score = 1;
+                    if (pga >= 0.8) score = 10;
+                    else if (pga >= 0.6) score = 8;
+                    else if (pga >= 0.4) score = 6;
+                    else if (pga >= 0.2) score = 4;
+                    else if (pga >= 0.1) score = 2;
+                    
+                    return {
+                        score: score,
+                        pga: pga.toFixed(3),
+                        category: score >= 8 ? 'Extreme' : score >= 6 ? 'High' : score >= 4 ? 'Moderate' : 'Low'
+                    };
+                }
+                return { score: 1, pga: 0, category: 'Low' };
+            } catch (error) {
+                console.error('Earthquake error:', error);
+                return { score: 1, pga: 0, category: 'Low' };
+            }
+        }
+
+        function assessWildfireRisk(lat, lon, atheniumData) {
+            if (atheniumData) {
+                if (atheniumData.wildfire !== undefined) {
+                    return { score: atheniumData.wildfire, source: 'Athenium' };
+                }
+                if (Array.isArray(atheniumData)) {
+                    const wildfireData = atheniumData.find(p => p.peril === 'WILDFIRE');
+                    if (wildfireData && wildfireData.riskScore !== undefined) {
+                        return { score: wildfireData.riskScore, source: 'Athenium' };
+                    }
+                }
+            }
+            
+            const highRiskStates = [
+                { name: 'California', lat: [32, 42], lon: [-125, -114], score: 9 },
+                { name: 'Oregon', lat: [42, 46.3], lon: [-124.5, -117], score: 8 },
+                { name: 'Washington', lat: [45.5, 49], lon: [-125, -117], score: 7 },
+                { name: 'Colorado', lat: [37, 41], lon: [-109, -102], score: 8 },
+                { name: 'New Mexico', lat: [31.3, 37], lon: [-109, -103], score: 7 },
+                { name: 'Arizona', lat: [31.3, 37], lon: [-115, -109], score: 8 },
+                { name: 'Montana', lat: [44.5, 49], lon: [-116, -104], score: 7 },
+                { name: 'Idaho', lat: [42, 49], lon: [-117, -111], score: 7 },
+                { name: 'Nevada', lat: [35, 42], lon: [-120, -114], score: 7 },
+                { name: 'Utah', lat: [37, 42], lon: [-114, -109], score: 6 },
+                { name: 'Wyoming', lat: [41, 45], lon: [-111, -104], score: 6 },
+                { name: 'Oklahoma', lat: [33.6, 37], lon: [-103, -94.4], score: 5 },
+                { name: 'Texas West', lat: [29, 36.5], lon: [-106.5, -100], score: 6 }
+            ];
+            
+            for (const region of highRiskStates) {
+                if (lat >= region.lat[0] && lat <= region.lat[1] && 
+                    lon >= region.lon[0] && lon <= region.lon[1]) {
+                    return { score: region.score, source: 'Geographic', region: region.name };
+                }
+            }
+            
+            return { score: 2, source: 'Geographic', region: 'Low Risk Area' };
+        }
+
         function assessKarstRisk(lat, lon) {
             const karstRegions = [
                 { name: 'Florida Central (Sinkhole Alley)', score: 9, lat: [27.5, 29.5], lon: [-82.5, -81] },
@@ -578,7 +660,7 @@
             return { score: 0, region: 'None' };
         }
         
-        function calculateRisk(elevation, atheniumData, karstData) {
+        function calculateRisk(elevation, atheniumData, karstData, earthquakeData, wildfireData) {
             let baseRisk = 30;
             
             if (elevation !== null) {
@@ -591,14 +673,13 @@
             let windRisk = 5;
             let tornadoRisk = 5;
             let hailRisk = 5;
-            let wildfireRisk = 5;
+            let wildfireRisk = wildfireData ? wildfireData.score : 5;
+            let earthquakeRisk = earthquakeData ? earthquakeData.score : 1;
             let karstScore = 0;
             
             if (atheniumData) {
-                // Handle both object format and array format from Athenium API
                 let dataArray = Array.isArray(atheniumData) ? atheniumData : null;
                 
-                // Flood risk - check multiple possible field names
                 if (atheniumData.fluvialRisk !== undefined || atheniumData.riverFloodRiskScore !== undefined) {
                     const fluvial = atheniumData.fluvialRisk || parseFloat(atheniumData.riverFloodRiskScore) || 0;
                     const pluvial = atheniumData.pluvialRisk || parseFloat(atheniumData.flashFloodRiskScore) || 5;
@@ -606,7 +687,6 @@
                     if (Math.max(fluvial, pluvial) >= 7) baseRisk += 12;
                 }
                 
-                // Hurricane risk
                 if (atheniumData.hurricaneWind !== undefined) {
                     hurricaneRisk = atheniumData.hurricaneWind;
                 } else if (dataArray) {
@@ -617,7 +697,6 @@
                 }
                 if (hurricaneRisk >= 7) baseRisk += 10;
                 
-                // Wind risk
                 if (atheniumData.wind !== undefined) {
                     windRisk = atheniumData.wind;
                 } else if (dataArray) {
@@ -628,7 +707,6 @@
                 }
                 if (windRisk >= 6) baseRisk += 5;
                 
-                // Tornado risk
                 if (atheniumData.tornado !== undefined) {
                     tornadoRisk = atheniumData.tornado;
                 } else if (dataArray) {
@@ -639,7 +717,6 @@
                 }
                 if (tornadoRisk >= 6) baseRisk += 5;
                 
-                // Hail risk
                 if (atheniumData.hail !== undefined) {
                     hailRisk = atheniumData.hail;
                 } else if (dataArray) {
@@ -649,23 +726,15 @@
                     }
                 }
                 if (hailRisk >= 6) baseRisk += 4;
-                
-                // Wildfire risk
-                if (atheniumData.wildfire !== undefined) {
-                    wildfireRisk = atheniumData.wildfire;
-                } else if (dataArray) {
-                    const wildfireData = dataArray.find(p => p.peril === 'WILDFIRE');
-                    if (wildfireData && wildfireData.riskScore !== undefined) {
-                        wildfireRisk = wildfireData.riskScore;
-                    }
-                }
-                if (wildfireRisk >= 7) baseRisk += 6;
             }
             
             if (karstData) {
                 karstScore = karstData.score;
                 if (karstScore >= 7) baseRisk += 8;
             }
+
+            if (earthquakeRisk >= 7) baseRisk += 8;
+            if (wildfireRisk >= 7) baseRisk += 6;
             
             const projectType = document.getElementById('projectType').value;
             const multipliers = {
@@ -690,13 +759,16 @@
                 windRisk: windRisk,
                 tornadoRisk: tornadoRisk,
                 hailRisk: hailRisk,
+                earthquakeRisk: earthquakeRisk,
+                earthquakeData: earthquakeData,
                 wildfireRisk: wildfireRisk,
+                wildfireData: wildfireData,
                 karstScore: karstScore,
-                recommendations: generateRecommendations(finalScore, floodScore, hurricaneRisk, karstScore)
+                recommendations: generateRecommendations(finalScore, floodScore, hurricaneRisk, karstScore, earthquakeRisk, wildfireRisk)
             };
         }
         
-        function generateRecommendations(score, flood, hurricane, karst) {
+        function generateRecommendations(score, flood, hurricane, karst, earthquake, wildfire) {
             const recs = [];
             
             if (score > 75) {
@@ -719,6 +791,14 @@
 
             if (karst >= 7) {
                 recs.push('KARST EXTREME: Mandatory geotechnical survey');
+            }
+
+            if (earthquake >= 7) {
+                recs.push('EARTHQUAKE HIGH: Consider earthquake sublimit');
+            }
+
+            if (wildfire >= 7) {
+                recs.push('WILDFIRE HIGH: Enhanced fire protection protocols');
             }
             
             return recs;
@@ -747,7 +827,19 @@
             document.getElementById('hurricaneRisk').textContent = riskData.hurricaneRisk + '/10';
             document.getElementById('tornadoRisk').textContent = riskData.tornadoRisk + '/10';
             document.getElementById('hailRisk').textContent = riskData.hailRisk + '/10';
-            document.getElementById('wildfireRisk').textContent = riskData.wildfireRisk + '/10';
+            
+            let earthquakeText = riskData.earthquakeRisk + '/10';
+            if (riskData.earthquakeData && riskData.earthquakeData.pga) {
+                earthquakeText += ' (PGA: ' + riskData.earthquakeData.pga + 'g)';
+            }
+            document.getElementById('earthquakeRisk').textContent = earthquakeText;
+            
+            let wildfireText = riskData.wildfireRisk + '/10';
+            if (riskData.wildfireData && riskData.wildfireData.source) {
+                wildfireText += ' (' + riskData.wildfireData.source + ')';
+            }
+            document.getElementById('wildfireRisk').textContent = wildfireText;
+            
             document.getElementById('karstRisk').textContent = riskData.karstScore + '/10';
             
             const recList = document.getElementById('recommendations');
@@ -768,7 +860,6 @@
             document.getElementById('atheniumData').value = '';
             document.getElementById('results').style.display = 'none';
             
-            // PRIORITY 3 FIX: Clean up map marker
             if (marker && map) {
                 map.removeLayer(marker);
                 marker = null;
