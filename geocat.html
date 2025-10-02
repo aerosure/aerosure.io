@@ -727,7 +727,7 @@
 
                 if (document.getElementById('layerWildfire').checked) {
                     wildfireData = estimateWildfireRisk(lat, lon, atheniumData);
-                    if (wildfireData) dataSources.push('Wildfire Analysis');
+                    if (wildfireData) dataSources.push('Athenium Wildfire');
                 }
 
                 let karstData = null;
@@ -830,27 +830,15 @@
         }
 
         function estimateWildfireRisk(lat, lon, atheniumData) {
-            let score = 5;
-            
-            if (lon < -100) {
-                score += 2;
+            if (atheniumData && atheniumData.wildfireScore !== undefined) {
+                return {
+                    score: atheniumData.wildfireScore,
+                    riskLevel: atheniumData.wildfireScore >= 7 ? 'High' : 
+                              atheniumData.wildfireScore >= 4 ? 'Moderate' : 'Low'
+                };
             }
             
-            if (atheniumData && atheniumData.wildfireScore) {
-                score = atheniumData.wildfireScore;
-            }
-            
-            const projectType = document.getElementById('projectType').value;
-            if (projectType === 'infrastructure' || projectType === 'water') {
-                score -= 1;
-            }
-            
-            score = Math.max(0, Math.min(10, score));
-            
-            return {
-                score: score,
-                riskLevel: score >= 7 ? 'High' : score >= 4 ? 'Moderate' : 'Low'
-            };
+            return null;
         }
 
         function assessKarstRisk(lat, lon) {
@@ -859,16 +847,16 @@
             let details = [];
             
             const karstRegions = [
-                { state: 'FL', name: 'Florida', baseScore: 8, lat: [24, 31], lon: [-87, -80], note: 'Extensive limestone, cover collapse sinkholes common' },
-                { state: 'TN', name: 'Tennessee', baseScore: 8, lat: [35, 37], lon: [-90, -81.5], note: 'Nashville basin, Eastern Highland Rim - active sinkhole development. Knoxville area in karst belt' },
-                { state: 'KY', name: 'Kentucky', baseScore: 7, lat: [36.5, 39.1], lon: [-89.5, -82], note: 'Mammoth Cave region, extensive karst terrain' },
-                { state: 'MO', name: 'Missouri', baseScore: 6, lat: [36, 40.5], lon: [-95.5, -89], note: 'Ozark Plateau karst, Springfield area' },
-                { state: 'PA', name: 'Pennsylvania', baseScore: 6, lat: [39.7, 42], lon: [-80.5, -74.5], note: 'Appalachian karst belt' },
-                { state: 'TX', name: 'Texas', baseScore: 5, lat: [29.5, 33.5], lon: [-101, -94], note: 'Edwards Plateau, Central Texas karst' },
-                { state: 'IN', name: 'Indiana', baseScore: 5, lat: [37.8, 41.8], lon: [-88, -84.8], note: 'Southern Indiana karst belt' },
-                { state: 'AL', name: 'Alabama', baseScore: 5, lat: [30.2, 35], lon: [-88.5, -84.9], note: 'Northern Alabama karst' },
-                { state: 'VA', name: 'Virginia', baseScore: 5, lat: [36.5, 39.5], lon: [-83.7, -75.2], note: 'Shenandoah Valley karst' },
-                { state: 'WV', name: 'West Virginia', baseScore: 5, lat: [37.2, 40.6], lon: [-82.6, -77.7], note: 'Greenbrier Valley karst' }
+                { state: 'FL', name: 'Florida', baseScore: 8, lat: [24, 31], lon: [-87, -80], note: 'Extensive limestone, cover collapse sinkholes common statewide' },
+                { state: 'TN', name: 'Tennessee', baseScore: 8, lat: [35, 37], lon: [-90, -82], note: 'Central basin karst - Nashville, Murfreesboro. Eastern Highland Rim active sinkhole development' },
+                { state: 'KY', name: 'Kentucky', baseScore: 7, lat: [36.5, 39.1], lon: [-89.5, -82], note: 'Mammoth Cave region, extensive karst terrain in central/south-central KY' },
+                { state: 'MO', name: 'Missouri', baseScore: 6, lat: [36, 38.5], lon: [-94.5, -90], note: 'Ozark Plateau karst - Springfield, Branson area. Excludes northern plains' },
+                { state: 'PA', name: 'Pennsylvania', baseScore: 6, lat: [39.7, 41.2], lon: [-80, -76], note: 'Appalachian karst belt - central/south-central PA. Excludes Philly metro' },
+                { state: 'TX', name: 'Texas', baseScore: 5, lat: [29.5, 31.5], lon: [-101, -97.5], note: 'Edwards Plateau only - Austin, San Antonio area. Excludes coastal/north TX' },
+                { state: 'IN', name: 'Indiana', baseScore: 5, lat: [37.8, 39.5], lon: [-87.5, -85.5], note: 'Southern Indiana karst belt - Mitchell plain, excludes central/northern IN' },
+                { state: 'AL', name: 'Alabama', baseScore: 5, lat: [33, 35], lon: [-88, -85.5], note: 'Northern Alabama karst - Huntsville region, Tennessee Valley' },
+                { state: 'VA', name: 'Virginia', baseScore: 5, lat: [36.5, 39.5], lon: [-81.5, -78], note: 'Shenandoah Valley/Great Valley karst ONLY - follows I-81 corridor, excludes coastal plain' },
+                { state: 'WV', name: 'West Virginia', baseScore: 5, lat: [37.2, 40.6], lon: [-82, -78], note: 'Greenbrier Valley karst - eastern panhandle region' }
             ];
             
             for (const region of karstRegions) {
