@@ -445,8 +445,8 @@
             <div class="form-group">
                 <label>Construction Type</label>
                 <select id="constructionType" onchange="toggleRenovationOptions()">
-                    <option value="renovation">Renovation/Rehab</option>
                     <option value="new">New Construction</option>
+                    <option value="renovation">Renovation/Rehab</option>
                 </select>
             </div>
 
@@ -1062,7 +1062,8 @@
                 'healthcare': 1.05,
                 'industrial': 1.03,
                 'commercial': 1.0,
-                'residential': 0.98
+                'residential': 0.98,
+                'educational': 0.95
             };
             
             const constructionType = document.getElementById('constructionType').value;
