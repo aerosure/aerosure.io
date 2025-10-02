@@ -430,6 +430,7 @@
             <div class="form-group">
                 <label>Project Type</label>
                 <select id="projectType">
+                    <option value="educational">Educational Facility</option>
                     <option value="commercial">Commercial Construction</option>
                     <option value="residential">Residential Construction</option>
                     <option value="infrastructure">Infrastructure</option>
@@ -1065,7 +1066,7 @@
             };
             
             const constructionType = document.getElementById('constructionType').value;
-            const constructionMultiplier = constructionType === 'new' ? 1.08 : 1.0;
+            const constructionMultiplier = constructionType === 'renovation' ? 1.12 : 1.0;
             
             const structuralWork = document.querySelector('input[name="structuralWork"]:checked').value === 'structural';
             const structuralMultiplier = structuralWork ? 1.15 : 1.0;
