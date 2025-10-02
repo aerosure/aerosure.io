@@ -300,42 +300,42 @@
 
             <div class="form-group">
                 <label>Construction Type</label>
-                <select id="constructionType">
+                <select id="constructionType" onchange="toggleConstructionFields()">
                     <option value="new">New Construction</option>
                     <option value="renovation">Renovation/Rehab</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label>Structural Complexity</label>
-                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+            <div class="form-group" id="structuralComplexityGroup">
+                <label style="opacity: 0.5;">Structural Complexity</label>
+                <div style="display: flex; gap: 1rem; margin-top: 0.5rem; opacity: 0.5;">
                     <label style="display: flex; align-items: center; font-weight: normal;">
-                        <input type="radio" name="structuralWork" value="non-structural" checked style="width: auto; margin-right: 0.5rem;">
+                        <input type="radio" name="structuralWork" value="non-structural" checked disabled style="width: auto; margin-right: 0.5rem;">
                         Non-Structural
                     </label>
                     <label style="display: flex; align-items: center; font-weight: normal;">
-                        <input type="radio" name="structuralWork" value="structural" style="width: auto; margin-right: 0.5rem;">
+                        <input type="radio" name="structuralWork" value="structural" disabled style="width: auto; margin-right: 0.5rem;">
                         Structural Work
                     </label>
                 </div>
-                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">
+                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem; opacity: 0.5;">
                     Structural: foundation, framing, load-bearing modifications, shoring
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Active Operations On-Site</label>
-                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+            <div class="form-group" id="activeOpsGroup">
+                <label style="opacity: 0.5;">Active Operations On-Site</label>
+                <div style="display: flex; gap: 1rem; margin-top: 0.5rem; opacity: 0.5;">
                     <label style="display: flex; align-items: center; font-weight: normal;">
-                        <input type="radio" name="activeOps" value="no" checked style="width: auto; margin-right: 0.5rem;">
+                        <input type="radio" name="activeOps" value="no" checked disabled style="width: auto; margin-right: 0.5rem;">
                         No Active Operations
                     </label>
                     <label style="display: flex; align-items: center; font-weight: normal;">
-                        <input type="radio" name="activeOps" value="yes" style="width: auto; margin-right: 0.5rem;">
+                        <input type="radio" name="activeOps" value="yes" disabled style="width: auto; margin-right: 0.5rem;">
                         Active Operations
                     </label>
                 </div>
-                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem;">
+                <div style="font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem; opacity: 0.5;">
                     Does project involve construction within/adjacent to operating facility?
                 </div>
             </div>
@@ -448,6 +448,30 @@
         let map = null;
         let marker = null;
         let globalRiskData = {};
+        
+        function toggleConstructionFields() {
+            const constructionType = document.getElementById('constructionType').value;
+            const structuralGroup = document.getElementById('structuralComplexityGroup');
+            const activeOpsGroup = document.getElementById('activeOpsGroup');
+            const structuralRadios = document.querySelectorAll('input[name="structuralWork"]');
+            const activeOpsRadios = document.querySelectorAll('input[name="activeOps"]');
+            
+            if (constructionType === 'new') {
+                structuralGroup.style.opacity = '0.5';
+                activeOpsGroup.style.opacity = '0.5';
+                structuralGroup.querySelector('label').style.opacity = '0.5';
+                activeOpsGroup.querySelector('label').style.opacity = '0.5';
+                structuralRadios.forEach(radio => radio.disabled = true);
+                activeOpsRadios.forEach(radio => radio.disabled = true);
+            } else {
+                structuralGroup.style.opacity = '1';
+                activeOpsGroup.style.opacity = '1';
+                structuralGroup.querySelector('label').style.opacity = '1';
+                activeOpsGroup.querySelector('label').style.opacity = '1';
+                structuralRadios.forEach(radio => radio.disabled = false);
+                activeOpsRadios.forEach(radio => radio.disabled = false);
+            }
+        }
         
         async function geocodeAddress() {
             const address = document.getElementById('address').value;
