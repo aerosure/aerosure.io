@@ -790,9 +790,12 @@
                     const pga = data.response.data.pga;
                     
                     let score, riskLevel;
-                    if (pga >= 0.8) {
+                    if (pga >= 1.0) {
                         score = 10;
                         riskLevel = 'Extreme';
+                    } else if (pga >= 0.8) {
+                        score = 9;
+                        riskLevel = 'Very High';
                     } else if (pga >= 0.6) {
                         score = 8;
                         riskLevel = 'High';
@@ -808,6 +811,9 @@
                     } else if (pga >= 0.2) {
                         score = 4;
                         riskLevel = 'Moderate-Low';
+                    } else if (pga >= 0.15) {
+                        score = 3;
+                        riskLevel = 'Low-Moderate';
                     } else if (pga >= 0.1) {
                         score = 2;
                         riskLevel = 'Low';
