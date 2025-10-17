@@ -787,34 +787,44 @@
                 const data = await response.json();
                 
                 if (data.response && data.response.data) {
+                    // Use Ss (1-second spectral acceleration) which is more representative
+                    // PGA can be inflated by site class adjustments
+                    const ss = data.response.data.ss;
                     const pga = data.response.data.pga;
                     
+                    console.log('EARTHQUAKE DEBUG - Ss Value:', ss);
+                    console.log('EARTHQUAKE DEBUG - PGA Value:', pga);
+                    console.log('EARTHQUAKE DEBUG - Using Ss for scoring');
+                    
+                    // Use Ss for scoring (more accurate for regional seismicity)
+                    const scoreValue = ss;
+                    
                     let score, riskLevel;
-                    if (pga >= 1.0) {
+                    if (scoreValue >= 2.0) {
                         score = 10;
                         riskLevel = 'Extreme';
-                    } else if (pga >= 0.8) {
+                    } else if (scoreValue >= 1.5) {
                         score = 9;
                         riskLevel = 'Very High';
-                    } else if (pga >= 0.6) {
+                    } else if (scoreValue >= 1.25) {
                         score = 8;
                         riskLevel = 'High';
-                    } else if (pga >= 0.5) {
+                    } else if (scoreValue >= 1.0) {
                         score = 7;
                         riskLevel = 'High';
-                    } else if (pga >= 0.4) {
+                    } else if (scoreValue >= 0.75) {
                         score = 6;
                         riskLevel = 'Moderate-High';
-                    } else if (pga >= 0.3) {
+                    } else if (scoreValue >= 0.50) {
                         score = 5;
                         riskLevel = 'Moderate';
-                    } else if (pga >= 0.2) {
+                    } else if (scoreValue >= 0.35) {
                         score = 4;
                         riskLevel = 'Moderate-Low';
-                    } else if (pga >= 0.15) {
+                    } else if (scoreValue >= 0.25) {
                         score = 3;
                         riskLevel = 'Low-Moderate';
-                    } else if (pga >= 0.1) {
+                    } else if (scoreValue >= 0.15) {
                         score = 2;
                         riskLevel = 'Low';
                     } else {
@@ -822,8 +832,12 @@
                         riskLevel = 'Very Low';
                     }
                     
+                    console.log('EARTHQUAKE DEBUG - Assigned Score:', score);
+                    console.log('EARTHQUAKE DEBUG - Risk Level:', riskLevel);
+                    
                     return {
                         pga: pga,
+                        ss: ss,
                         riskLevel: riskLevel,
                         score: score
                     };
