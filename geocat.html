@@ -1275,6 +1275,10 @@
                             detailText += detailText ? ' | ' : '';
                             detailText += `PGA: ${perilData.pga.toFixed(2)}g`;
                         }
+                        if (perilData.ss) {
+                            detailText += detailText ? ' | ' : '';
+                            detailText += `Ss: ${perilData.ss.toFixed(2)}g`;
+                        }
                         if (perilData.level) {
                             detailText += detailText ? ' | ' : '';
                             detailText += `Level: ${perilData.level}`;
