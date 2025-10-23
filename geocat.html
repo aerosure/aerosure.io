@@ -477,6 +477,131 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white !important;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: white !important;
+                border-bottom: 2px solid #1e3c72;
+                padding: 1rem !important;
+                box-shadow: none !important;
+            }
+            
+            .container {
+                display: block !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin-top: 80px !important;
+            }
+            
+            .input-panel {
+                display: none !important;
+            }
+            
+            .results-panel {
+                box-shadow: none !important;
+                padding: 20px !important;
+                border: none !important;
+            }
+            
+            .tabs, .btn, .notification, .api-status, .status-indicator {
+                display: none !important;
+            }
+            
+            .tab-content {
+                display: block !important;
+                page-break-inside: avoid;
+            }
+            
+            .risk-score-container {
+                page-break-inside: avoid;
+                background: #f3f4f6 !important;
+                color: #1f2937 !important;
+                border: 2px solid #1e3c72 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .risk-score-container::after {
+                display: none !important;
+            }
+            
+            .data-card, .peril-item {
+                page-break-inside: avoid;
+                border: 1px solid #e5e7eb !important;
+            }
+            
+            .recommendations {
+                page-break-inside: avoid;
+                background: #fffbeb !important;
+                border: 2px solid #f59e0b !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .chart-container {
+                page-break-inside: avoid;
+                max-height: 400px;
+            }
+            
+            canvas {
+                max-height: 300px !important;
+            }
+            
+            .print-header {
+                display: block !important;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            @page {
+                margin: 0.5in;
+                size: letter;
+            }
+        }
+        
+        .print-header {
+            display: none;
+            text-align: center;
+            padding: 2rem 0;
+            border-bottom: 3px solid #1e3c72;
+            margin-bottom: 2rem;
+        }
+        
+        .print-header h1 {
+            color: #1e3c72;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .print-header .subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        
+        .print-section {
+            page-break-inside: avoid;
+            margin-bottom: 2rem;
+        }
+        
+        .print-section h2 {
+            color: #1e3c72;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
 
         .api-status {
             display: flex;
@@ -1476,7 +1601,441 @@
         }
 
         function printReport() {
-            window.print();
+            if (!globalRiskData.score) {
+                showNotification('Please run analysis first', 'error');
+                return;
+            }
+            
+            // Create a new window for the print report
+            const printWindow = window.open('', '_blank', 'width=1200,height=800');
+            
+            // Get all the data
+            const projectName = document.getElementById('projectName').value || 'Unnamed Project';
+            const address = document.getElementById('address').value || 'Not Specified';
+            const lat = document.getElementById('latitude').value;
+            const lon = document.getElementById('longitude').value;
+            const projectType = document.getElementById('projectType').value;
+            const constructionType = document.getElementById('constructionType').value;
+            const projectValue = parseInt(document.getElementById('projectValue').value) || 0;
+            
+            const atheniumData = getAtheniumData(parseFloat(lat), parseFloat(lon));
+            
+            // Determine risk color and category
+            let riskColor = '#10b981';
+            let riskCategory = 'LOW RISK';
+            if (globalRiskData.score > 75) {
+                riskColor = '#ef4444';
+                riskCategory = 'HIGH RISK';
+            } else if (globalRiskData.score > 60) {
+                riskColor = '#f59e0b';
+                riskCategory = 'ELEVATED RISK';
+            } else if (globalRiskData.score > 45) {
+                riskColor = '#3b82f6';
+                riskCategory = 'MODERATE RISK';
+            }
+            
+            // Generate peril table HTML
+            let perilTableHTML = '';
+            Object.keys(globalRiskData.perils).forEach(key => {
+                const peril = globalRiskData.perils[key];
+                const riskLevel = getRiskLevel(peril.score);
+                const riskLevelColor = riskLevel === 'HIGH' || riskLevel === 'EXTREME' ? '#ef4444' :
+                                       riskLevel === 'MODERATE' ? '#f59e0b' : '#10b981';
+                
+                perilTableHTML += `
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #e5e7eb;">
+                            <strong>${key.charAt(0).toUpperCase() + key.slice(1)}</strong>
+                        </td>
+                        <td style="padding: 12px; border: 1px solid #e5e7eb; text-align: center;">
+                            <strong>${peril.score.toFixed(1)}/10</strong>
+                        </td>
+                        <td style="padding: 12px; border: 1px solid #e5e7eb; text-align: center;">
+                            ${peril.probability ? peril.probability.toFixed(1) + '%' : 'N/A'}
+                        </td>
+                        <td style="padding: 12px; border: 1px solid #e5e7eb; text-align: center; color: ${riskLevelColor}; font-weight: bold;">
+                            ${riskLevel}
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            // Generate recommendations HTML
+            let recommendationsHTML = '';
+            globalRiskData.recommendations.forEach(rec => {
+                recommendationsHTML += `<li style="margin-bottom: 8px;">${rec}</li>`;
+            });
+            
+            // Generate deductibles HTML
+            const deductibles = getDeductibleRecommendations(globalRiskData);
+            let deductiblesHTML = '';
+            deductibles.forEach(ded => {
+                deductiblesHTML += `<li style="margin-bottom: 8px;">${ded}</li>`;
+            });
+            
+            // Build the complete HTML document
+            const printHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CatZone Risk Assessment - ${projectName}</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 0.5in;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: white;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            border-bottom: 3px solid #1e3c72;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            color: #1e3c72;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header .subtitle {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        
+        .header .date {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .risk-score-box {
+            background: linear-gradient(135deg, ${riskColor}, ${riskColor}dd);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 2rem 0;
+            page-break-inside: avoid;
+        }
+        
+        .risk-score-value {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        
+        .risk-category {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+            page-break-inside: avoid;
+        }
+        
+        .section-title {
+            color: #1e3c72;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-item {
+            padding: 0.5rem 0;
+        }
+        
+        .info-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .info-value {
+            color: #1f2937;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th {
+            background: #1e3c72;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        
+        .recommendations-box {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            page-break-inside: avoid;
+        }
+        
+        .recommendations-box h3 {
+            color: #92400e;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendations-box ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .recommendations-box li:before {
+            content: "→ ";
+            color: #92400e;
+            font-weight: bold;
+        }
+        
+        .deductibles-box {
+            background: #f0f9ff;
+            border: 2px solid #0284c7;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            page-break-inside: avoid;
+        }
+        
+        .deductibles-box h3 {
+            color: #0369a1;
+            margin-bottom: 1rem;
+        }
+        
+        .deductibles-box ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .deductibles-box li:before {
+            content: "• ";
+            color: #0369a1;
+            font-weight: bold;
+        }
+        
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 2px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        @media print {
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            
+            .risk-score-box {
+                background: ${riskColor} !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CATZONE PROFESSIONAL</h1>
+        <div class="subtitle">NATCAT Risk Intelligence Report</div>
+        <div class="date">Generated: ${new Date().toLocaleString()}</div>
+    </div>
+    
+    <div class="risk-score-box">
+        <div class="risk-category">${riskCategory}</div>
+        <div class="risk-score-value">${globalRiskData.score}/100</div>
+        <div>Composite Risk Score</div>
+        <div style="margin-top: 1rem; font-size: 1.1rem;">
+            Suggested Premium Rate: ${globalRiskData.suggestedRate}%
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">PROJECT INFORMATION</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Project Name</div>
+                <div class="info-value">${projectName}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Project Type</div>
+                <div class="info-value">${projectType.charAt(0).toUpperCase() + projectType.slice(1)}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Construction Type</div>
+                <div class="info-value">${constructionType.charAt(0).toUpperCase() + constructionType.slice(1)}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Total Insured Value</div>
+                <div class="info-value">$${projectValue.toLocaleString()}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Address</div>
+                <div class="info-value">${address}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Coordinates</div>
+                <div class="info-value">${lat}, ${lon}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="quick-stats">
+        <div class="stat-card">
+            <div class="stat-value">${Math.round(atheniumData.elevation)}</div>
+            <div class="stat-label">Elevation (ft)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">${Math.round(globalRiskData.floodScore)}%</div>
+            <div class="stat-label">Flood Risk</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">${globalRiskData.scsScore}%</div>
+            <div class="stat-label">SCS Risk</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">${globalRiskData.suggestedRate}%</div>
+            <div class="stat-label">Base Rate</div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">SITE CHARACTERISTICS</h2>
+        <ul style="list-style: none; padding: 0;">
+            <li style="padding: 0.5rem 0;"><strong>Elevation:</strong> ${Math.round(atheniumData.elevation)} feet above sea level</li>
+            <li style="padding: 0.5rem 0;"><strong>Height Above Water:</strong> ${Math.round(atheniumData.heightAboveWater)} feet</li>
+            <li style="padding: 0.5rem 0;"><strong>FEMA Flood Zone:</strong> ${atheniumData.fluvialRisk > 6 ? 'AE (High Risk)' : 'X (Minimal Risk)'}</li>
+            <li style="padding: 0.5rem 0;"><strong>Primary Natural Hazards:</strong> ${getPrimaryRisks(atheniumData)}</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">NATURAL CATASTROPHE RISK ANALYSIS</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Peril</th>
+                    <th style="text-align: center;">Risk Score</th>
+                    <th style="text-align: center;">Annual Probability</th>
+                    <th style="text-align: center;">Risk Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${perilTableHTML}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="recommendations-box">
+        <h3>UNDERWRITING RECOMMENDATIONS</h3>
+        <ul>
+            ${recommendationsHTML}
+        </ul>
+    </div>
+    
+    <div class="deductibles-box">
+        <h3>RECOMMENDED DEDUCTIBLE STRUCTURE</h3>
+        <ul>
+            ${deductiblesHTML}
+        </ul>
+    </div>
+    
+    <div class="footer">
+        <p><strong>CatZone Professional v3.0</strong> | Powered by Athenium Climate Intelligence</p>
+        <p>This report is for underwriting evaluation purposes only</p>
+        <p style="margin-top: 1rem;">© ${new Date().getFullYear()} Ascot Insurance Group - Inland Marine Division</p>
+    </div>
+    
+    <button onclick="window.print()" class="no-print" style="position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #1e3c72; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Print Report</button>
+</body>
+</html>
+            `;
+            
+            // Write the HTML to the new window
+            printWindow.document.write(printHTML);
+            printWindow.document.close();
+            
+            // Focus and print
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+            }, 250);
+            
+            showNotification('Print report generated');
         }
 
         function downloadJSON() {
@@ -1524,93 +2083,323 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Header
-            doc.setFontSize(20);
+            // Get data
+            const projectName = document.getElementById('projectName').value || 'Unnamed Project';
+            const address = document.getElementById('address').value || 'Not Specified';
+            const lat = document.getElementById('latitude').value;
+            const lon = document.getElementById('longitude').value;
+            const projectType = document.getElementById('projectType').value;
+            const constructionType = document.getElementById('constructionType').value;
+            const projectValue = parseInt(document.getElementById('projectValue').value) || 0;
+            
+            // Add header with color
+            doc.setFillColor(30, 60, 114);
+            doc.rect(0, 0, 210, 35, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
             doc.setFont(undefined, 'bold');
-            doc.text('CatZone Professional Risk Assessment', 105, 20, { align: 'center' });
+            doc.text('CATZONE PROFESSIONAL', 105, 15, { align: 'center' });
             
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text('Generated: ' + new Date().toLocaleString(), 105, 28, { align: 'center' });
-            
-            // Project Info
             doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
-            let y = 45;
-            doc.text('PROJECT INFORMATION', 20, y);
-            
             doc.setFont(undefined, 'normal');
-            doc.setFontSize(10);
-            y += 8;
-            
-            doc.text('Project: ' + (document.getElementById('projectName').value || 'N/A'), 20, y);
-            y += 6;
-            doc.text('Address: ' + (document.getElementById('address').value || 'N/A'), 20, y);
-            y += 6;
-            doc.text('Coordinates: ' + document.getElementById('latitude').value + ', ' + 
-                     document.getElementById('longitude').value, 20, y);
-            y += 6;
-            doc.text('Type: ' + document.getElementById('projectType').value, 20, y);
-            y += 6;
-            doc.text('Value: $' + (parseInt(document.getElementById('projectValue').value) || 0).toLocaleString(), 20, y);
-            y += 12;
-            
-            // Risk Score
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text('RISK ASSESSMENT', 20, y);
-            y += 8;
-            
-            doc.setFontSize(16);
-            doc.text('Composite Risk Score: ' + globalRiskData.score + '/100', 20, y);
-            y += 10;
-            
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text('Suggested Rate: ' + globalRiskData.suggestedRate + '%', 20, y);
-            y += 8;
-            
-            // Perils
-            doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
-            doc.text('PERIL ANALYSIS', 20, y);
-            y += 8;
-            
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            
-            Object.keys(globalRiskData.perils).forEach(peril => {
-                const data = globalRiskData.perils[peril];
-                doc.text(`${peril.toUpperCase()}: ${data.score}/10` + 
-                        (data.probability ? ` (${data.probability.toFixed(1)}% annual)` : ''), 20, y);
-                y += 6;
-            });
-            
-            y += 6;
-            
-            // Recommendations
-            doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
-            doc.text('RECOMMENDATIONS', 20, y);
-            y += 8;
+            doc.text('NATCAT RISK INTELLIGENCE REPORT', 105, 23, { align: 'center' });
             
             doc.setFontSize(9);
+            doc.text('Generated: ' + new Date().toLocaleString(), 105, 30, { align: 'center' });
+            
+            // Reset text color
+            doc.setTextColor(0, 0, 0);
+            
+            // Risk Score Box
+            let y = 45;
+            const scoreColor = globalRiskData.score > 75 ? [239, 68, 68] : 
+                             globalRiskData.score > 60 ? [245, 158, 11] :
+                             globalRiskData.score > 45 ? [59, 130, 246] : [16, 185, 129];
+            
+            doc.setFillColor(...scoreColor);
+            doc.rect(15, y, 180, 25, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18);
+            doc.setFont(undefined, 'bold');
+            doc.text('COMPOSITE RISK SCORE: ' + globalRiskData.score + '/100', 105, y + 12, { align: 'center' });
+            
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            let riskLevel = globalRiskData.score > 75 ? 'HIGH RISK' :
+                           globalRiskData.score > 60 ? 'ELEVATED RISK' :
+                           globalRiskData.score > 45 ? 'MODERATE RISK' : 'LOW RISK';
+            doc.text(riskLevel + ' | Suggested Rate: ' + globalRiskData.suggestedRate + '%', 105, y + 20, { align: 'center' });
+            
+            doc.setTextColor(0, 0, 0);
+            y += 35;
+            
+            // Project Information Section
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, y, 180, 8, 'F');
+            doc.text('PROJECT INFORMATION', 20, y + 6);
+            y += 12;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            
+            // Two column layout for project info
+            const col1X = 20;
+            const col2X = 110;
+            let tempY = y;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('Project Name:', col1X, tempY);
+            doc.setFont(undefined, 'normal');
+            doc.text(projectName, col1X + 25, tempY);
+            tempY += 6;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('Address:', col1X, tempY);
+            doc.setFont(undefined, 'normal');
+            const addressLines = doc.splitTextToSize(address, 75);
+            doc.text(addressLines, col1X + 17, tempY);
+            tempY += addressLines.length * 5;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('Project Type:', col1X, tempY);
+            doc.setFont(undefined, 'normal');
+            doc.text(projectType.charAt(0).toUpperCase() + projectType.slice(1), col1X + 24, tempY);
+            
+            tempY = y;
+            doc.setFont(undefined, 'bold');
+            doc.text('Coordinates:', col2X, tempY);
+            doc.setFont(undefined, 'normal');
+            doc.text(lat + ', ' + lon, col2X + 23, tempY);
+            tempY += 6;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('Construction:', col2X, tempY);
+            doc.setFont(undefined, 'normal');
+            doc.text(constructionType.charAt(0).toUpperCase() + constructionType.slice(1), col2X + 24, tempY);
+            tempY += 6;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('Project Value:', col2X, tempY);
+            doc.setFont(undefined, 'normal');
+            doc.text('$' + projectValue.toLocaleString(), col2X + 25, tempY);
+            
+            y = Math.max(tempY, y + 25);
+            
+            // Site Characteristics
+            y += 8;
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, y, 180, 8, 'F');
+            doc.text('SITE CHARACTERISTICS', 20, y + 6);
+            y += 12;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            
+            // Get Athenium data for display
+            const atheniumData = getAtheniumData(parseFloat(lat), parseFloat(lon));
+            
+            doc.text('• Elevation: ' + Math.round(atheniumData.elevation) + ' ft above sea level', 20, y);
+            y += 6;
+            doc.text('• Height Above Water: ' + Math.round(atheniumData.heightAboveWater) + ' ft', 20, y);
+            y += 6;
+            doc.text('• FEMA Flood Zone: ' + (atheniumData.fluvialRisk > 6 ? 'AE (High Risk)' : 'X (Minimal Risk)'), 20, y);
+            y += 10;
+            
+            // Natural Catastrophe Risk Analysis
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, y, 180, 8, 'F');
+            doc.text('NATURAL CATASTROPHE RISK ANALYSIS', 20, y + 6);
+            y += 12;
+            
+            doc.setFontSize(10);
+            
+            // Create risk table
+            const perilData = [
+                ['Peril', 'Risk Score', 'Annual Probability', 'Risk Level'],
+                ['Flood (River)', atheniumData.fluvialRisk.toFixed(1) + '/10', 'N/A', getRiskLevel(atheniumData.fluvialRisk)],
+                ['Flood (Rain)', atheniumData.pluvialRisk.toFixed(1) + '/10', 'N/A', getRiskLevel(atheniumData.pluvialRisk)],
+                ['Hail', atheniumData.hail + '/10', atheniumData.hailProbability.toFixed(1) + '%', getRiskLevel(atheniumData.hail)],
+                ['Wind', atheniumData.wind + '/10', atheniumData.windProbability.toFixed(1) + '%', getRiskLevel(atheniumData.wind)],
+                ['Tornado', atheniumData.tornado + '/10', atheniumData.tornadoProbability.toFixed(1) + '%', getRiskLevel(atheniumData.tornado)],
+                ['Hurricane', atheniumData.hurricaneWind + '/10', atheniumData.hurricaneProbability.toFixed(1) + '%', getRiskLevel(atheniumData.hurricaneWind)],
+                ['Heavy Rain', atheniumData.rainfall + '/10', atheniumData.rainfallProbability.toFixed(1) + '%', getRiskLevel(atheniumData.rainfall)]
+            ];
+            
+            // Draw table
+            const startX = 20;
+            const colWidths = [40, 30, 40, 40];
+            let tableY = y;
+            
+            // Header row
+            doc.setFont(undefined, 'bold');
+            doc.setFillColor(30, 60, 114);
+            doc.rect(startX, tableY, 170, 7, 'F');
+            doc.setTextColor(255, 255, 255);
+            
+            let xPos = startX + 2;
+            perilData[0].forEach((header, i) => {
+                doc.text(header, xPos, tableY + 5);
+                xPos += colWidths[i];
+            });
+            
+            doc.setTextColor(0, 0, 0);
+            tableY += 7;
+            
+            // Data rows
+            doc.setFont(undefined, 'normal');
+            for (let i = 1; i < perilData.length; i++) {
+                if (i % 2 === 0) {
+                    doc.setFillColor(245, 245, 245);
+                    doc.rect(startX, tableY, 170, 6, 'F');
+                }
+                
+                xPos = startX + 2;
+                perilData[i].forEach((cell, j) => {
+                    // Color code risk levels
+                    if (j === 3) {
+                        if (cell === 'HIGH' || cell === 'EXTREME') {
+                            doc.setTextColor(239, 68, 68);
+                        } else if (cell === 'MODERATE') {
+                            doc.setTextColor(245, 158, 11);
+                        } else {
+                            doc.setTextColor(16, 185, 129);
+                        }
+                    }
+                    doc.text(cell, xPos, tableY + 4);
+                    doc.setTextColor(0, 0, 0);
+                    xPos += colWidths[j];
+                });
+                tableY += 6;
+            }
+            
+            y = tableY + 8;
+            
+            // Check if we need a new page
+            if (y > 240) {
+                doc.addPage();
+                y = 20;
+            }
+            
+            // Underwriting Recommendations
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, y, 180, 8, 'F');
+            doc.text('UNDERWRITING RECOMMENDATIONS', 20, y + 6);
+            y += 12;
+            
+            doc.setFontSize(10);
             doc.setFont(undefined, 'normal');
             
             globalRiskData.recommendations.forEach(rec => {
                 const lines = doc.splitTextToSize('• ' + rec, 170);
                 lines.forEach(line => {
-                    if (y > 280) {
+                    if (y > 270) {
                         doc.addPage();
                         y = 20;
                     }
                     doc.text(line, 20, y);
                     y += 5;
                 });
+                y += 2;
             });
             
-            doc.save('CatZone_Report_' + Date.now() + '.pdf');
-            showNotification('PDF downloaded successfully');
+            y += 5;
+            
+            // Deductible Structure
+            if (y > 200) {
+                doc.addPage();
+                y = 20;
+            }
+            
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, y, 180, 8, 'F');
+            doc.text('RECOMMENDED DEDUCTIBLE STRUCTURE', 20, y + 6);
+            y += 12;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            
+            const deductibles = getDeductibleRecommendations(globalRiskData);
+            deductibles.forEach(ded => {
+                doc.text('• ' + ded, 20, y);
+                y += 6;
+            });
+            
+            // Footer
+            y = 270;
+            doc.setDrawColor(200, 200, 200);
+            doc.line(15, y, 195, y);
+            y += 5;
+            
+            doc.setFontSize(8);
+            doc.setTextColor(128, 128, 128);
+            doc.text('CatZone Professional v3.0 | Powered by Athenium Climate Intelligence', 105, y, { align: 'center' });
+            y += 4;
+            doc.text('This report is for underwriting evaluation purposes only', 105, y, { align: 'center' });
+            
+            // Save the PDF
+            const fileName = 'CatZone_Report_' + projectName.replace(/[^a-z0-9]/gi, '_') + '_' + new Date().toISOString().slice(0,10) + '.pdf';
+            doc.save(fileName);
+            showNotification('PDF report generated successfully');
+        }
+        
+        function getRiskLevel(score) {
+            if (score >= 8) return 'EXTREME';
+            if (score >= 6) return 'HIGH';
+            if (score >= 4) return 'MODERATE';
+            if (score >= 2) return 'LOW';
+            return 'MINIMAL';
+        }
+        
+        function getDeductibleRecommendations(riskData) {
+            const deds = [];
+            
+            // Base AOP deductible
+            if (riskData.score > 60) {
+                deds.push('All Other Perils (AOP): $50,000');
+            } else if (riskData.score > 45) {
+                deds.push('All Other Perils (AOP): $25,000');
+            } else {
+                deds.push('All Other Perils (AOP): $10,000');
+            }
+            
+            // Wind/Hail
+            if (riskData.perils.hail && riskData.perils.hail.score >= 6) {
+                deds.push('Wind/Hail: 5% of TIV (minimum $100,000)');
+            } else if (riskData.perils.hail && riskData.perils.hail.score >= 4) {
+                deds.push('Wind/Hail: 3% of TIV (minimum $50,000)');
+            } else {
+                deds.push('Wind/Hail: 1% of TIV (minimum $25,000)');
+            }
+            
+            // Flood
+            if (riskData.perils.flood && riskData.perils.flood.score >= 6) {
+                deds.push('Flood: $100,000 with 50% TIV sublimit');
+            } else if (riskData.perils.flood && riskData.perils.flood.score >= 4) {
+                deds.push('Flood: $50,000 with full TIV coverage');
+            } else {
+                deds.push('Flood: $25,000 with full TIV coverage');
+            }
+            
+            // Named Storm
+            if (riskData.perils.hurricane && riskData.perils.hurricane.score >= 6) {
+                deds.push('Named Storm: 5% of TIV');
+            } else if (riskData.perils.hurricane && riskData.perils.hurricane.score >= 3) {
+                deds.push('Named Storm: 3% of TIV');
+            }
+            
+            return deds;
         }
 
         function resetForm() {
