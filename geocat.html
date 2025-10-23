@@ -766,11 +766,18 @@
                     <option value="commercial">Commercial Construction</option>
                     <option value="residential">Residential Construction</option>
                     <option value="infrastructure">Infrastructure</option>
+                    <option value="bridge">Bridge Construction</option>
+                    <option value="marine">Marine/Port Facility</option>
+                    <option value="water">Water/Wastewater Treatment</option>
                     <option value="industrial">Industrial Facility</option>
                     <option value="healthcare">Healthcare Facility</option>
+                    <option value="education">Educational Facility</option>
                     <option value="warehouse">Warehouse/Distribution</option>
                     <option value="retail">Retail Development</option>
                     <option value="multifamily">Multi-Family Residential</option>
+                    <option value="hospitality">Hotel/Hospitality</option>
+                    <option value="renewable">Renewable Energy (Solar/Wind)</option>
+                    <option value="data_center">Data Center</option>
                 </select>
             </div>
 
@@ -1281,14 +1288,21 @@
             // Project type adjustment
             const projectType = document.getElementById('projectType').value;
             const typeMultipliers = {
-                'industrial': 1.1,
-                'healthcare': 1.15,
-                'infrastructure': 1.12,
-                'commercial': 1.0,
-                'warehouse': 0.95,
-                'residential': 0.98,
-                'retail': 1.02,
-                'multifamily': 1.05
+                'water': 1.20,           // Highest - critical infrastructure + water exposure
+                'data_center': 1.18,     // Very high - zero downtime tolerance
+                'healthcare': 1.15,      // High - operational sensitivity
+                'bridge': 1.12,          // High - complex engineering
+                'marine': 1.12,          // High - water exposure
+                'infrastructure': 1.10,   // Moderate-high - public infrastructure
+                'industrial': 1.08,      // Moderate-high - equipment values
+                'education': 1.05,       // Moderate - occupied buildings
+                'renewable': 1.05,       // Moderate - specialized equipment
+                'hospitality': 1.03,     // Moderate - business interruption
+                'retail': 1.02,          // Standard - typical commercial
+                'commercial': 1.0,       // Baseline
+                'multifamily': 0.98,     // Slightly lower - distributed risk
+                'warehouse': 0.95,       // Lower - simple structures
+                'residential': 0.93      // Lowest - standard construction
             };
             
             const finalScore = Math.min(95, Math.max(5, baseRisk * (typeMultipliers[projectType] || 1.0)));
@@ -1323,7 +1337,9 @@
 
         function generateRecommendations(score, perils, data) {
             const recs = [];
+            const projectType = document.getElementById('projectType').value;
             
+            // Overall risk level recommendations
             if (score > 75) {
                 recs.push('HIGH RISK: Comprehensive coverage with enhanced sublimits required');
                 recs.push('Consider declining or requiring significant risk mitigation');
@@ -1335,14 +1351,50 @@
                 recs.push('Standard policy terms acceptable');
             }
             
+            // Project type specific recommendations
+            if (projectType === 'water') {
+                recs.push('WATER/WASTEWATER: Require geotechnical survey for sinkhole/subsidence risk');
+                recs.push('Mandatory water detection systems (LAIIER or equivalent)');
+                recs.push('Environmental liability exclusion or sublimit required');
+                recs.push('Verify contractor has water treatment facility experience');
+            } else if (projectType === 'data_center') {
+                recs.push('DATA CENTER: Zero water tolerance - enhanced water damage prevention required');
+                recs.push('Backup power systems must be protected from all perils');
+                recs.push('Consider business interruption coverage given criticality');
+            } else if (projectType === 'healthcare') {
+                recs.push('HEALTHCARE: Active operations exposure - strict contamination protocols');
+                recs.push('Medical equipment requires specialized coverage endorsement');
+                recs.push('ICRA protocols mandatory for occupied facility work');
+            } else if (projectType === 'bridge') {
+                recs.push('BRIDGE: Verify marine/over-water construction experience');
+                recs.push('Scour and hydraulic engineering review required');
+                recs.push('Consider increased flood sublimits for in-water work');
+            } else if (projectType === 'marine') {
+                recs.push('MARINE/PORT: Storm surge and wave action coverage required');
+                recs.push('Verify contractor has marine construction experience');
+                recs.push('Consider naming US Army Corps as additional insured');
+            } else if (projectType === 'renewable') {
+                recs.push('RENEWABLE ENERGY: Specialized equipment breakdown coverage required');
+                recs.push('Verify panel/turbine manufacturer warranties');
+                recs.push('Consider hail resistance ratings for solar installations');
+            }
+            
+            // Peril-specific recommendations
             if (perils.hail && perils.hail.score >= 6) {
                 recs.push('Hail exposure HIGH: Minimum 3% wind/hail deductible required');
-                recs.push('Require Class 4 impact-resistant roofing materials');
+                if (projectType === 'renewable') {
+                    recs.push('Solar panels require Class 4 hail rating certification');
+                } else {
+                    recs.push('Require Class 4 impact-resistant roofing materials');
+                }
             }
             
             if (perils.flood && perils.flood.score >= 6) {
                 recs.push('Flood exposure ELEVATED: Consider flood sublimit 25-50% of TIV');
                 recs.push('Require flood mitigation plan and emergency protocols');
+                if (projectType === 'water' || projectType === 'marine') {
+                    recs.push('Enhanced flood deductible required for water-adjacent facilities');
+                }
             }
             
             if (perils.hurricane && perils.hurricane.score >= 6) {
@@ -1352,10 +1404,23 @@
             
             if (perils.tornado && perils.tornado.score >= 5) {
                 recs.push('Tornado risk MODERATE: Verify construction anchoring standards');
+                if (projectType === 'warehouse' || projectType === 'industrial') {
+                    recs.push('Tilt-up construction requires enhanced anchoring verification');
+                }
             }
             
             if (data.elevation < 100) {
                 recs.push('Low elevation site: Enhanced water damage prevention required');
+                if (projectType === 'water') {
+                    recs.push('Critical infrastructure at low elevation - consider exclusions');
+                }
+            }
+            
+            // Construction type considerations
+            const constructionType = document.getElementById('constructionType').value;
+            if (constructionType === 'renovation' && (projectType === 'healthcare' || projectType === 'water' || projectType === 'data_center')) {
+                recs.push('ACTIVE OPERATIONS RISK: Existing facility damage exclusion recommended');
+                recs.push('Hot work permits and fire watch mandatory during renovation');
             }
             
             return recs;
