@@ -1249,6 +1249,14 @@
             let baseRisk = 30;
             const perils = {};
             
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lon = parseFloat(document.getElementById('longitude').value);
+            
+            // Get additional risk assessments
+            const karstData = assessKarstRisk(lat, lon);
+            const wildfireData = estimateWildfireRisk(lat, lon);
+            const earthquakeData = getUSGSEarthquakeRisk(lat, lon);
+            
             // Elevation adjustment
             if (data.elevation < 100) baseRisk += 15;
             else if (data.elevation < 500) baseRisk += 5;
@@ -1285,6 +1293,50 @@
             
             perils.rainfall = { score: data.rainfall, probability: data.rainfallProbability };
             
+            // KARST/SINKHOLE RISK
+            if (karstData.score > 0) {
+                if (karstData.score >= 8) baseRisk += 15;
+                else if (karstData.score >= 6) baseRisk += 10;
+                else if (karstData.score >= 4) baseRisk += 5;
+                else if (karstData.score >= 2) baseRisk += 2;
+                
+                perils.karst = { 
+                    score: karstData.score, 
+                    probability: null,
+                    riskLevel: karstData.riskLevel,
+                    details: karstData.details
+                };
+            }
+            
+            // WILDFIRE RISK
+            if (wildfireData.score > 0) {
+                if (wildfireData.score >= 7) baseRisk += 10;
+                else if (wildfireData.score >= 5) baseRisk += 5;
+                else if (wildfireData.score >= 3) baseRisk += 2;
+                
+                perils.wildfire = {
+                    score: wildfireData.score,
+                    probability: null,
+                    riskLevel: wildfireData.riskLevel,
+                    details: wildfireData.details
+                };
+            }
+            
+            // EARTHQUAKE RISK
+            if (earthquakeData.score > 1) {
+                if (earthquakeData.score >= 8) baseRisk += 12;
+                else if (earthquakeData.score >= 6) baseRisk += 8;
+                else if (earthquakeData.score >= 4) baseRisk += 4;
+                else if (earthquakeData.score >= 2) baseRisk += 2;
+                
+                perils.earthquake = {
+                    score: earthquakeData.score,
+                    probability: null,
+                    riskLevel: earthquakeData.riskLevel,
+                    pga: earthquakeData.pga
+                };
+            }
+            
             // Project type adjustment
             const projectType = document.getElementById('projectType').value;
             const typeMultipliers = {
@@ -1313,6 +1365,9 @@
                 floodScore: floodScore,
                 scsScore: Math.round(scsScore * 10),
                 hurricaneScore: data.hurricaneWind,
+                karstScore: karstData.score,
+                wildfireScore: wildfireData.score,
+                earthquakeScore: earthquakeData.score,
                 perils: perils,
                 recommendations: generateRecommendations(finalScore, perils, data),
                 suggestedRate: calculateRate(finalScore, perils)
@@ -1416,16 +1471,61 @@
                 }
             }
             
-            // Construction type considerations
-            const constructionType = document.getElementById('constructionType').value;
-            if (constructionType === 'renovation' && (projectType === 'healthcare' || projectType === 'water' || projectType === 'data_center')) {
-                recs.push('ACTIVE OPERATIONS RISK: Existing facility damage exclusion recommended');
-                recs.push('Hot work permits and fire watch mandatory during renovation');
+            // KARST/SINKHOLE specific recommendations
+            if (perils.karst) {
+                if (perils.karst.score >= 8) {
+                    recs.push('KARST EXTREME: MANDATORY geotechnical survey with sinkhole assessment');
+                    recs.push('Consider sinkhole EXCLUSION or separate ground stability insurance');
+                    recs.push('If covered: minimum $500,000 sinkhole deductible');
+                    if (projectType === 'water') {
+                        recs.push('CRITICAL: Water infrastructure in karst = catastrophic loss potential');
+                        recs.push('Reference: $1.8M Tennessee water facility sinkhole loss');
+                    }
+                } else if (perils.karst.score >= 6) {
+                    recs.push('KARST HIGH: Geotechnical survey strongly recommended');
+                    recs.push('Consider sinkhole sublimit 25-50% of TIV');
+                    recs.push('Minimum $250,000 sinkhole deductible');
+                } else if (perils.karst.score >= 4) {
+                    recs.push('KARST MODERATE: Review site geology, consider Phase I assessment');
+                    recs.push('Standard deductible with sinkhole coverage notation');
+                } else if (perils.karst.score >= 2) {
+                    recs.push('KARST LOW: Note regional karst exposure in file');
+                }
+            }
+            
+            // WILDFIRE specific recommendations
+            if (perils.wildfire && perils.wildfire.score >= 5) {
+                if (perils.wildfire.score >= 7) {
+                    recs.push('WILDFIRE HIGH: Defensible space requirements mandatory');
+                    recs.push('Fire-resistant materials required (Class A roofing, non-combustible siding)');
+                } else {
+                    recs.push('WILDFIRE MODERATE: Verify local fire codes compliance');
+                }
+            }
+            
+            // EARTHQUAKE specific recommendations
+            if (perils.earthquake && perils.earthquake.score >= 4) {
+                if (perils.earthquake.score >= 8) {
+                    recs.push('EARTHQUAKE EXTREME: Seismic design review required');
+                    recs.push('Consider earthquake sublimit or separate DIC policy');
+                } else if (perils.earthquake.score >= 6) {
+                    recs.push('EARTHQUAKE HIGH: Verify seismic anchoring and bracing');
+                } else {
+                    recs.push('EARTHQUAKE MODERATE: Standard seismic provisions adequate');
+                }
             }
             
             return recs;
         }
 
+        function getRiskLevel(score) {
+            if (score >= 8) return 'EXTREME';
+            if (score >= 6) return 'HIGH';
+            if (score >= 4) return 'MODERATE';
+            if (score >= 2) return 'LOW';
+            return 'MINIMAL';
+        }
+        
         function updateResults(riskData) {
             // Update risk score display
             document.getElementById('riskScore').textContent = riskData.score;
@@ -1464,7 +1564,58 @@
                 `${riskData.hurricaneScore}/10`;
             document.getElementById('tornadoRisk').textContent = 
                 `${riskData.perils.tornado.score}/10`;
-            document.getElementById('wildfireRisk').textContent = 'N/A';
+            
+            // Update wildfire display
+            if (riskData.wildfireScore !== undefined && riskData.wildfireScore > 0) {
+                document.getElementById('wildfireRisk').textContent = `${riskData.wildfireScore}/10`;
+            } else {
+                document.getElementById('wildfireRisk').textContent = 'Minimal';
+            }
+            
+            // Add earthquake and karst cards if they don't exist
+            const dataGrid = document.querySelector('.data-grid');
+            
+            if (!document.getElementById('earthquakeRisk')) {
+                const eqCard = document.createElement('div');
+                eqCard.className = 'data-card';
+                eqCard.innerHTML = `
+                    <h3>EARTHQUAKE</h3>
+                    <div class="value" id="earthquakeRisk">--</div>
+                    <div class="label">Seismic Risk</div>
+                `;
+                dataGrid.appendChild(eqCard);
+            }
+            
+            if (!document.getElementById('karstRisk')) {
+                const karstCard = document.createElement('div');
+                karstCard.className = 'data-card';
+                karstCard.innerHTML = `
+                    <h3>KARST/SINKHOLE</h3>
+                    <div class="value" id="karstRisk">--</div>
+                    <div class="label">Subsidence Risk</div>
+                `;
+                dataGrid.appendChild(karstCard);
+            }
+            
+            // Update earthquake display
+            if (riskData.earthquakeScore !== undefined && riskData.earthquakeScore > 1) {
+                document.getElementById('earthquakeRisk').textContent = `${riskData.earthquakeScore}/10`;
+            } else {
+                document.getElementById('earthquakeRisk').textContent = 'Minimal';
+            }
+            
+            // Update karst display
+            if (riskData.karstScore !== undefined && riskData.karstScore > 0) {
+                const karstDisplay = document.getElementById('karstRisk');
+                karstDisplay.textContent = `${riskData.karstScore}/10`;
+                if (riskData.karstScore >= 8) {
+                    karstDisplay.style.color = '#ef4444';
+                } else if (riskData.karstScore >= 6) {
+                    karstDisplay.style.color = '#f59e0b';
+                }
+            } else {
+                document.getElementById('karstRisk').textContent = 'None';
+            }
             
             // Update elevation trend
             const elevTrend = document.getElementById('elevationTrend');
@@ -1480,8 +1631,22 @@
             const perilList = document.getElementById('perilList');
             perilList.innerHTML = '';
             
-            Object.keys(riskData.perils).forEach(key => {
+            const perilOrder = [
+                { key: 'flood', display: 'FLOOD', icon: '🌊' },
+                { key: 'hail', display: 'HAIL', icon: '🧊' },
+                { key: 'wind', display: 'WIND', icon: '💨' },
+                { key: 'tornado', display: 'TORNADO', icon: '🌪️' },
+                { key: 'hurricane', display: 'HURRICANE', icon: '🌀' },
+                { key: 'rainfall', display: 'HEAVY RAIN', icon: '🌧️' },
+                { key: 'karst', display: 'KARST/SINKHOLE', icon: '🕳️' },
+                { key: 'wildfire', display: 'WILDFIRE', icon: '🔥' },
+                { key: 'earthquake', display: 'EARTHQUAKE', icon: '📊' }
+            ];
+            
+            perilOrder.forEach(({ key, display, icon }) => {
                 const peril = riskData.perils[key];
+                if (!peril || (peril.score === 0 && key !== 'karst')) return;
+                
                 const item = document.createElement('div');
                 item.className = 'peril-item';
                 
@@ -1489,27 +1654,46 @@
                 if (peril.score >= 7) scoreClass = 'score-high';
                 else if (peril.score >= 5) scoreClass = 'score-moderate';
                 
-                const icons = {
-                    flood: '🌊',
-                    hail: '🧊',
-                    wind: '💨',
-                    tornado: '🌪️',
-                    hurricane: '🌀',
-                    rainfall: '🌧️'
-                };
+                let detailText = '';
+                if (peril.probability) {
+                    detailText = `${peril.probability.toFixed(1)}% annual probability`;
+                } else if (peril.riskLevel) {
+                    detailText = `Risk Level: ${peril.riskLevel}`;
+                }
+                
+                // Special handling for karst to show details
+                if (key === 'karst' && peril.details && peril.details.length > 0) {
+                    detailText = peril.details[0]; // Show primary detail
+                }
+                
+                // Special handling for earthquake to show PGA
+                if (key === 'earthquake' && peril.pga) {
+                    detailText += ` | PGA: ${peril.pga.toFixed(2)}g`;
+                }
                 
                 item.innerHTML = `
                     <div class="peril-name">
-                        <span>${icons[key] || '⚠️'}</span>
-                        <span>${key.toUpperCase()}</span>
+                        <span>${icon}</span>
+                        <div>
+                            <div>${display}</div>
+                            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 2px;">
+                                ${detailText}
+                            </div>
+                        </div>
                     </div>
                     <div>
-                        <span style="font-size: 0.85rem; color: #6b7280; margin-right: 1rem;">
-                            ${peril.probability ? `${peril.probability.toFixed(1)}% annual` : ''}
-                        </span>
                         <span class="peril-score ${scoreClass}">${peril.score.toFixed(1)}/10</span>
                     </div>
                 `;
+                
+                // Add click handler for karst to show all details
+                if (key === 'karst' && peril.details && peril.details.length > 1) {
+                    item.style.cursor = 'pointer';
+                    item.title = 'Click for details';
+                    item.onclick = () => {
+                        alert('Karst/Sinkhole Risk Details:\n\n' + peril.details.join('\n\n'));
+                    };
+                }
                 
                 perilList.appendChild(item);
             });
@@ -2419,12 +2603,223 @@
             showNotification('PDF report generated successfully');
         }
         
-        function getRiskLevel(score) {
-            if (score >= 8) return 'EXTREME';
-            if (score >= 6) return 'HIGH';
-            if (score >= 4) return 'MODERATE';
-            if (score >= 2) return 'LOW';
-            return 'MINIMAL';
+        function assessKarstRisk(lat, lon) {
+            let score = 0;
+            let riskLevel = 'Very Low';
+            let details = [];
+            
+            // Comprehensive karst regions based on USGS data and your loss experience
+            const karstRegions = [
+                { state: 'FL', name: 'Florida', baseScore: 8, lat: [24, 31], lon: [-87, -80], note: 'Extensive limestone, cover collapse sinkholes common statewide' },
+                { state: 'TN', name: 'Tennessee', baseScore: 8, lat: [35, 37], lon: [-90, -82], note: 'Central basin karst - Nashville, Murfreesboro. Eastern Highland Rim active sinkhole development' },
+                { state: 'KY', name: 'Kentucky', baseScore: 7, lat: [36.5, 39.1], lon: [-89.5, -82], note: 'Mammoth Cave region, extensive karst terrain in central/south-central KY' },
+                { state: 'MO', name: 'Missouri', baseScore: 6, lat: [36, 38.5], lon: [-94.5, -90], note: 'Ozark Plateau karst - Springfield, Branson area. Excludes northern plains' },
+                { state: 'PA', name: 'Pennsylvania', baseScore: 6, lat: [39.7, 41.2], lon: [-80, -76], note: 'Appalachian karst belt - central/south-central PA. Excludes Philly metro' },
+                { state: 'TX', name: 'Texas', baseScore: 5, lat: [29.5, 31.5], lon: [-101, -97.5], note: 'Edwards Plateau only - Austin, San Antonio area. Excludes coastal/north TX' },
+                { state: 'IN', name: 'Indiana', baseScore: 5, lat: [37.8, 39.5], lon: [-87.5, -85.5], note: 'Southern Indiana karst belt - Mitchell plain, excludes central/northern IN' },
+                { state: 'AL', name: 'Alabama', baseScore: 5, lat: [33, 35], lon: [-88, -85.5], note: 'Northern Alabama karst - Huntsville region, Tennessee Valley' },
+                { state: 'VA', name: 'Virginia', baseScore: 5, lat: [36.5, 39.5], lon: [-81.5, -78], note: 'Shenandoah Valley/Great Valley karst ONLY - follows I-81 corridor, excludes coastal plain' },
+                { state: 'WV', name: 'West Virginia', baseScore: 5, lat: [37.2, 40.6], lon: [-82, -78], note: 'Greenbrier Valley karst - eastern panhandle region' },
+                { state: 'AR', name: 'Arkansas', baseScore: 4, lat: [35, 36.5], lon: [-94.5, -91.5], note: 'Ozark region in northern Arkansas' },
+                { state: 'OH', name: 'Ohio', baseScore: 3, lat: [39, 41], lon: [-84, -82], note: 'Western Ohio karst belt' },
+                { state: 'OK', name: 'Oklahoma', baseScore: 3, lat: [34, 35.5], lon: [-97.5, -94.5], note: 'Arbuckle Mountains region' },
+                { state: 'NM', name: 'New Mexico', baseScore: 4, lat: [32, 33], lon: [-105, -104], note: 'Carlsbad Caverns region' }
+            ];
+            
+            // Check if location is in a karst region
+            for (const region of karstRegions) {
+                if (lat >= region.lat[0] && lat <= region.lat[1] && 
+                    lon >= region.lon[0] && lon <= region.lon[1]) {
+                    score = region.baseScore;
+                    details.push(`Located in ${region.name} karst region`);
+                    details.push(region.note);
+                    break;
+                }
+            }
+            
+            // Additional risk factors
+            const projectType = document.getElementById('projectType').value;
+            const constructionType = document.getElementById('constructionType').value;
+            
+            // Water/wastewater facilities in karst = extreme risk (Tennessee loss validation)
+            if (score > 0 && projectType === 'water') {
+                score += 2;
+                details.push('CRITICAL: Water infrastructure in karst terrain - extreme sinkhole risk');
+                details.push('Reference: $1.8M Tennessee loss - water facility sinkhole collapse');
+            }
+            
+            // Construction activity increases risk
+            if (score > 0) {
+                if (constructionType === 'new') {
+                    score += 1;
+                    details.push('New construction: excavation/dewatering may trigger sinkholes');
+                } else if (constructionType === 'renovation') {
+                    score += 0.5;
+                    details.push('Renovation: vibration may affect existing voids');
+                }
+            }
+            
+            // Urban development increases risk
+            if (score > 0) {
+                score += 0.5;
+                details.push('Urban development increases sinkhole frequency');
+            }
+            
+            // Cap score at 10
+            score = Math.min(10, score);
+            
+            // Determine risk level
+            if (score >= 8) {
+                riskLevel = 'EXTREME';
+            } else if (score >= 6) {
+                riskLevel = 'HIGH';
+            } else if (score >= 4) {
+                riskLevel = 'MODERATE';
+            } else if (score >= 2) {
+                riskLevel = 'LOW';
+            } else if (score > 0) {
+                riskLevel = 'MINIMAL';
+            } else {
+                riskLevel = 'NONE';
+                details.push('No karst terrain identified at this location');
+            }
+            
+            return {
+                score: score,
+                riskLevel: riskLevel,
+                details: details,
+                requiresGeotech: score >= 6,
+                requiresSinkholeExclusion: score >= 8
+            };
+        }
+
+        function estimateWildfireRisk(lat, lon) {
+            // Wildfire risk estimation based on location
+            // Note: No free real-time wildfire API available, using geographic estimation
+            
+            let score = 0;
+            let riskLevel = 'Low';
+            let details = [];
+            
+            // High wildfire risk regions
+            const wildfireRegions = [
+                { name: 'California', lat: [32, 42], lon: [-124, -114], baseScore: 8 },
+                { name: 'Colorado Front Range', lat: [37, 41], lon: [-106, -104], baseScore: 7 },
+                { name: 'Arizona', lat: [31, 37], lon: [-114, -109], baseScore: 7 },
+                { name: 'Nevada', lat: [35, 42], lon: [-120, -114], baseScore: 6 },
+                { name: 'Montana', lat: [44, 49], lon: [-116, -104], baseScore: 6 },
+                { name: 'Idaho', lat: [42, 49], lon: [-117, -111], baseScore: 6 },
+                { name: 'Oregon', lat: [42, 46], lon: [-124, -117], baseScore: 6 },
+                { name: 'Washington', lat: [45.5, 49], lon: [-124, -117], baseScore: 5 },
+                { name: 'New Mexico', lat: [31, 37], lon: [-109, -103], baseScore: 5 },
+                { name: 'Utah', lat: [37, 42], lon: [-114, -109], baseScore: 5 },
+                { name: 'Texas Hill Country', lat: [29, 31], lon: [-100, -97], baseScore: 4 },
+                { name: 'Florida', lat: [25, 31], lon: [-87, -80], baseScore: 3 }
+            ];
+            
+            // Check location against wildfire regions
+            for (const region of wildfireRegions) {
+                if (lat >= region.lat[0] && lat <= region.lat[1] && 
+                    lon >= region.lon[0] && lon <= region.lon[1]) {
+                    score = region.baseScore;
+                    details.push(`Located in ${region.name} wildfire zone`);
+                    break;
+                }
+            }
+            
+            // Seasonal adjustment (simplified)
+            const currentMonth = new Date().getMonth();
+            if (score > 0 && (currentMonth >= 6 && currentMonth <= 10)) {
+                score += 1;
+                details.push('Peak wildfire season (July-November)');
+            }
+            
+            // Urban interface adjustment
+            if (score > 0) {
+                const projectType = document.getElementById('projectType').value;
+                if (projectType === 'residential' || projectType === 'multifamily') {
+                    score += 1;
+                    details.push('Wildland-Urban Interface (WUI) exposure');
+                }
+            }
+            
+            score = Math.min(10, score);
+            
+            // Determine risk level
+            if (score >= 7) {
+                riskLevel = 'HIGH';
+            } else if (score >= 5) {
+                riskLevel = 'MODERATE';
+            } else if (score >= 3) {
+                riskLevel = 'LOW';
+            } else {
+                riskLevel = 'MINIMAL';
+            }
+            
+            if (score === 0) {
+                details.push('No significant wildfire risk at this location');
+            }
+            
+            return {
+                score: score,
+                riskLevel: riskLevel,
+                details: details
+            };
+        }
+
+        function getUSGSEarthquakeRisk(lat, lon) {
+            // Simplified earthquake risk based on seismic zones
+            // Real implementation would call USGS API
+            
+            let score = 0;
+            let riskLevel = 'Low';
+            let pga = 0;
+            
+            // High seismic risk zones
+            const seismicZones = [
+                { name: 'California', lat: [32, 42], lon: [-124, -114], basePGA: 0.6 },
+                { name: 'Alaska', lat: [54, 71], lon: [-170, -130], basePGA: 0.8 },
+                { name: 'Pacific Northwest', lat: [42, 49], lon: [-124, -117], basePGA: 0.4 },
+                { name: 'Utah/Nevada', lat: [37, 42], lon: [-114, -111], basePGA: 0.3 },
+                { name: 'New Madrid', lat: [35, 38], lon: [-91, -88], basePGA: 0.3 },
+                { name: 'Charleston SC', lat: [32, 34], lon: [-81, -79], basePGA: 0.2 }
+            ];
+            
+            // Check location against seismic zones
+            for (const zone of seismicZones) {
+                if (lat >= zone.lat[0] && lat <= zone.lat[1] && 
+                    lon >= zone.lon[0] && lon <= zone.lon[1]) {
+                    pga = zone.basePGA;
+                    break;
+                }
+            }
+            
+            // Convert PGA to risk score
+            if (pga >= 0.8) {
+                score = 10;
+                riskLevel = 'EXTREME';
+            } else if (pga >= 0.6) {
+                score = 8;
+                riskLevel = 'HIGH';
+            } else if (pga >= 0.4) {
+                score = 6;
+                riskLevel = 'MODERATE-HIGH';
+            } else if (pga >= 0.2) {
+                score = 4;
+                riskLevel = 'MODERATE';
+            } else if (pga >= 0.1) {
+                score = 2;
+                riskLevel = 'LOW';
+            } else {
+                score = 1;
+                riskLevel = 'VERY LOW';
+            }
+            
+            return {
+                score: score,
+                riskLevel: riskLevel,
+                pga: pga
+            };
         }
         
         function getDeductibleRecommendations(riskData) {
