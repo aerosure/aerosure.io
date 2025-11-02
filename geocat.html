@@ -455,6 +455,65 @@
         display: none !important;
     }
 
+    .modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.8);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 3% auto;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .modal-close {
+        color: #aaa;
+        float: right;
+        font-size: 32px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 20px;
+    }
+
+    .modal-close:hover,
+    .modal-close:focus {
+        color: #000;
+    }
+
+    .modal h2 {
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+
+    .modal h3 {
+        color: var(--secondary);
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .modal p {
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+
+    .modal ul {
+        margin-left: 2rem;
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+
     @media (max-width: 1024px) {
         .container {
             grid-template-columns: 1fr;
@@ -652,6 +711,72 @@
 
             <div id="atheniumStatus"></div>
         </div>
+
+        <!-- Reference Materials -->
+        <div class="panel" style="margin-top: 2rem;">
+            <div class="panel-header">📚 Risk Assessment Resources</div>
+            
+            <div class="info-box">
+                <h3 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.1rem;">Peril-Specific Documentation</h3>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--dark); margin-bottom: 0.5rem; font-weight: 700;">🕳️ Karst & Sinkhole Resources</h4>
+                    <p style="margin-bottom: 0.75rem; line-height: 1.6;">Understanding subsurface conditions is critical for infrastructure projects:</p>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>White Paper:</strong> <a href="#" onclick="openKarstWhitePaper(); return false;" style="color: #0284c7; text-decoration: underline;">What Lies Beneath - Subsurface Conditions</a></li>
+                        <li><strong>USGS Karst Map:</strong> <a href="https://www.usgs.gov/media/images/map-showing-principal-karst-areas-united-states" target="_blank" style="color: #0284c7; text-decoration: underline;">Principal Karst Areas (USGS)</a></li>
+                        <li><strong>Risk Factors:</strong> <a href="#" onclick="showKarstRiskFactors(); return false;" style="color: #0284c7; text-decoration: underline;">Critical Karst Assessment Checklist</a></li>
+                        <li><strong>State Resources:</strong> <a href="#" onclick="showKarstByState(); return false;" style="color: #0284c7; text-decoration: underline;">Karst Terrain by State Guide</a></li>
+                    </ul>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--dark); margin-bottom: 0.5rem; font-weight: 700;">🌊 Flood Assessment Resources</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>FEMA Flood Maps:</strong> <a href="https://msc.fema.gov/portal/home" target="_blank" style="color: #0284c7; text-decoration: underline;">National Flood Hazard Layer</a></li>
+                        <li><strong>USGS Real-Time Data:</strong> <a href="https://waterdata.usgs.gov/nwis/rt" target="_blank" style="color: #0284c7; text-decoration: underline;">Real-Time Water Data</a></li>
+                        <li><strong>Construction Timing:</strong> <a href="#" onclick="showFloodTimingGuide(); return false;" style="color: #0284c7; text-decoration: underline;">Seasonal Flood Risk Analysis</a></li>
+                    </ul>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--dark); margin-bottom: 0.5rem; font-weight: 700;">⛈️ Severe Weather Resources</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>NOAA Storm Data:</strong> <a href="https://www.ncdc.noaa.gov/stormevents/" target="_blank" style="color: #0284c7; text-decoration: underline;">Storm Events Database</a></li>
+                        <li><strong>SPC Reports:</strong> <a href="https://www.spc.noaa.gov/climo/reports/" target="_blank" style="color: #0284c7; text-decoration: underline;">Severe Weather Reports Archive</a></li>
+                        <li><strong>Hail Maps:</strong> <a href="https://www.spc.noaa.gov/climo/reports/last3days.html" target="_blank" style="color: #0284c7; text-decoration: underline;">Recent Hail Activity</a></li>
+                    </ul>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--dark); margin-bottom: 0.5rem; font-weight: 700;">🔥 Wildfire Resources</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Wildfire Risk Maps:</strong> <a href="https://wildfirerisk.org/" target="_blank" style="color: #0284c7; text-decoration: underline;">Wildfire Risk to Communities</a></li>
+                        <li><strong>Active Fires:</strong> <a href="https://www.fire.ca.gov/incidents" target="_blank" style="color: #0284c7; text-decoration: underline;">Current Fire Incidents</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 style="color: var(--dark); margin-bottom: 0.5rem; font-weight: 700;">📊 Earthquake Resources</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>USGS Hazard Maps:</strong> <a href="https://www.usgs.gov/programs/earthquake-hazards/hazards" target="_blank" style="color: #0284c7; text-decoration: underline;">National Seismic Hazard Maps</a></li>
+                        <li><strong>Earthquake API:</strong> <a href="https://earthquake.usgs.gov/fdsnws/event/1/" target="_blank" style="color: #0284c7; text-decoration: underline;">Real-Time Earthquake Data</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="alert alert-warning" style="margin-top: 1.5rem;">
+                <strong>⚠️ Underwriting Note:</strong> Always cross-reference multiple data sources. No single tool provides complete risk assessment. Use CATZone scores as a starting point for deeper investigation.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for educational content -->
+<div id="educationModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div id="modalContent"></div>
     </div>
 </div>
 
@@ -1275,6 +1400,335 @@ Report generated by CATZone v2.0 | Ascot Inland Marine | Powered by Athenium
         renderResults();
 
         alert('Project loaded successfully!');
+    }
+
+    // Modal functions
+    function closeModal() {
+        document.getElementById('educationModal').style.display = 'none';
+    }
+
+    function showModal(content) {
+        document.getElementById('modalContent').innerHTML = content;
+        document.getElementById('educationModal').style.display = 'block';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('educationModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    function openKarstWhitePaper() {
+        const content = `
+            <h2>What Lies Beneath: Subsurface Conditions White Paper</h2>
+            
+            <h3>The Underground Gamble</h3>
+            <p>Every infrastructure project is a bet against the ground. Contractors bid on what they can see—plans, surveys, and boring logs—but they build on what's actually there. The gap between assumed conditions and reality drives more cost overruns, schedule delays, and coverage disputes than any other single factor in construction.</p>
+
+            <p>Subsurface conditions don't reveal themselves until excavation begins. By then, contracts are signed, insurance is bound, and change order battles are inevitable. Rock where soil was expected. Contaminated fill where clean earth was promised. Utilities that don't match the plans. Each discovery triggers the same sequence: work stops, engineers investigate, lawyers argue over who pays.</p>
+
+            <h3>Why Karst Terrain Matters</h3>
+            <p>Karst topography—land formed by the dissolution of soluble rocks like limestone, dolomite, and gypsum—creates unique and often invisible subsurface hazards. Water action gradually dissolves the rock, creating underground voids, caverns, and channels. The surface appears stable until it suddenly isn't.</p>
+
+            <p><strong>Key karst risks include:</strong></p>
+            <ul>
+                <li><strong>Sinkhole collapse:</strong> Sudden ground subsidence when underground voids can no longer support surface loads</li>
+                <li><strong>Foundation settlement:</strong> Differential settlement as weight triggers subsurface void migration</li>
+                <li><strong>Underground water flow:</strong> Unpredictable groundwater patterns that complicate dewatering and excavation</li>
+                <li><strong>Utility infrastructure failure:</strong> Underground pipes and cables damaged by ground movement</li>
+            </ul>
+
+            <h3>High-Risk Karst Regions</h3>
+            <p><strong>Critical areas requiring enhanced assessment:</strong></p>
+            <ul>
+                <li><strong>Florida:</strong> Extensive limestone formations throughout central and northern regions</li>
+                <li><strong>Kentucky/Tennessee:</strong> Mammoth Cave region and surrounding areas</li>
+                <li><strong>Missouri:</strong> Extensive karst in Ozark Plateau</li>
+                <li><strong>Texas:</strong> Edwards Plateau (Austin/San Antonio corridor)</li>
+                <li><strong>Indiana:</strong> Southern limestone regions</li>
+                <li><strong>Pennsylvania/West Virginia:</strong> Appalachian karst belt</li>
+            </ul>
+
+            <h3>Underwriting Implications</h3>
+            <p>Projects in known karst terrain require:</p>
+            <ul>
+                <li><strong>Comprehensive geotechnical investigation:</strong> Standard soil borings insufficient; specialized karst assessment required</li>
+                <li><strong>Ground monitoring protocols:</strong> Ongoing surveillance during excavation and construction</li>
+                <li><strong>Contingency budget:</strong> 15-25% additional cost reserves for ground-related issues</li>
+                <li><strong>Engineering oversight:</strong> Geotechnical engineer review of all excavation activities</li>
+                <li><strong>Modified coverage terms:</strong> Higher deductibles or sublimits for karst-related losses</li>
+            </ul>
+
+            <p><strong>Rate Guidance for Karst Terrain:</strong></p>
+            <ul>
+                <li>Karst score 6.0-7.0: Add 10-15% to base rate</li>
+                <li>Karst score 7.0-8.5: Add 15-25% to base rate</li>
+                <li>Karst score 8.5+: Add 25-40% to base rate + enhanced risk controls</li>
+            </ul>
+        `;
+        showModal(content);
+    }
+
+    function showKarstRiskFactors() {
+        const content = `
+            <h2>Critical Karst Assessment Checklist</h2>
+            
+            <h3>Pre-Binding Investigation Required</h3>
+            
+            <h4>1. Geological Assessment</h4>
+            <ul>
+                <li>Review USGS karst maps for project location</li>
+                <li>Identify known sinkhole activity within 1-mile radius</li>
+                <li>Obtain state geological survey reports for area</li>
+                <li>Review historical aerial imagery for surface depressions</li>
+            </ul>
+
+            <h4>2. Geotechnical Investigation Quality</h4>
+            <p><strong>Standard Requirements:</strong></p>
+            <ul>
+                <li>Borings extend minimum 50 feet below proposed foundation depth</li>
+                <li>Boring spacing appropriate for karst (closer than standard projects)</li>
+                <li>Geophysical surveys (GPR or resistivity) to identify subsurface voids</li>
+                <li>Report specifically addresses karst potential and mitigation measures</li>
+            </ul>
+
+            <h4>3. Construction-Phase Risks</h4>
+            <ul>
+                <li><strong>Excavation hazards:</strong> Void discovery during earthwork</li>
+                <li><strong>Dewatering complications:</strong> Groundwater flow through karst channels</li>
+                <li><strong>Load concentration:</strong> Heavy equipment or material storage triggering collapse</li>
+                <li><strong>Vibration effects:</strong> Pile driving or compaction destabilizing existing voids</li>
+            </ul>
+
+            <h4>4. Project-Specific Risk Multipliers</h4>
+            <p><strong>Higher Risk Scenarios:</strong></p>
+            <ul>
+                <li>Water/wastewater projects (excavation + water exposure)</li>
+                <li>Bridge foundations (concentrated loads)</li>
+                <li>Projects with extensive underground utilities</li>
+                <li>Sites with previous karst-related incidents nearby</li>
+                <li>Construction during wet seasons (increased dissolution activity)</li>
+            </ul>
+
+            <h4>5. Required Risk Controls</h4>
+            <p><strong>Mandatory for High Karst Exposure:</strong></p>
+            <ul>
+                <li>Geotechnical engineer on-site during excavation</li>
+                <li>Ground monitoring system (settlement gauges, vibration monitors)</li>
+                <li>Void grouting contingency plan and budget</li>
+                <li>Modified foundation design to span potential voids</li>
+                <li>Emergency response plan for ground collapse</li>
+            </ul>
+
+            <h4>6. Documentation Requirements</h4>
+            <ul>
+                <li>Complete geotechnical report with karst-specific analysis</li>
+                <li>Geotechnical engineer's professional opinion on site suitability</li>
+                <li>Foundation design calculations addressing karst conditions</li>
+                <li>Contractor's karst mitigation plan</li>
+                <li>Construction budget showing karst contingency allocation</li>
+            </ul>
+
+            <h3>Red Flags - Decline or Heavily Load</h3>
+            <ul>
+                <li>Known sinkhole activity within 500 feet of project</li>
+                <li>Previous karst-related losses at or near site</li>
+                <li>Inadequate geotechnical investigation for karst terrain</li>
+                <li>No geotechnical oversight during construction</li>
+                <li>Contractor lacks karst experience</li>
+                <li>Project timeline doesn't allow proper ground assessment</li>
+            </ul>
+        `;
+        showModal(content);
+    }
+
+    function showKarstByState() {
+        const content = `
+            <h2>Karst Terrain by State Guide</h2>
+            
+            <h3>High-Risk Karst States</h3>
+            
+            <h4>Florida (Score: 8.0-9.0)</h4>
+            <p><strong>Highest Risk Areas:</strong> Central Florida (I-4 corridor), West-Central (Tampa-St. Pete), Northern panhandle</p>
+            <p><strong>Primary Issues:</strong> Limestone throughout, high water table, frequent sinkhole activity, rapid formation due to heavy rainfall</p>
+            <p><strong>Underwriting Note:</strong> Most active karst area in US. Require comprehensive investigation for all projects.</p>
+
+            <h4>Texas - Edwards Plateau (Score: 7.5-8.5)</h4>
+            <p><strong>Highest Risk Areas:</strong> Austin, San Antonio, Hill Country region</p>
+            <p><strong>Primary Issues:</strong> Edwards Aquifer recharge zone, caves and underground drainage, water resource sensitivity</p>
+            <p><strong>Underwriting Note:</strong> Environmental concerns add complexity. Water projects especially challenging.</p>
+
+            <h4>Kentucky (Score: 7.0-8.0)</h4>
+            <p><strong>Highest Risk Areas:</strong> Central Kentucky (Lexington basin), Western Kentucky (Mammoth Cave region)</p>
+            <p><strong>Primary Issues:</strong> Extensive cave systems, sinkhole plains, underground drainage</p>
+            <p><strong>Underwriting Note:</strong> Well-documented karst. Good historical data available.</p>
+
+            <h4>Tennessee (Score: 7.0-8.0)</h4>
+            <p><strong>Highest Risk Areas:</strong> Middle Tennessee (Nashville area), East Tennessee valleys</p>
+            <p><strong>Primary Issues:</strong> Limestone valleys, sinkhole development, underground streams</p>
+            <p><strong>Underwriting Note:</strong> Similar profile to Kentucky. Infrastructure projects require enhanced assessment.</p>
+
+            <h4>Missouri (Score: 6.5-7.5)</h4>
+            <p><strong>Highest Risk Areas:</strong> Ozark Plateau, Springfield region, central Missouri</p>
+            <p><strong>Primary Issues:</strong> Extensive cave systems, springs, losing streams</p>
+            <p><strong>Underwriting Note:</strong> Show Me Cave State. Assume karst unless proven otherwise.</p>
+
+            <h3>Moderate-Risk Karst States</h3>
+
+            <h4>Indiana (Score: 6.0-7.0)</h4>
+            <p><strong>Areas:</strong> Southern third of state (Mitchell Plain)</p>
+            <p><strong>Issues:</strong> Lost River system, sinkhole development, cave systems</p>
+
+            <h4>Pennsylvania (Score: 6.0-7.0)</h4>
+            <p><strong>Areas:</strong> Southeastern (Valley and Ridge), Central (Nittany Valley)</p>
+            <p><strong>Issues:</strong> Limestone valleys, historical sinkhole collapses, foundation issues</p>
+
+            <h4>West Virginia (Score: 6.0-7.0)</h4>
+            <p><strong>Areas:</strong> Eastern panhandle, Greenbrier Valley</p>
+            <p><strong>Issues:</strong> Extensive cave systems, sinkhole plains</p>
+
+            <h4>Alabama (Score: 6.0-7.0)</h4>
+            <p><strong>Areas:</strong> Northern Alabama (Huntsville region), Central (Birmingham area)</p>
+            <p><strong>Issues:</strong> Limestone formations, sinkhole development</p>
+
+            <h3>State-Specific Resources</h3>
+            <ul>
+                <li><strong>Florida:</strong> FL Geological Survey Sinkhole Database</li>
+                <li><strong>Texas:</strong> Edwards Aquifer Authority, TWDB Karst Resources</li>
+                <li><strong>Kentucky:</strong> KY Geological Survey Karst Map</li>
+                <li><strong>Missouri:</strong> MO Department of Natural Resources Karst Program</li>
+                <li><strong>Pennsylvania:</strong> PA DCNR Karst Resources</li>
+            </ul>
+
+            <h3>Underwriting Strategy by State</h3>
+            <p><strong>High-Risk States (FL, TX-Edwards, KY, TN):</strong></p>
+            <ul>
+                <li>Automatic referral for projects >$10M</li>
+                <li>Mandatory geotechnical review</li>
+                <li>Rate loading 15-40% based on specific karst exposure</li>
+                <li>Enhanced monitoring requirements</li>
+            </ul>
+
+            <p><strong>Moderate-Risk States (IN, PA, WV, MO, AL):</strong></p>
+            <ul>
+                <li>Site-specific assessment required</li>
+                <li>Geotechnical review for projects >$25M</li>
+                <li>Rate loading 10-25% where karst confirmed</li>
+            </ul>
+        `;
+        showModal(content);
+    }
+
+    function showFloodTimingGuide() {
+        const content = `
+            <h2>Construction Timing & Seasonal Flood Risk</h2>
+            
+            <h3>Why Construction Timing Matters</h3>
+            <p>Flood risk varies dramatically by season and construction phase. A project that breaks ground in March faces different exposure than one starting in September. Understanding these patterns is critical for accurate risk assessment.</p>
+
+            <h3>Seasonal Flood Patterns by Region</h3>
+
+            <h4>Gulf Coast & Southeast</h4>
+            <ul>
+                <li><strong>Highest Risk:</strong> June-November (hurricane season + summer storms)</li>
+                <li><strong>Peak Month:</strong> September (hurricane + tropical storm activity)</li>
+                <li><strong>Secondary Peak:</strong> March-April (spring thunderstorms)</li>
+                <li><strong>Lowest Risk:</strong> October-February (outside hurricane season)</li>
+            </ul>
+
+            <h4>Midwest & Plains</h4>
+            <ul>
+                <li><strong>Highest Risk:</strong> April-June (snowmelt + spring rainfall)</li>
+                <li><strong>Peak Month:</strong> May (severe weather + runoff)</li>
+                <li><strong>Secondary Peak:</strong> September-October (fall heavy rains)</li>
+                <li><strong>Lowest Risk:</strong> December-February (frozen ground)</li>
+            </ul>
+
+            <h4>Northeast</h4>
+            <ul>
+                <li><strong>Highest Risk:</strong> March-May (snowmelt + spring rains)</li>
+                <li><strong>Peak Month:</strong> April (rapid thaw + precipitation)</li>
+                <li><strong>Secondary Peak:</strong> August-September (tropical systems)</li>
+                <li><strong>Lowest Risk:</strong> January-February (frozen conditions)</li>
+            </ul>
+
+            <h4>West Coast</h4>
+            <ul>
+                <li><strong>Highest Risk:</strong> December-March (atmospheric rivers)</li>
+                <li><strong>Peak Month:</strong> January-February (winter storms)</li>
+                <li><strong>Secondary Peak:</strong> None (dry summers)</li>
+                <li><strong>Lowest Risk:</strong> June-September (drought season)</li>
+            </ul>
+
+            <h3>Construction Phase Vulnerability</h3>
+
+            <h4>Phase 1: Site Prep & Excavation (HIGHEST RISK)</h4>
+            <p><strong>Flood Risk Multiplier: 2.0-3.0x</strong></p>
+            <ul>
+                <li>Open excavations act as collection basins</li>
+                <li>Disturbed soil has poor drainage</li>
+                <li>No permanent drainage systems yet installed</li>
+                <li>Equipment vulnerable to water damage</li>
+                <li><strong>Mitigation:</strong> Temporary berms, sump pumps, rapid backfill after rain</li>
+            </ul>
+
+            <h4>Phase 2: Foundation & Below-Grade (HIGH RISK)</h4>
+            <p><strong>Flood Risk Multiplier: 1.5-2.0x</strong></p>
+            <ul>
+                <li>Waterproofing not yet complete</li>
+                <li>Below-grade spaces vulnerable</li>
+                <li>Concrete curing sensitive to water exposure</li>
+                <li><strong>Mitigation:</strong> Dewatering systems, accelerated waterproofing schedule</li>
+            </ul>
+
+            <h4>Phase 3: Structure & Envelope (MODERATE RISK)</h4>
+            <p><strong>Flood Risk Multiplier: 1.0-1.5x</strong></p>
+            <ul>
+                <li>Building partially enclosed</li>
+                <li>Interior finish materials not yet installed</li>
+                <li>Some drainage systems operational</li>
+                <li><strong>Mitigation:</strong> Temporary roof sections, perimeter drainage</li>
+            </ul>
+
+            <h4>Phase 4: Finish & MEP (LOWER RISK)</h4>
+            <p><strong>Flood Risk Multiplier: 0.5-1.0x</strong></p>
+            <ul>
+                <li>Building enclosed and protected</li>
+                <li>Permanent drainage functional</li>
+                <li>But: High-value finish materials now on-site</li>
+                <li><strong>Mitigation:</strong> Flood barriers, sump pump redundancy</li>
+            </ul>
+
+            <h3>Timeline Risk Assessment Tool</h3>
+            <p>When analyzing a project timeline:</p>
+            <ol>
+                <li>Identify construction start and planned completion dates</li>
+                <li>Map excavation/foundation phase dates against regional peak flood season</li>
+                <li>Apply appropriate risk multiplier if overlap exists</li>
+                <li>Require enhanced controls for high-risk timing scenarios</li>
+            </ol>
+
+            <h3>Rate Adjustment Guidance</h3>
+            <p><strong>Excavation during peak flood season:</strong></p>
+            <ul>
+                <li>Gulf Coast June-Sept: +25-40% loading</li>
+                <li>Midwest April-June: +20-35% loading</li>
+                <li>Northeast March-May: +15-30% loading</li>
+                <li>West Coast Dec-March: +20-35% loading</li>
+            </ul>
+
+            <p><strong>Required risk controls for high-risk timing:</strong></p>
+            <ul>
+                <li>Weather monitoring service with alerts</li>
+                <li>24-hour emergency response capability</li>
+                <li>Redundant dewatering equipment</li>
+                <li>Rapid excavation backfill protocols</li>
+                <li>Material storage elevation requirements</li>
+            </ul>
+        `;
+        showModal(content);
     }
 </script>
 ```
