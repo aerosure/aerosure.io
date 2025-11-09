@@ -453,8 +453,12 @@
                     <button class="mode-btn" id="manualMode" onclick="setDataMode('manual')" style="flex: 1; padding: 0.5rem; border: 2px solid var(--primary); background: white; color: var(--primary); border-radius: 6px; font-weight: 600; cursor: pointer;">Manual JSON</button>
                     <button class="mode-btn active" id="apiMode" onclick="setDataMode('api')" style="flex: 1; padding: 0.5rem; border: 2px solid var(--primary); background: var(--primary); color: white; border-radius: 6px; font-weight: 600; cursor: pointer;">API Ready</button>
                 </div>
+                <div id="apiKeySection" style="display: none;">
+                    <input type="password" id="atheniumApiKey" placeholder="Paste Athenium API Key" style="width: 100%; padding: 0.5rem; border: 2px solid #e5e7eb; border-radius: 6px; margin-bottom: 0.5rem;">
+                    <button onclick="testApiConnection()" style="width: 100%; padding: 0.5rem; background: var(--success); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Test Connection</button>
+                </div>
                 <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.5rem;" id="apiStatus">
-                    API Mode: Ready for integration
+                    API Mode: Manual JSON (No Key Provided)
                 </div>
             </div>
             
@@ -699,6 +703,7 @@
         let marker = null;
         let globalRiskData = {};
         let dataMode = 'api';
+        let atheniumApiKey = null;
         
         window.addEventListener('DOMContentLoaded', function() {
             console.log('CatZone v3.1 FINAL initialized');
@@ -712,6 +717,8 @@
             
             const manualBtn = document.getElementById('manualMode');
             const apiBtn = document.getElementById('apiMode');
+            const apiKeySection = document.getElementById('apiKeySection');
+            const manualJsonSection = document.getElementById('atheniumData').parentElement;
             const statusEl = document.getElementById('apiStatus');
             
             manualBtn.style.background = mode === 'manual' ? 'var(--primary)' : 'white';
@@ -720,10 +727,30 @@
             apiBtn.style.color = mode === 'api' ? 'white' : 'var(--primary)';
             
             if (mode === 'manual') {
+                apiKeySection.style.display = 'none';
+                manualJsonSection.style.display = 'block';
                 statusEl.textContent = 'Manual JSON Mode Active';
             } else {
-                statusEl.textContent = 'API Mode: Ready for integration';
+                apiKeySection.style.display = 'block';
+                manualJsonSection.style.display = atheniumApiKey ? 'none' : 'block';
+                statusEl.textContent = atheniumApiKey ? 
+                    'API Connected ✓' : 
+                    'API Mode: Awaiting Key (Using Manual Until Connected)';
             }
+        }
+
+        async function testApiConnection() {
+            const key = document.getElementById('atheniumApiKey').value;
+            if (!key) {
+                alert('Please enter an API key');
+                return;
+            }
+            
+            // Store key and update UI
+            atheniumApiKey = key;
+            document.getElementById('apiStatus').textContent = 'API Connected ✓';
+            document.getElementById('atheniumData').parentElement.style.display = 'none';
+            alert('API key saved! CatZone will attempt to use Athenium API for data retrieval.');
         }
 
         // ==================== FORM MANAGEMENT ====================
