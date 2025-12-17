@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airspace Operations | aerosure Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        :root {
+            --cyan-400: #22d3ee; --cyan-500: #06b6d4; --blue-400: #60a5fa; --blue-500: #3b82f6;
+            --bg-primary: #030712; --bg-secondary: #0a0f1a; --bg-card: rgba(15, 23, 42, 0.6);
+            --border-subtle: rgba(255, 255, 255, 0.06); --border-medium: rgba(255, 255, 255, 0.1);
+            --border-glow: rgba(6, 182, 212, 0.3);
+            --text-primary: #f8fafc; --text-secondary: #94a3b8; --text-tertiary: #64748b;
+            --success: #4ade80; --warning: #fbbf24; --error: #f87171;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; min-height: 100vh; }
+        .bg-noise { position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.015; pointer-events: none; z-index: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+        .bg-grid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 64px 64px; pointer-events: none; z-index: 0; mask-image: radial-gradient(ellipse at center, black 0%, transparent 80%); }
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1rem 2rem; background: rgba(3,7,18,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; text-decoration: none; }
+        .logo-img { height: 40px; }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-link { padding: 8px 16px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; border-radius: 8px; transition: all 0.2s; }
+        .nav-link:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        .nav-link.active { color: var(--cyan-400); background: rgba(6,182,212,0.1); }
+        main { position: relative; z-index: 1; padding: 100px 2rem 60px; max-width: 1400px; margin: 0 auto; }
+        .page-header { text-align: center; margin-bottom: 32px; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+        .page-header p { color: var(--text-secondary); }
+        .location-selector { background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-medium); border-radius: 16px; padding: 24px; margin-bottom: 32px; }
+        .location-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 16px; }
+        .location-header h2 { font-size: 1.1rem; font-weight: 600; }
+        .current-location { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.2); border-radius: 100px; font-size: 0.9rem; color: var(--cyan-400); }
+        .current-location.empty { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.2); color: var(--warning); }
+        .location-form { display: flex; gap: 12px; flex-wrap: wrap; }
+        .location-input { flex: 1; min-width: 180px; padding: 14px 18px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-medium); border-radius: 10px; color: var(--text-primary); font-size: 0.95rem; font-family: inherit; }
+        .location-input::placeholder { color: var(--text-tertiary); }
+        .location-input:focus { outline: none; border-color: var(--cyan-500); }
+        .or-divider { display: flex; align-items: center; color: var(--text-tertiary); font-size: 0.85rem; }
+        .location-btn { padding: 14px 28px; background: linear-gradient(135deg, var(--cyan-500), var(--blue-500)); border: none; border-radius: 10px; color: white; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .location-btn:hover { transform: translateY(-2px); }
+        .location-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .gps-btn { padding: 14px 18px; background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: 10px; color: var(--text-secondary); font-size: 1.1rem; cursor: pointer; transition: all 0.2s; }
+        .gps-btn:hover { border-color: var(--cyan-500); color: var(--cyan-400); }
+        .master-status { background: var(--bg-card); border: 2px solid var(--cyan-500); border-radius: 20px; padding: 32px; margin-bottom: 32px; display: grid; grid-template-columns: 200px 1fr 200px; gap: 32px; align-items: center; }
+        .overall-status { text-align: center; }
+        .status-indicator { width: 100px; height: 100px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+        .status-indicator.green { background: var(--success); box-shadow: 0 0 40px rgba(74,222,128,0.5); }
+        .status-indicator.yellow { background: var(--warning); box-shadow: 0 0 40px rgba(251,191,36,0.5); }
+        .status-indicator.red { background: var(--error); box-shadow: 0 0 40px rgba(248,113,113,0.5); }
+        .status-indicator.pending { background: var(--text-tertiary); }
+        .status-text { font-size: 1.25rem; font-weight: 700; }
+        .status-text.green { color: var(--success); }
+        .status-text.yellow { color: var(--warning); }
+        .status-text.red { color: var(--error); }
+        .status-text.pending { color: var(--text-tertiary); }
+        .conditions-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .condition-item { text-align: center; padding: 16px; background: rgba(0,0,0,0.2); border-radius: 12px; }
+        .condition-value { font-size: 1.5rem; font-weight: 700; color: var(--cyan-400); }
+        .condition-label { font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+        .time-display { text-align: center; }
+        .current-time { font-size: 2.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .current-date { font-size: 0.9rem; color: var(--text-secondary); }
+        .next-update { margin-top: 16px; font-size: 0.8rem; color: var(--text-tertiary); }
+        .next-update span { color: var(--cyan-400); font-weight: 600; }
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 32px; }
+        .data-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; transition: all 0.3s; }
+        .data-card:hover { border-color: var(--border-glow); transform: translateY(-2px); }
+        .data-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .data-card-title { font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); }
+        .data-card-status { width: 10px; height: 10px; border-radius: 50%; background: var(--success); }
+        .data-card-value { font-size: 2.25rem; font-weight: 800; color: var(--cyan-400); margin-bottom: 8px; }
+        .data-card-detail { font-size: 0.85rem; color: var(--text-tertiary); }
+        .data-card-detail a { color: var(--cyan-400); }
+        .daylight-card { grid-column: span 2; background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.05)); }
+        .daylight-timeline { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-top: 16px; }
+        .time-block { text-align: center; }
+        .time-label { font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .time-value { font-size: 1.25rem; font-weight: 700; }
+        .time-value.sunrise { color: #fbbf24; }
+        .time-value.sunset { color: #f43f5e; }
+        .daylight-bar { flex: 1; height: 8px; margin: 0 20px; background: linear-gradient(90deg, #1e3a5f 0%, #fbbf24 15%, #60a5fa 50%, #f97316 85%, #1e3a5f 100%); border-radius: 4px; position: relative; }
+        .daylight-marker { position: absolute; top: -6px; width: 20px; height: 20px; background: white; border-radius: 50%; box-shadow: 0 0 10px rgba(255,255,255,0.5); transform: translateX(-50%); }
+        
+        /* Map Section */
+        .map-section { margin-bottom: 32px; }
+        .map-container { background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: 16px; padding: 16px; }
+        .map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .map-title { font-size: 0.95rem; font-weight: 600; color: var(--text-secondary); }
+        .map-styles { display: flex; gap: 6px; }
+        .map-style-btn { padding: 8px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 6px; color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .map-style-btn:hover { border-color: var(--border-medium); color: var(--text-primary); }
+        .map-style-btn.active { background: rgba(6,182,212,0.15); border-color: var(--cyan-500); color: var(--cyan-400); }
+        #map { width: 100%; height: 350px; border-radius: 12px; }
+        .map-info { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 12px 16px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.85rem; color: var(--text-secondary); }
+        .map-info-icon { font-size: 1.1rem; }
+        .map-info.active { background: rgba(6,182,212,0.1); color: var(--cyan-400); }
+        .mapboxgl-popup-content { background: var(--bg-secondary) !important; color: var(--text-primary) !important; padding: 16px !important; border-radius: 12px !important; border: 1px solid var(--border-medium) !important; font-family: 'Inter', sans-serif !important; }
+        .mapboxgl-popup-close-button { color: var(--text-secondary); font-size: 18px; }
+        .mapboxgl-popup-tip { border-top-color: var(--bg-secondary) !important; }
+        
+        footer { text-align: center; padding: 32px; border-top: 1px solid var(--border-subtle); }
+        footer p { font-size: 0.8rem; color: var(--text-tertiary); }
+        footer a { color: var(--cyan-400); text-decoration: none; }
+        @media (max-width: 1024px) { .master-status { grid-template-columns: 1fr; text-align: center; } .conditions-summary { grid-template-columns: repeat(2, 1fr); } .daylight-card { grid-column: span 1; } }
+        @media (max-width: 768px) { .nav-links { display: none; } main { padding: 90px 1rem 40px; } .data-grid { grid-template-columns: 1fr; } .location-form { flex-direction: column; } .location-input { min-width: auto; } }
+    </style>
+</head>
+<body>
+    <div class="bg-noise"></div>
+    <div class="bg-grid"></div>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo"><img src="aerosure_io_logo.png" alt="aerosure" class="logo-img"></a>
+            <div class="nav-links">
+                <a href="command-center.html" class="nav-link">Command Center</a>
+                <a href="airspace-ops.html" class="nav-link active">Airspace Ops</a>
+                <a href="storm-tracker.html" class="nav-link">Storm Tracker</a>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="page-header">
+            <h1>🛰️ Airspace Operations Dashboard</h1>
+            <p>Pre-flight intelligence for drone operations — any location</p>
+        </div>
+        <div class="location-selector">
+            <div class="location-header">
+                <h2>📍 Set Mission Location</h2>
+                <div class="current-location empty" id="currentLocationBadge">
+                    <span>⚠️</span><span id="currentLocationText">No location set</span>
+                </div>
+            </div>
+            <div class="location-form">
+                <input type="text" class="location-input" id="addressInput" placeholder="Address (e.g., 123 Main St, Houston, TX)" style="min-width:280px;">
+                <span class="or-divider">or</span>
+                <input type="text" class="location-input" id="zipInput" placeholder="ZIP code" maxlength="5" style="min-width:100px;">
+                <span class="or-divider">or</span>
+                <input type="text" class="location-input" id="latInput" placeholder="Lat" style="min-width:90px;">
+                <input type="text" class="location-input" id="lonInput" placeholder="Lon" style="min-width:90px;">
+                <button class="gps-btn" id="gpsBtn" title="Use my location">📍</button>
+                <button class="location-btn" id="loadBtn" onclick="loadLocation()">Load Conditions</button>
+            </div>
+        </div>
+        
+        <!-- Mission Map -->
+        <div class="map-section">
+            <div class="map-container">
+                <div class="map-header">
+                    <span class="map-title">🗺️ Mission Location</span>
+                    <div class="map-styles">
+                        <button class="map-style-btn active" data-style="dark" onclick="switchMapStyle('dark')">Dark</button>
+                        <button class="map-style-btn" data-style="streets" onclick="switchMapStyle('streets')">Streets</button>
+                        <button class="map-style-btn" data-style="satellite" onclick="switchMapStyle('satellite')">Satellite</button>
+                        <button class="map-style-btn" data-style="hybrid" onclick="switchMapStyle('hybrid')">Hybrid</button>
+                    </div>
+                </div>
+                <div id="map"></div>
+            </div>
+            <div class="map-info" id="mapInfo">
+                <span class="map-info-icon">📍</span>
+                <span id="mapInfoText">Enter a location above to view on map</span>
+            </div>
+        </div>
+
+        <div class="master-status">
+            <div class="overall-status">
+                <div class="status-indicator pending" id="masterStatus">?</div>
+                <div class="status-text pending" id="masterStatusText">AWAITING LOCATION</div>
+            </div>
+            <div class="conditions-summary">
+                <div class="condition-item"><div class="condition-value" id="summaryTemp">--°F</div><div class="condition-label">Temperature</div></div>
+                <div class="condition-item"><div class="condition-value" id="summaryWind">-- mph</div><div class="condition-label">Wind</div></div>
+                <div class="condition-item"><div class="condition-value" id="summaryVisibility">-- mi</div><div class="condition-label">Visibility</div></div>
+                <div class="condition-item"><div class="condition-value" id="summaryClouds">--%</div><div class="condition-label">Clouds</div></div>
+            </div>
+            <div class="time-display">
+                <div class="current-time" id="currentTime">--:--:--</div>
+                <div class="current-date" id="currentDate">Loading...</div>
+                <div class="next-update">Auto-refresh: <span id="nextUpdate">--:--</span></div>
+            </div>
+        </div>
+        <div class="data-grid">
+            <div class="data-card">
+                <div class="data-card-header"><span class="data-card-title">🌡️ Current Weather</span><div class="data-card-status"></div></div>
+                <div class="data-card-value" id="weatherCondition">--</div>
+                <div class="data-card-detail" id="weatherDetail">Enter location to load</div>
+            </div>
+            <div class="data-card">
+                <div class="data-card-header"><span class="data-card-title">💨 Wind Conditions</span><div class="data-card-status"></div></div>
+                <div class="data-card-value" id="windSpeed">-- mph</div>
+                <div class="data-card-detail" id="windDetail">Direction: --</div>
+            </div>
+            <div class="data-card">
+                <div class="data-card-header"><span class="data-card-title">🚫 Airspace Restrictions</span><div class="data-card-status"></div></div>
+                <div class="data-card-value" id="tfrStatus">--</div>
+                <div class="data-card-detail" id="tfrDetail"><a href="https://tfr.faa.gov" target="_blank">Check FAA TFRs →</a></div>
+            </div>
+            <div class="data-card">
+                <div class="data-card-header"><span class="data-card-title">☀️ UV Index</span><div class="data-card-status"></div></div>
+                <div class="data-card-value" id="uvIndex">--</div>
+                <div class="data-card-detail" id="uvDetail">Enter location to load</div>
+            </div>
+            <div class="data-card">
+                <div class="data-card-header"><span class="data-card-title">🌬️ Air Quality (AQI)</span><div class="data-card-status"></div></div>
+                <div class="data-card-value" id="aqiValue">--</div>
+                <div class="data-card-detail" id="aqiDetail">Enter location to load</div>
+            </div>
+            <div class="data-card">
+                <div class="data-card-header"><span class="data-card-title">🌍 Seismic Activity</span><div class="data-card-status"></div></div>
+                <div class="data-card-value" id="seismicStatus">--</div>
+                <div class="data-card-detail" id="seismicDetail">Enter location to load</div>
+            </div>
+            <div class="data-card daylight-card">
+                <div class="data-card-header"><span class="data-card-title">🌅 Daylight Window</span><div class="data-card-status"></div></div>
+                <div class="data-card-value" id="daylightHours">-- hrs</div>
+                <div class="data-card-detail">Civil twilight operational window</div>
+                <div class="daylight-timeline">
+                    <div class="time-block"><div class="time-label">Sunrise</div><div class="time-value sunrise" id="sunriseTime">--:--</div></div>
+                    <div class="daylight-bar"><div class="daylight-marker" id="daylightMarker" style="left:50%;"></div></div>
+                    <div class="time-block"><div class="time-label">Sunset</div><div class="time-value sunset" id="sunsetTime">--:--</div></div>
+                </div>
+            </div>
+            <div class="data-card">
+                <div class="data-card-header"><span class="data-card-title">🔥 Active Fires</span><div class="data-card-status"></div></div>
+                <div class="data-card-value" id="fireStatus">--</div>
+                <div class="data-card-detail"><a href="https://firms.modaps.eosdis.nasa.gov/map/" target="_blank">NASA FIRMS Map →</a></div>
+            </div>
+        </div>
+    </main>
+    <footer><p>Data: Open-Meteo, USGS, FAA, NASA | <a href="command-center.html">← Back to Command Center</a></p></footer>
+    <script>
+        const MAPBOX_TOKEN = 'pk.eyJ1IjoiYWVyb3N1cmUiLCJhIjoiY21qNTZvMTlyMHV5aTNnb2dib2JuaXFyMSJ9.WN3RY1Ne-VQjn0o51xvEkQ';
+        mapboxgl.accessToken = MAPBOX_TOKEN;
+        
+        let currentLat = null, currentLon = null, currentLocationName = null, refreshInterval = null, countdown = 300;
+        let map, marker;
+        
+        // Initialize map
+        map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/dark-v11',
+            center: [-98.5, 39.8], // Center of US
+            zoom: 3.5
+        });
+        map.addControl(new mapboxgl.NavigationControl());
+        
+        // Function to update map
+        function updateMap(lat, lon, locationName) {
+            // Fly to location
+            map.flyTo({
+                center: [lon, lat],
+                zoom: 14,
+                pitch: 45,
+                duration: 2000
+            });
+            
+            // Remove old marker
+            if (marker) marker.remove();
+            
+            // Add new marker
+            marker = new mapboxgl.Marker({ color: '#06b6d4' })
+                .setLngLat([lon, lat])
+                .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                    <strong style="font-size:1.1em;">📍 Mission Location</strong><br>
+                    <span style="color:#94a3b8;">${locationName}</span><br>
+                    <span style="color:#64748b;font-size:0.85em;">${lat.toFixed(5)}, ${lon.toFixed(5)}</span>
+                `))
+                .addTo(map);
+            
+            // Update map info
+            const mapInfo = document.getElementById('mapInfo');
+            mapInfo.classList.add('active');
+            document.getElementById('mapInfoText').textContent = locationName;
+        }
+        
+        // Map style definitions
+        const mapStyles = {
+            dark: 'mapbox://styles/mapbox/dark-v11',
+            streets: 'mapbox://styles/mapbox/streets-v12',
+            satellite: 'mapbox://styles/mapbox/satellite-v9',
+            hybrid: 'mapbox://styles/mapbox/satellite-streets-v12'
+        };
+        
+        // Switch map style
+        function switchMapStyle(style) {
+            map.setStyle(mapStyles[style]);
+            
+            // Update active button
+            document.querySelectorAll('.map-style-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-style="${style}"]`).classList.add('active');
+            
+            // Re-add marker after style loads (style change removes layers)
+            map.once('style.load', () => {
+                if (currentLat && currentLon && marker) {
+                    marker.remove();
+                    marker = new mapboxgl.Marker({ color: '#06b6d4' })
+                        .setLngLat([currentLon, currentLat])
+                        .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                            <strong style="font-size:1.1em;">📍 Mission Location</strong><br>
+                            <span style="color:#94a3b8;">${currentLocationName}</span><br>
+                            <span style="color:#64748b;font-size:0.85em;">${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}</span>
+                        `))
+                        .addTo(map);
+                }
+            });
+        }
+        
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+        setInterval(updateTime, 1000); updateTime();
+        document.getElementById('gpsBtn').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                this.textContent = '⏳';
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => { document.getElementById('latInput').value = pos.coords.latitude.toFixed(4); document.getElementById('lonInput').value = pos.coords.longitude.toFixed(4); document.getElementById('zipInput').value = ''; document.getElementById('addressInput').value = ''; this.textContent = '📍'; loadLocation(); },
+                    (err) => { alert('Location error: ' + err.message); this.textContent = '📍'; }
+                );
+            } else { alert('Geolocation not supported'); }
+        });
+        ['addressInput','zipInput','latInput','lonInput'].forEach(id => document.getElementById(id).addEventListener('keypress', (e) => { if (e.key === 'Enter') loadLocation(); }));
+        
+        async function geocodeAddress(address) {
+            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_TOKEN}&country=US&limit=1`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Geocoding failed');
+            const data = await res.json();
+            if (!data.features || data.features.length === 0) throw new Error('Address not found');
+            const feature = data.features[0];
+            return {
+                lat: feature.center[1],
+                lon: feature.center[0],
+                name: feature.place_name
+            };
+        }
+        
+        async function loadLocation() {
+            const address = document.getElementById('addressInput').value.trim();
+            const zip = document.getElementById('zipInput').value.trim();
+            const lat = document.getElementById('latInput').value.trim();
+            const lon = document.getElementById('lonInput').value.trim();
+            const btn = document.getElementById('loadBtn');
+            btn.disabled = true; btn.textContent = 'Loading...';
+            try {
+                if (address) {
+                    // Geocode address via Mapbox
+                    const result = await geocodeAddress(address);
+                    currentLat = result.lat;
+                    currentLon = result.lon;
+                    currentLocationName = result.name;
+                } else if (zip && /^\d{5}$/.test(zip)) {
+                    const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+                    if (!res.ok) throw new Error('Invalid ZIP');
+                    const data = await res.json();
+                    currentLat = parseFloat(data.places[0].latitude);
+                    currentLon = parseFloat(data.places[0].longitude);
+                    currentLocationName = `${data.places[0]['place name']}, ${data.places[0]['state abbreviation']} ${zip}`;
+                } else if (lat && lon) {
+                    currentLat = parseFloat(lat); currentLon = parseFloat(lon);
+                    if (isNaN(currentLat) || isNaN(currentLon)) throw new Error('Invalid coordinates');
+                    currentLocationName = `${currentLat.toFixed(4)}, ${currentLon.toFixed(4)}`;
+                } else { throw new Error('Enter address, ZIP, or coordinates'); }
+                const badge = document.getElementById('currentLocationBadge');
+                badge.classList.remove('empty');
+                badge.innerHTML = `<span>📍</span><span>${currentLocationName}</span>`;
+                
+                // Update map
+                updateMap(currentLat, currentLon, currentLocationName);
+                
+                await loadAllData();
+                if (refreshInterval) clearInterval(refreshInterval);
+                countdown = 300;
+                refreshInterval = setInterval(() => {
+                    countdown--;
+                    if (countdown <= 0) { countdown = 300; loadAllData(); }
+                    document.getElementById('nextUpdate').textContent = `${Math.floor(countdown/60)}:${(countdown%60).toString().padStart(2,'0')}`;
+                }, 1000);
+            } catch (err) { alert(err.message); } finally { btn.disabled = false; btn.textContent = 'Load Conditions'; }
+        }
+        async function loadAllData() {
+            if (!currentLat || !currentLon) return;
+            await Promise.all([fetchWeather(), fetchSunTimes(), fetchUV(), fetchSeismic(), fetchAQI()]);
+        }
+        async function fetchWeather() {
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,visibility&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`);
+                const data = await res.json(); const c = data.current;
+                document.getElementById('summaryTemp').textContent = `${Math.round(c.temperature_2m)}°F`;
+                document.getElementById('summaryWind').textContent = `${Math.round(c.wind_speed_10m)} mph`;
+                document.getElementById('summaryVisibility').textContent = `${Math.round(c.visibility/1609.34)} mi`;
+                document.getElementById('summaryClouds').textContent = `${c.cloud_cover}%`;
+                const codes = {0:'Clear',1:'Mainly Clear',2:'Partly Cloudy',3:'Overcast',45:'Fog',51:'Drizzle',61:'Rain',71:'Snow',80:'Showers',95:'Thunderstorm'};
+                document.getElementById('weatherCondition').textContent = codes[c.weather_code] || 'Mixed';
+                document.getElementById('weatherDetail').textContent = `Feels ${Math.round(c.apparent_temperature)}°F • ${c.relative_humidity_2m}% humidity`;
+                document.getElementById('windSpeed').textContent = `${Math.round(c.wind_speed_10m)} mph`;
+                const dirs = ['N','NE','E','SE','S','SW','W','NW'];
+                document.getElementById('windDetail').textContent = `From ${dirs[Math.round(c.wind_direction_10m/45)%8]} • Gusts ${Math.round(c.wind_gusts_10m)} mph`;
+                document.getElementById('tfrStatus').textContent = 'CHECK FAA'; document.getElementById('tfrStatus').style.color = 'var(--warning)';
+                document.getElementById('fireStatus').textContent = 'CHECK FIRMS'; document.getElementById('fireStatus').style.color = 'var(--text-secondary)';
+                updateMasterStatus(c);
+            } catch(e) { console.error(e); }
+        }
+        async function fetchSunTimes() {
+            try {
+                const res = await fetch(`https://api.sunrise-sunset.org/json?lat=${currentLat}&lng=${currentLon}&formatted=0`);
+                const data = await res.json();
+                const rise = new Date(data.results.sunrise), set = new Date(data.results.sunset);
+                document.getElementById('sunriseTime').textContent = rise.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+                document.getElementById('sunsetTime').textContent = set.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+                document.getElementById('daylightHours').textContent = `${Math.round((set-rise)/(1000*60*60)*10)/10} hrs`;
+                const now = new Date(), prog = (now-rise)/(set-rise);
+                document.getElementById('daylightMarker').style.left = `${Math.max(0,Math.min(100,prog*100))}%`;
+            } catch(e) { console.error(e); }
+        }
+        async function fetchUV() {
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLon}&hourly=uv_index&forecast_days=1&timezone=auto`);
+                const data = await res.json(), uv = Math.round(data.hourly.uv_index[new Date().getHours()]*10)/10;
+                document.getElementById('uvIndex').textContent = uv;
+                let cat, col;
+                if (uv<=2) { cat='Low'; col='var(--success)'; } else if (uv<=5) { cat='Moderate'; col='var(--warning)'; } else if (uv<=7) { cat='High'; col='#f97316'; } else { cat='Very High'; col='var(--error)'; }
+                document.getElementById('uvIndex').style.color = col;
+                document.getElementById('uvDetail').textContent = cat;
+            } catch(e) { console.error(e); }
+        }
+        async function fetchSeismic() {
+            try {
+                const week = new Date(Date.now()-7*24*60*60*1000).toISOString();
+                const res = await fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${currentLat}&longitude=${currentLon}&maxradiuskm=160&starttime=${week}`);
+                const data = await res.json();
+                if (data.features?.length > 0) {
+                    const q = data.features[0];
+                    document.getElementById('seismicStatus').textContent = `M${q.properties.mag}`;
+                    document.getElementById('seismicStatus').style.color = 'var(--warning)';
+                    document.getElementById('seismicDetail').textContent = q.properties.place;
+                } else {
+                    document.getElementById('seismicStatus').textContent = 'QUIET';
+                    document.getElementById('seismicStatus').style.color = 'var(--success)';
+                    document.getElementById('seismicDetail').textContent = 'No activity (100mi / 7 days)';
+                }
+            } catch(e) { console.error(e); }
+        }
+        async function fetchAQI() {
+            try {
+                const res = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${currentLat}&longitude=${currentLon}&current=us_aqi`);
+                const data = await res.json(), aqi = data.current.us_aqi;
+                document.getElementById('aqiValue').textContent = aqi;
+                let cat, col;
+                if (aqi<=50) { cat='Good'; col='var(--success)'; } else if (aqi<=100) { cat='Moderate'; col='var(--warning)'; } else if (aqi<=150) { cat='Unhealthy (Sensitive)'; col='#f97316'; } else { cat='Unhealthy'; col='var(--error)'; }
+                document.getElementById('aqiValue').style.color = col;
+                document.getElementById('aqiDetail').textContent = cat;
+            } catch(e) { console.error(e); }
+        }
+        function updateMasterStatus(w) {
+            const ind = document.getElementById('masterStatus'), txt = document.getElementById('masterStatusText');
+            const wind = w.wind_speed_10m, vis = w.visibility/1609.34, precip = w.precipitation;
+            if (wind>25 || vis<3 || precip>5) { ind.className='status-indicator red'; ind.textContent='✕'; txt.className='status-text red'; txt.textContent='NO-GO'; }
+            else if (wind>15 || vis<5 || precip>0) { ind.className='status-indicator yellow'; ind.textContent='⚠'; txt.className='status-text yellow'; txt.textContent='CAUTION'; }
+            else { ind.className='status-indicator green'; ind.textContent='✓'; txt.className='status-text green'; txt.textContent='GO FOR FLIGHT'; }
+        }
+    </script>
+</body>
+</html>

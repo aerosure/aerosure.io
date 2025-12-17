@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center | aerosure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyan-400: #22d3ee;
+            --cyan-500: #06b6d4;
+            --blue-400: #60a5fa;
+            --blue-500: #3b82f6;
+            --purple-500: #8b5cf6;
+            --orange-400: #fb923c;
+            --orange-500: #f97316;
+            
+            --glow-cyan: rgba(6, 182, 212, 0.5);
+            --glow-orange: rgba(249, 115, 22, 0.4);
+            
+            --bg-primary: #030712;
+            --bg-secondary: #0a0f1a;
+            --bg-card: rgba(15, 23, 42, 0.6);
+            --bg-card-hover: rgba(22, 33, 54, 0.8);
+            
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-medium: rgba(255, 255, 255, 0.1);
+            --border-glow: rgba(6, 182, 212, 0.3);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Background Effects */
+        .bg-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.015;
+            pointer-events: none;
+            z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 64px 64px;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: radial-gradient(ellipse at center, black 0%, transparent 80%);
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
+            top: -150px;
+            right: -100px;
+        }
+
+        .bg-orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 45px;
+            width: auto;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--cyan-400);
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 1;
+            padding: 120px 2rem 80px;
+        }
+
+        .page-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--orange-400);
+            margin-bottom: 24px;
+        }
+
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--orange-400);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--orange-400), var(--cyan-400));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Weather Lookup Widget */
+        .weather-section {
+            margin-bottom: 64px;
+        }
+
+        .weather-widget {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-medium);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .weather-widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--orange-500), var(--cyan-500));
+        }
+
+        .weather-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .weather-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .weather-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .weather-input-row {
+            display: flex;
+            gap: 16px;
+            max-width: 500px;
+            margin: 0 auto 32px;
+        }
+
+        .weather-input {
+            flex: 1;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-medium);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .weather-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .weather-input:focus {
+            outline: none;
+            border-color: var(--cyan-500);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .weather-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--orange-400), var(--orange-500));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px var(--glow-orange);
+        }
+
+        .weather-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--glow-orange);
+        }
+
+        .weather-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Weather Results */
+        .weather-results {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .weather-results.active {
+            display: grid;
+        }
+
+        .weather-stat {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+        }
+
+        .weather-stat-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .weather-stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .weather-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Flight Status */
+        .flight-status {
+            text-align: center;
+            padding: 24px;
+            border-radius: 16px;
+            margin-top: 24px;
+            display: none;
+        }
+
+        .flight-status.active {
+            display: block;
+        }
+
+        .flight-status.go {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .flight-status.caution {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .flight-status.no-go {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+
+        .flight-status-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .flight-status.go .flight-status-icon { color: var(--success); }
+        .flight-status.caution .flight-status-icon { color: var(--warning); }
+        .flight-status.no-go .flight-status-icon { color: var(--error); }
+
+        .flight-status h3 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+
+        .flight-status p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .weather-location {
+            text-align: center;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .weather-location.active {
+            display: block;
+        }
+
+        .weather-location h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .weather-location h3 span {
+            color: var(--text-primary);
+        }
+
+        /* Tools Grid */
+        .tools-section {
+            margin-bottom: 64px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.15);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--cyan-400);
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 36px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tool-card.airspace::before {
+            background: linear-gradient(90deg, var(--cyan-500), var(--blue-500));
+        }
+
+        .tool-card.storm::before {
+            background: linear-gradient(90deg, var(--orange-500), var(--error));
+        }
+
+        .tool-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-glow);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        .tool-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.75rem;
+        }
+
+        .tool-card.airspace .tool-icon {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .tool-card.storm .tool-icon {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(248, 113, 113, 0.1));
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .tool-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .tool-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .tool-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tool-feature {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .tool-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--cyan-400);
+            transition: gap 0.2s;
+        }
+
+        .tool-card.storm .tool-cta {
+            color: var(--orange-400);
+        }
+
+        .tool-card:hover .tool-cta {
+            gap: 12px;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            padding: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .status-dot.warning {
+            background: var(--warning);
+            box-shadow: 0 0 10px var(--warning);
+        }
+
+        .status-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 2rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        footer p {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+
+        footer a {
+            color: var(--cyan-400);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .weather-input-row {
+                flex-direction: column;
+            }
+
+            .status-bar {
+                flex-direction: column;
+                gap: 16px;
+                align-items: center;
+            }
+
+            .weather-results {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-noise"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="aerosure_io_logo.png" alt="aerosure" class="logo-img">
+            </a>
+            <a href="index.html" class="back-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="page-container">
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-badge">
+                    <span class="hero-badge-dot"></span>
+                    Live Mission Intelligence
+                </div>
+                <h1><span class="gradient">Command Center</span></h1>
+                <p>Real-time weather intelligence, airspace monitoring, and storm tracking. Everything you need before, during, and after the mission.</p>
+            </div>
+
+            <!-- Weather Lookup Widget -->
+            <section class="weather-section">
+                <div class="weather-widget">
+                    <div class="weather-header">
+                        <h2>⚡ Quick Weather Check</h2>
+                        <p>Enter a ZIP code to get current conditions and flight status</p>
+                    </div>
+
+                    <div class="weather-input-row">
+                        <input type="text" class="weather-input" id="zipInput" placeholder="Enter ZIP code (e.g., 23220)" maxlength="5" pattern="[0-9]{5}">
+                        <button class="weather-btn" id="weatherBtn" onclick="getWeather()">
+                            Check Weather
+                        </button>
+                    </div>
+
+                    <div class="weather-location" id="weatherLocation">
+                        <h3>Current conditions for <span id="locationName">—</span></h3>
+                    </div>
+
+                    <div class="weather-results" id="weatherResults">
+                        <div class="weather-stat">
+                            <div class="weather-stat-icon" id="weatherIcon">🌤️</div>
+                            <div class="weather-stat-value" id="tempValue">--°</div>
+                            <div class="weather-stat-label">Temperature</div>
+                        </div>
+                        <div class="weather-stat">
+                            <div class="weather-stat-icon">💨</div>
+                            <div class="weather-stat-value" id="windValue">-- mph</div>
+                            <div class="weather-stat-label">Wind Speed</div>
+                        </div>
+                        <div class="weather-stat">
+                            <div class="weather-stat-icon">💧</div>
+                            <div class="weather-stat-value" id="humidityValue">--%</div>
+                            <div class="weather-stat-label">Humidity</div>
+                        </div>
+                        <div class="weather-stat">
+                            <div class="weather-stat-icon">👁️</div>
+                            <div class="weather-stat-value" id="visibilityValue">-- mi</div>
+                            <div class="weather-stat-label">Visibility</div>
+                        </div>
+                        <div class="weather-stat">
+                            <div class="weather-stat-icon">☁️</div>
+                            <div class="weather-stat-value" id="cloudsValue">--%</div>
+                            <div class="weather-stat-label">Cloud Cover</div>
+                        </div>
+                    </div>
+
+                    <div class="flight-status" id="flightStatus">
+                        <div class="flight-status-icon" id="flightIcon">✓</div>
+                        <h3 id="flightTitle">Flight Status</h3>
+                        <p id="flightDesc">Conditions assessment</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tools Grid -->
+            <section class="tools-section">
+                <div class="section-header">
+                    <div class="section-badge">Mission Tools</div>
+                    <h2>Intelligence Dashboards</h2>
+                </div>
+
+                <div class="tools-grid">
+                    <a href="airspace-ops.html" class="tool-card airspace">
+                        <div class="tool-icon">🛰️</div>
+                        <h3>Airspace Operations</h3>
+                        <p>Pre-flight intelligence dashboard. Check weather, UV index, air quality, TFRs, and seismic activity before every mission.</p>
+                        <div class="tool-features">
+                            <span class="tool-feature">Weather Conditions</span>
+                            <span class="tool-feature">TFR Alerts</span>
+                            <span class="tool-feature">Air Quality</span>
+                            <span class="tool-feature">UV Index</span>
+                            <span class="tool-feature">Daylight Hours</span>
+                        </div>
+                        <span class="tool-cta">
+                            Launch Dashboard
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </span>
+                    </a>
+
+                    <a href="storm-tracker.html" class="tool-card storm">
+                        <div class="tool-icon">🌀</div>
+                        <h3>Storm Tracker</h3>
+                        <p>Live tropical cyclone monitoring with Athenium hurricane data. Track active storms, forecast paths, and coordinate emergency response.</p>
+                        <div class="tool-features">
+                            <span class="tool-feature">Live Storm Tracks</span>
+                            <span class="tool-feature">Wind Swaths</span>
+                            <span class="tool-feature">Forecast Models</span>
+                            <span class="tool-feature">Emergency Response</span>
+                        </div>
+                        <span class="tool-cta">
+                            Launch Tracker
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <span class="status-label">Weather API Online</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <span class="status-label">Athenium Connected</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <span class="status-label">FAA Data Feed Active</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 aerosure LLC | <a href="index.html">aerosure.io</a> | <a href="mailto:info@aerosure.io">info@aerosure.io</a> | <a href="tel:+18042501243">(804) 250-1243</a></p>
+    </footer>
+
+    <script>
+        // OpenWeather API (free tier)
+        const OPENWEATHER_API_KEY = ''; // Add your key here for production
+        
+        // Allow Enter key to trigger search
+        document.getElementById('zipInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                getWeather();
+            }
+        });
+
+        async function getWeather() {
+            const zip = document.getElementById('zipInput').value.trim();
+            
+            if (!/^\d{5}$/.test(zip)) {
+                alert('Please enter a valid 5-digit ZIP code');
+                return;
+            }
+
+            const btn = document.getElementById('weatherBtn');
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+
+            try {
+                // Use OpenWeather API with ZIP code
+                // For demo, using a free weather API that doesn't require key
+                const geoResponse = await fetch(
+                    `https://api.zippopotam.us/us/${zip}`
+                );
+                
+                if (!geoResponse.ok) {
+                    throw new Error('Invalid ZIP code');
+                }
+                
+                const geoData = await geoResponse.json();
+                const place = geoData.places[0];
+                const lat = parseFloat(place.latitude);
+                const lon = parseFloat(place.longitude);
+                const cityName = `${place['place name']}, ${place['state abbreviation']}`;
+
+                // Get weather from Open-Meteo (free, no API key required)
+                const weatherResponse = await fetch(
+                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,cloud_cover,visibility&temperature_unit=fahrenheit&wind_speed_unit=mph`
+                );
+                
+                const weatherData = await weatherResponse.json();
+                const current = weatherData.current;
+
+                // Update display
+                document.getElementById('locationName').textContent = cityName;
+                document.getElementById('weatherLocation').classList.add('active');
+                
+                const temp = Math.round(current.temperature_2m);
+                const wind = Math.round(current.wind_speed_10m);
+                const humidity = current.relative_humidity_2m;
+                const clouds = current.cloud_cover;
+                const visibility = Math.round((current.visibility || 10000) / 1609.34); // meters to miles
+
+                document.getElementById('tempValue').textContent = `${temp}°F`;
+                document.getElementById('windValue').textContent = `${wind} mph`;
+                document.getElementById('humidityValue').textContent = `${humidity}%`;
+                document.getElementById('cloudsValue').textContent = `${clouds}%`;
+                document.getElementById('visibilityValue').textContent = `${visibility} mi`;
+
+                // Set weather icon based on conditions
+                let icon = '☀️';
+                if (clouds > 80) icon = '☁️';
+                else if (clouds > 50) icon = '⛅';
+                else if (clouds > 20) icon = '🌤️';
+                document.getElementById('weatherIcon').textContent = icon;
+
+                // Determine flight status
+                const flightStatus = document.getElementById('flightStatus');
+                const flightIcon = document.getElementById('flightIcon');
+                const flightTitle = document.getElementById('flightTitle');
+                const flightDesc = document.getElementById('flightDesc');
+
+                flightStatus.className = 'flight-status active';
+                
+                if (wind > 25 || visibility < 3) {
+                    flightStatus.classList.add('no-go');
+                    flightIcon.textContent = '✕';
+                    flightTitle.textContent = 'NO-GO — Unfavorable Conditions';
+                    flightDesc.textContent = wind > 25 
+                        ? `Wind speed of ${wind} mph exceeds safe operating limits.`
+                        : `Visibility of ${visibility} mi is below minimum requirements.`;
+                } else if (wind > 15 || visibility < 5 || clouds > 90) {
+                    flightStatus.classList.add('caution');
+                    flightIcon.textContent = '⚠';
+                    flightTitle.textContent = 'CAUTION — Marginal Conditions';
+                    flightDesc.textContent = 'Flight possible but exercise caution. Monitor conditions closely.';
+                } else {
+                    flightStatus.classList.add('go');
+                    flightIcon.textContent = '✓';
+                    flightTitle.textContent = 'GO — Favorable Conditions';
+                    flightDesc.textContent = 'Weather conditions are suitable for drone operations.';
+                }
+
+                document.getElementById('weatherResults').classList.add('active');
+
+            } catch (error) {
+                console.error('Weather fetch error:', error);
+                alert('Could not fetch weather data. Please check the ZIP code and try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Check Weather';
+            }
+        }
+    </script>
+</body>
+</html>
