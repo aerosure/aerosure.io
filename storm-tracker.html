@@ -18,6 +18,7 @@
             --border-subtle: rgba(255, 255, 255, 0.06); --border-medium: rgba(255, 255, 255, 0.1);
             --text-primary: #f8fafc; --text-secondary: #94a3b8; --text-tertiary: #64748b;
             --success: #4ade80; --warning: #fbbf24; --error: #f87171;
+            --cat5: #ff0066; --cat4: #ff3300; --cat3: #ff6600; --cat2: #ffcc00; --cat1: #ffff00; --ts: #00ffcc; --td: #00ccff;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; min-height: 100vh; }
@@ -60,6 +61,63 @@
         .pulse-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } }
         
+        /* Active Storms Section */
+        .storms-section { 
+            background: var(--bg-card); border: 1px solid var(--border-medium); 
+            border-radius: 20px; padding: 24px; margin-bottom: 32px; 
+        }
+        .storms-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 20px; flex-wrap: wrap; gap: 16px; 
+        }
+        .storms-title { display: flex; align-items: center; gap: 12px; }
+        .storms-title svg { width: 28px; height: 28px; stroke: var(--orange-400); }
+        .storms-title h2 { font-size: 1.25rem; font-weight: 700; }
+        .storm-count { 
+            background: rgba(249, 115, 22, 0.15); color: var(--orange-400); 
+            padding: 6px 14px; border-radius: 100px; font-size: 0.85rem; font-weight: 600; 
+        }
+        .storm-count.none { background: rgba(74, 222, 128, 0.1); color: var(--success); }
+        
+        .storms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+        .storm-card { 
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); 
+            border-radius: 16px; padding: 20px; transition: all 0.3s; cursor: pointer;
+        }
+        .storm-card:hover { border-color: var(--orange-400); transform: translateY(-2px); }
+        .storm-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .storm-name { font-size: 1.25rem; font-weight: 700; }
+        .storm-category { 
+            padding: 4px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .storm-category.cat5 { background: var(--cat5); color: white; }
+        .storm-category.cat4 { background: var(--cat4); color: white; }
+        .storm-category.cat3 { background: var(--cat3); color: black; }
+        .storm-category.cat2 { background: var(--cat2); color: black; }
+        .storm-category.cat1 { background: var(--cat1); color: black; }
+        .storm-category.ts { background: var(--ts); color: black; }
+        .storm-category.td { background: var(--td); color: black; }
+        
+        .storm-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+        .storm-stat { }
+        .storm-stat-label { font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .storm-stat-value { font-size: 1.1rem; font-weight: 600; }
+        
+        .storm-location { font-size: 0.85rem; color: var(--text-secondary); }
+        .storm-basin { 
+            display: inline-block; padding: 2px 8px; background: rgba(255,255,255,0.1); 
+            border-radius: 4px; font-size: 0.75rem; margin-top: 8px; 
+        }
+        
+        .no-storms { 
+            text-align: center; padding: 48px 24px; 
+            background: rgba(74, 222, 128, 0.05); border-radius: 16px; 
+        }
+        .no-storms svg { width: 48px; height: 48px; stroke: var(--success); margin-bottom: 16px; }
+        .no-storms h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--success); }
+        .no-storms p { color: var(--text-secondary); font-size: 0.9rem; }
+        
         /* Map Section */
         .map-section { 
             background: var(--bg-card); border: 1px solid var(--border-medium); 
@@ -76,15 +134,36 @@
         .last-update { font-size: 0.85rem; color: var(--text-tertiary); }
         .last-update span { color: var(--cyan-400); }
         
-        #stormMap { height: 500px; border-radius: 12px; overflow: hidden; }
+        #stormMap { height: 550px; border-radius: 12px; overflow: hidden; }
         
         .map-legend { 
-            display: flex; justify-content: center; gap: 24px; margin-top: 16px; flex-wrap: wrap; 
+            display: flex; justify-content: center; gap: 16px; margin-top: 16px; flex-wrap: wrap; 
             padding: 16px; background: rgba(0,0,0,0.2); border-radius: 12px;
         }
-        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-secondary); }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-secondary); }
         .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
-        .legend-line { width: 24px; height: 3px; border-radius: 2px; }
+        .legend-line { width: 20px; height: 3px; border-radius: 2px; }
+        
+        /* Forecast Section */
+        .forecast-section { 
+            background: var(--bg-card); border: 1px solid var(--border-medium); 
+            border-radius: 20px; padding: 24px; margin-bottom: 32px; 
+        }
+        .forecast-header { margin-bottom: 20px; }
+        .forecast-header h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .forecast-header h2 svg { width: 24px; height: 24px; stroke: var(--cyan-400); }
+        .forecast-header p { font-size: 0.9rem; color: var(--text-secondary); }
+        
+        .forecast-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .forecast-table th, .forecast-table td { 
+            padding: 12px; text-align: left; border-bottom: 1px solid var(--border-subtle); 
+        }
+        .forecast-table th { 
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; 
+            color: var(--text-tertiary); font-weight: 600; 
+        }
+        .forecast-table td { font-size: 0.9rem; }
+        .forecast-table tr:hover { background: rgba(255,255,255,0.02); }
         
         /* Emergency Banner */
         .emergency-banner { 
@@ -168,12 +247,23 @@
         footer p { font-size: 0.8rem; color: var(--text-tertiary); }
         footer a { color: var(--cyan-400); text-decoration: none; }
         
+        /* Athenium Badge */
+        .athenium-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 8px 16px; border-radius: 100px; font-size: 0.8rem; color: #a5b4fc;
+        }
+        .athenium-badge svg { width: 16px; height: 16px; }
+        
         @media (max-width: 768px) { 
             .nav-links { display: none; } 
             main { padding: 90px 1rem 40px; } 
-            #stormMap { height: 350px; }
+            #stormMap { height: 400px; }
             .hero-section h1 { font-size: 1.75rem; }
             .emergency-banner.active { flex-direction: column; text-align: center; }
+            .forecast-table { font-size: 0.8rem; }
+            .forecast-table th, .forecast-table td { padding: 8px 6px; }
         }
     </style>
 </head>
@@ -197,22 +287,42 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <defs><linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fb923c"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs>
                     <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 2a10 10 0 0 1 0 20"/>
-                    <path d="M12 2c-2.5 2.5-4 6-4 10s1.5 7.5 4 10"/>
-                    <path d="M2 12h20"/>
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2c-1.5 2-2.5 4.5-2.5 7s1 5 2.5 7"/>
+                    <path d="M12 22c1.5-2 2.5-4.5 2.5-7s-1-5-2.5-7"/>
                 </svg>
                 Storm Tracker
             </h1>
-            <p>Real-time tropical cyclone monitoring • Emergency response coordination</p>
-            <div class="data-source-banner">
-                <div class="pulse-dot"></div>
-                <div class="data-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                    NOAA/NHC Data Feed
+            <p>Real-time tropical cyclone monitoring powered by Athenium BeaconHurricane™</p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <div class="data-source-banner">
+                    <div class="pulse-dot"></div>
+                    <div class="data-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        Live Data Feed
+                    </div>
                 </div>
-                <span style="color: var(--text-tertiary); font-size: 0.85rem;">24/7 Monitoring Active</span>
+                <div class="athenium-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    Powered by Athenium Beacon
+                </div>
             </div>
         </div>
+        
+        <!-- Active Storms Section -->
+        <section class="storms-section">
+            <div class="storms-header">
+                <div class="storms-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2c-1.5 2-2.5 4.5-2.5 7s1 5 2.5 7"/></svg>
+                    <h2>Active Tropical Systems</h2>
+                </div>
+                <div class="storm-count" id="stormCount">Loading...</div>
+            </div>
+            
+            <div id="stormsContainer">
+                <!-- Storm cards will be injected here -->
+            </div>
+        </section>
         
         <!-- Emergency Response Banner (hidden by default) -->
         <div class="emergency-banner" id="emergencyBanner">
@@ -243,18 +353,49 @@
                         <path d="M12 2a10 10 0 0 1 0 20"/>
                         <path d="M12 2c-2.5 2.5-4 6-4 10s1.5 7.5 4 10"/>
                     </svg>
-                    <h2>Atlantic Basin Monitor</h2>
+                    <h2>Global Tropical Cyclone Monitor</h2>
                 </div>
                 <div class="last-update">Updated: <span id="lastUpdate"></span></div>
             </div>
             <div id="stormMap"></div>
             <div class="map-legend">
-                <div class="legend-item"><div class="legend-dot" style="background: #22d3ee;"></div> aerosure Base (Richmond, VA)</div>
-                <div class="legend-item"><div class="legend-line" style="background: #22d3ee; opacity: 0.5;"></div> 300mi Operational Radius</div>
-                <div class="legend-item"><div class="legend-line" style="background: #fb923c; opacity: 0.5;"></div> 600mi Monitoring Zone</div>
-                <div class="legend-item"><div class="legend-line" style="background: rgba(249,115,22,0.3);"></div> Atlantic Development Zone</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--cat5);"></div> Cat 5 (157+ mph)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--cat4);"></div> Cat 4 (130-156)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--cat3);"></div> Cat 3 (111-129)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--cat2);"></div> Cat 2 (96-110)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--cat1);"></div> Cat 1 (74-95)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--ts);"></div> Tropical Storm</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--td);"></div> Tropical Depression</div>
+                <div class="legend-item"><div class="legend-line" style="background: #22d3ee; opacity: 0.5;"></div> aerosure 300mi</div>
             </div>
         </div>
+        
+        <!-- Forecast Table Section (shown when storms active) -->
+        <section class="forecast-section" id="forecastSection" style="display: none;">
+            <div class="forecast-header">
+                <h2>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    Athenium Hurricane Forecast
+                </h2>
+                <p>Official (888) and AI-Enhanced (999) ensemble track forecasts</p>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="forecast-table" id="forecastTable">
+                    <thead>
+                        <tr>
+                            <th>Valid Time</th>
+                            <th>Hour</th>
+                            <th>Position</th>
+                            <th>Wind (mph)</th>
+                            <th>Pressure (hPa)</th>
+                            <th>Category</th>
+                        </tr>
+                    </thead>
+                    <tbody id="forecastBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
         
         <!-- Info Cards -->
         <div class="info-grid">
@@ -337,22 +478,6 @@
                     <p>National Weather Service radar mosaic with real-time precipitation tracking.</p>
                     <span class="resource-link">Visit NWS Radar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
                 </a>
-                <a href="https://www.ssd.noaa.gov/goes/east/tatl/loop-avn.html" target="_blank" class="resource-card">
-                    <h4>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                        GOES East Satellite
-                    </h4>
-                    <p>Live satellite imagery of the Atlantic basin from NOAA's GOES-16 satellite.</p>
-                    <span class="resource-link">Visit GOES East <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
-                </a>
-                <a href="http://tropic.ssec.wisc.edu/" target="_blank" class="resource-card">
-                    <h4>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                        CIMSS Tropical
-                    </h4>
-                    <p>Satellite imagery, model loops, and advanced tropical cyclone analysis from UW-Madison.</p>
-                    <span class="resource-link">Visit CIMSS <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
-                </a>
             </div>
         </section>
         
@@ -362,8 +487,8 @@
             <p>Integrated monitoring with rapid deployment capabilities</p>
             <div class="info-badges">
                 <div class="info-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                    <span>NOAA/NHC Data</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    <span>Athenium Beacon Data</span>
                 </div>
                 <div class="info-badge">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -383,13 +508,76 @@
     </main>
     
     <footer>
-        <p>Data: NOAA, National Hurricane Center | <a href="command-center.html">← Back to Command Center</a></p>
+        <p>Data: Athenium BeaconHurricane™, NOAA, National Hurricane Center | <a href="command-center.html">← Back to Command Center</a></p>
     </footer>
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // ===========================================
+        // ATHENIUM BEACON DATA - Updated: 2025-12-19 00:00Z
+        // ===========================================
+        const ATHENIUM_DATA = {
+            lastUpdate: "2025-12-19T00:00:00Z",
+            activeStorms: [
+                {
+                    atcfid: "SH092025",
+                    name: "NINE",
+                    basin: "Southern Hemisphere",
+                    basinCode: "S",
+                    lat: -12.2,
+                    lon: 109.2,
+                    windMph: 40,
+                    pressureHpa: 999,
+                    category: "TS",
+                    movement: { direction: 275, speedMph: 7 },
+                    forecast: {
+                        peakWindMph: 64,
+                        minPressureHpa: 990,
+                        forecastHours: 186,
+                        track: [
+                            { hour: 0, lat: -12.12, lon: 109.24, windMph: 40, cat: "TS" },
+                            { hour: 24, lat: -13.0, lon: 107.98, windMph: 53, cat: "TS" },
+                            { hour: 48, lat: -13.77, lon: 105.85, windMph: 59, cat: "TS" },
+                            { hour: 72, lat: -14.14, lon: 104.29, windMph: 64, cat: "TS" },
+                            { hour: 96, lat: -14.24, lon: 102.77, windMph: 62, cat: "TS" },
+                            { hour: 120, lat: -14.23, lon: 101.28, windMph: 53, cat: "TS" },
+                            { hour: 144, lat: -14.35, lon: 100.28, windMph: 44, cat: "TS" },
+                            { hour: 168, lat: -14.22, lon: 98.54, windMph: 42, cat: "TS" },
+                            { hour: 186, lat: -14.15, lon: 100.21, windMph: 40, cat: "TS" }
+                        ]
+                    }
+                }
+            ]
+        };
+        
+        // Category colors
+        const categoryColors = {
+            'CAT5': '#ff0066', 'CAT4': '#ff3300', 'CAT3': '#ff6600',
+            'CAT2': '#ffcc00', 'CAT1': '#ffff00', 'TS': '#00ffcc', 'TD': '#00ccff'
+        };
+        
+        // Get category from wind speed
+        function getCategory(windMph) {
+            if (windMph >= 157) return 'CAT5';
+            if (windMph >= 130) return 'CAT4';
+            if (windMph >= 111) return 'CAT3';
+            if (windMph >= 96) return 'CAT2';
+            if (windMph >= 74) return 'CAT1';
+            if (windMph >= 39) return 'TS';
+            return 'TD';
+        }
+        
+        // Format category for display
+        function formatCategory(cat) {
+            const labels = {
+                'CAT5': 'Category 5', 'CAT4': 'Category 4', 'CAT3': 'Category 3',
+                'CAT2': 'Category 2', 'CAT1': 'Category 1', 'TS': 'Tropical Storm', 'TD': 'Tropical Depression'
+            };
+            return labels[cat] || cat;
+        }
+        
         // Update timestamp
-        document.getElementById('lastUpdate').textContent = new Date().toLocaleString('en-US', { 
+        document.getElementById('lastUpdate').textContent = new Date(ATHENIUM_DATA.lastUpdate).toLocaleString('en-US', { 
             month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' 
         });
         
@@ -408,21 +596,186 @@
             seasonCard.classList.add('off-season');
             seasonBadge.className = 'season-badge inactive';
             seasonBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/><polyline points="16 16 12 12 8 16"/></svg> OFF-SEASON';
-            seasonText.textContent = 'Atlantic hurricane season runs June 1 - November 30. Off-season systems are rare but possible. Next season begins June 1.';
+            seasonText.textContent = 'Atlantic hurricane season runs June 1 - November 30. Off-season systems are rare but possible. Southern Hemisphere season is active (Nov-Apr).';
+        }
+        
+        // Render storm cards
+        function renderStormCards() {
+            const container = document.getElementById('stormsContainer');
+            const countEl = document.getElementById('stormCount');
+            const storms = ATHENIUM_DATA.activeStorms;
+            
+            if (storms.length === 0) {
+                countEl.textContent = 'No Active Storms';
+                countEl.classList.add('none');
+                container.innerHTML = `
+                    <div class="no-storms">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <h3>No Active Tropical Systems</h3>
+                        <p>All monitored basins are currently quiet. aerosure continues 24/7 monitoring via Athenium Beacon.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            countEl.textContent = `${storms.length} Active Storm${storms.length > 1 ? 's' : ''}`;
+            countEl.classList.remove('none');
+            
+            container.innerHTML = `<div class="storms-grid">${storms.map(storm => {
+                const cat = getCategory(storm.windMph);
+                const catClass = cat.toLowerCase().replace(' ', '');
+                return `
+                    <div class="storm-card" onclick="focusStorm(${storm.lat}, ${storm.lon})">
+                        <div class="storm-card-header">
+                            <div>
+                                <div class="storm-name">${storm.name}</div>
+                                <div class="storm-basin">${storm.basin}</div>
+                            </div>
+                            <span class="storm-category ${catClass}">${cat}</span>
+                        </div>
+                        <div class="storm-stats">
+                            <div class="storm-stat">
+                                <div class="storm-stat-label">Max Wind</div>
+                                <div class="storm-stat-value">${storm.windMph} mph</div>
+                            </div>
+                            <div class="storm-stat">
+                                <div class="storm-stat-label">Pressure</div>
+                                <div class="storm-stat-value">${storm.pressureHpa} hPa</div>
+                            </div>
+                            <div class="storm-stat">
+                                <div class="storm-stat-label">Movement</div>
+                                <div class="storm-stat-value">${storm.movement.direction}° @ ${storm.movement.speedMph} mph</div>
+                            </div>
+                            <div class="storm-stat">
+                                <div class="storm-stat-label">Peak Forecast</div>
+                                <div class="storm-stat-value">${storm.forecast.peakWindMph} mph</div>
+                            </div>
+                        </div>
+                        <div class="storm-location">
+                            Position: ${Math.abs(storm.lat).toFixed(1)}°${storm.lat < 0 ? 'S' : 'N'}, ${Math.abs(storm.lon).toFixed(1)}°${storm.lon < 0 ? 'W' : 'E'}
+                        </div>
+                    </div>
+                `;
+            }).join('')}</div>`;
+            
+            // Show forecast table
+            if (storms.length > 0) {
+                document.getElementById('forecastSection').style.display = 'block';
+                renderForecastTable(storms[0]);
+            }
+        }
+        
+        // Render forecast table
+        function renderForecastTable(storm) {
+            const tbody = document.getElementById('forecastBody');
+            const baseTime = new Date(ATHENIUM_DATA.lastUpdate);
+            
+            tbody.innerHTML = storm.forecast.track.map(point => {
+                const validTime = new Date(baseTime.getTime() + point.hour * 3600000);
+                const cat = getCategory(point.windMph);
+                return `
+                    <tr>
+                        <td>${validTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${validTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</td>
+                        <td>+${point.hour}h</td>
+                        <td>${Math.abs(point.lat).toFixed(1)}°${point.lat < 0 ? 'S' : 'N'}, ${Math.abs(point.lon).toFixed(1)}°${point.lon < 0 ? 'W' : 'E'}</td>
+                        <td style="color: ${categoryColors[cat]}">${point.windMph}</td>
+                        <td>${storm.pressureHpa - (point.hour * 0.05).toFixed(0)}</td>
+                        <td><span style="color: ${categoryColors[cat]}">${cat}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Global map reference
+        let stormMap;
+        
+        // Focus on storm
+        function focusStorm(lat, lon) {
+            if (stormMap) {
+                stormMap.setView([lat, lon], 6);
+            }
         }
         
         // Initialize Leaflet map
         function initMap() {
-            const map = L.map('stormMap').setView([30, -65], 4);
+            // Center on Atlantic or first storm
+            const storms = ATHENIUM_DATA.activeStorms;
+            let center = [25, -60];
+            let zoom = 4;
+            
+            if (storms.length > 0) {
+                center = [storms[0].lat, storms[0].lon];
+                zoom = 5;
+            }
+            
+            stormMap = L.map('stormMap').setView(center, zoom);
             
             // Dark CARTO basemap
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '© CARTO | © OpenStreetMap',
+                attribution: '© CARTO | © OpenStreetMap | Athenium Beacon',
                 subdomains: 'abcd',
                 maxZoom: 19
-            }).addTo(map);
+            }).addTo(stormMap);
             
-            // Richmond base marker with custom icon
+            // Add storms to map
+            storms.forEach(storm => {
+                const cat = getCategory(storm.windMph);
+                const color = categoryColors[cat];
+                
+                // Current position marker
+                const stormIcon = L.divIcon({
+                    html: `<div style="width: 24px; height: 24px; background: ${color}; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 20px ${color};"></div>`,
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12],
+                    className: 'storm-marker'
+                });
+                
+                L.marker([storm.lat, storm.lon], { icon: stormIcon })
+                    .addTo(stormMap)
+                    .bindPopup(`
+                        <strong style="color:${color}; font-size: 1.1em;">${storm.name}</strong><br>
+                        <span style="color:#94a3b8;">${formatCategory(cat)}</span><br>
+                        <strong>${storm.windMph} mph</strong> | ${storm.pressureHpa} hPa<br>
+                        <span style="color:#64748b; font-size: 0.85em;">Moving ${storm.movement.direction}° at ${storm.movement.speedMph} mph</span>
+                    `);
+                
+                // Forecast track
+                if (storm.forecast && storm.forecast.track) {
+                    const trackCoords = storm.forecast.track.map(p => [p.lat, p.lon]);
+                    
+                    // Draw track line
+                    L.polyline(trackCoords, {
+                        color: color,
+                        weight: 3,
+                        opacity: 0.8,
+                        dashArray: '8, 8'
+                    }).addTo(stormMap);
+                    
+                    // Add forecast points
+                    storm.forecast.track.forEach((point, idx) => {
+                        if (idx === 0) return; // Skip current position
+                        
+                        const pointCat = getCategory(point.windMph);
+                        const pointColor = categoryColors[pointCat];
+                        
+                        const forecastIcon = L.divIcon({
+                            html: `<div style="width: ${idx < 4 ? 12 : 8}px; height: ${idx < 4 ? 12 : 8}px; background: ${pointColor}; border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; opacity: ${1 - idx * 0.08};"></div>`,
+                            iconSize: [12, 12],
+                            iconAnchor: [6, 6],
+                            className: 'forecast-marker'
+                        });
+                        
+                        L.marker([point.lat, point.lon], { icon: forecastIcon })
+                            .addTo(stormMap)
+                            .bindPopup(`
+                                <strong>+${point.hour}h Forecast</strong><br>
+                                ${point.windMph} mph (${pointCat})
+                            `);
+                    });
+                }
+            });
+            
+            // Richmond base marker
             const baseIcon = L.divIcon({
                 html: '<svg viewBox="0 0 24 24" width="28" height="28" fill="#22d3ee" stroke="#030712" stroke-width="1"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="#030712"/></svg>',
                 iconSize: [28, 28],
@@ -431,7 +784,7 @@
             });
             
             L.marker([37.505, -77.319], { icon: baseIcon })
-                .addTo(map)
+                .addTo(stormMap)
                 .bindPopup('<strong style="color:#22d3ee;">aerosure Operations Base</strong><br><span style="color:#94a3b8;">Richmond, VA</span><br><span style="color:#64748b;font-size:0.85em;">FAA Part 107 Certified</span>');
             
             // 300-mile operational radius
@@ -442,7 +795,7 @@
                 fillOpacity: 0.05,
                 weight: 2,
                 dashArray: '8, 8'
-            }).addTo(map).bindPopup('<strong>300-mile Operational Radius</strong><br>Primary deployment zone');
+            }).addTo(stormMap);
             
             // 600-mile monitoring radius
             L.circle([37.505, -77.319], {
@@ -450,29 +803,19 @@
                 color: '#fb923c',
                 fillColor: '#fb923c',
                 fillOpacity: 0.03,
-                weight: 2,
+                weight: 1,
                 dashArray: '8, 8'
-            }).addTo(map).bindPopup('<strong>600-mile Monitoring Zone</strong><br>Extended response capability');
-            
-            // Atlantic hurricane development zone
-            const atlanticBox = [
-                [8, -85], [8, -15], [35, -15], [35, -85], [8, -85]
-            ];
-            L.polyline(atlanticBox, {
-                color: 'rgba(249, 115, 22, 0.4)',
-                weight: 2,
-                dashArray: '12, 6'
-            }).addTo(map).bindPopup('<strong>Atlantic Development Zone</strong><br>Primary hurricane formation region');
+            }).addTo(stormMap);
             
             // Add scale
-            L.control.scale({ imperial: true, metric: false }).addTo(map);
+            L.control.scale({ imperial: true, metric: false }).addTo(stormMap);
         }
         
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', initMap);
-        
-        // Demo: Show emergency banner (uncomment to test)
-        // document.getElementById('emergencyBanner').classList.add('active');
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStormCards();
+            initMap();
+        });
     </script>
 </body>
 </html>
