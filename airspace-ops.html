@@ -380,6 +380,9 @@
                     currentLat = result.lat;
                     currentLon = result.lon;
                     currentLocationName = result.name;
+                    // Auto-populate lat/lon fields
+                    document.getElementById('latInput').value = currentLat.toFixed(5);
+                    document.getElementById('lonInput').value = currentLon.toFixed(5);
                 } else if (zip && /^\d{5}$/.test(zip)) {
                     const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
                     if (!res.ok) throw new Error('Invalid ZIP');
@@ -387,6 +390,9 @@
                     currentLat = parseFloat(data.places[0].latitude);
                     currentLon = parseFloat(data.places[0].longitude);
                     currentLocationName = `${data.places[0]['place name']}, ${data.places[0]['state abbreviation']} ${zip}`;
+                    // Auto-populate lat/lon fields
+                    document.getElementById('latInput').value = currentLat.toFixed(5);
+                    document.getElementById('lonInput').value = currentLon.toFixed(5);
                 } else if (lat && lon) {
                     currentLat = parseFloat(lat); currentLon = parseFloat(lon);
                     if (isNaN(currentLat) || isNaN(currentLon)) throw new Error('Invalid coordinates');
