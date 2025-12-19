@@ -89,6 +89,14 @@
         .daylight-bar { flex: 1; height: 8px; margin: 0 20px; background: linear-gradient(90deg, #1e3a5f 0%, #fbbf24 15%, #60a5fa 50%, #f97316 85%, #1e3a5f 100%); border-radius: 4px; position: relative; }
         .daylight-marker { position: absolute; top: -6px; width: 20px; height: 20px; background: white; border-radius: 50%; box-shadow: 0 0 10px rgba(255,255,255,0.5); transform: translateX(-50%); }
         
+        /* Windy Section */
+        .windy-section { background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: 16px; padding: 20px; margin-bottom: 32px; }
+        .windy-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .windy-header h3 { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .windy-subtitle { font-size: 0.8rem; color: var(--text-tertiary); }
+        .windy-wrapper { border-radius: 12px; overflow: hidden; }
+        .windy-wrapper iframe { display: block; width: 100%; height: 450px; border: none; }
+        
         /* Map Section */
         .map-section { margin-bottom: 32px; }
         .map-container { background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: 16px; padding: 16px; }
@@ -128,14 +136,14 @@
     </nav>
     <main>
         <div class="page-header">
-            <h1>🛰️ Airspace Operations Dashboard</h1>
+            <h1><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="url(#headGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="headGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient></defs><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Airspace Operations</h1>
             <p>Pre-flight intelligence for drone operations — any location</p>
         </div>
         <div class="location-selector">
             <div class="location-header">
-                <h2>📍 Set Mission Location</h2>
+                <h2><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Set Mission Location</h2>
                 <div class="current-location empty" id="currentLocationBadge">
-                    <span>⚠️</span><span id="currentLocationText">No location set</span>
+                    <span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><span id="currentLocationText">No location set</span>
                 </div>
             </div>
             <div class="location-form">
@@ -145,7 +153,7 @@
                 <span class="or-divider">or</span>
                 <input type="text" class="location-input" id="latInput" placeholder="Lat" style="min-width:90px;">
                 <input type="text" class="location-input" id="lonInput" placeholder="Lon" style="min-width:90px;">
-                <button class="gps-btn" id="gpsBtn" title="Use my location">📍</button>
+                <button class="gps-btn" id="gpsBtn" title="Use my location"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg></button>
                 <button class="location-btn" id="loadBtn" onclick="loadLocation()">Load Conditions</button>
             </div>
         </div>
@@ -154,7 +162,7 @@
         <div class="map-section">
             <div class="map-container">
                 <div class="map-header">
-                    <span class="map-title">🗺️ Mission Location</span>
+                    <span class="map-title"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg> Mission Location</span>
                     <div class="map-styles">
                         <button class="map-style-btn active" data-style="dark" onclick="switchMapStyle('dark')">Dark</button>
                         <button class="map-style-btn" data-style="streets" onclick="switchMapStyle('streets')">Streets</button>
@@ -165,7 +173,7 @@
                 <div id="map"></div>
             </div>
             <div class="map-info" id="mapInfo">
-                <span class="map-info-icon">📍</span>
+                <span class="map-info-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
                 <span id="mapInfoText">Enter a location above to view on map</span>
             </div>
         </div>
@@ -189,37 +197,37 @@
         </div>
         <div class="data-grid">
             <div class="data-card">
-                <div class="data-card-header"><span class="data-card-title">🌡️ Current Weather</span><div class="data-card-status"></div></div>
+                <div class="data-card-header"><span class="data-card-title"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg> Current Weather</span><div class="data-card-status"></div></div>
                 <div class="data-card-value" id="weatherCondition">--</div>
                 <div class="data-card-detail" id="weatherDetail">Enter location to load</div>
             </div>
             <div class="data-card">
-                <div class="data-card-header"><span class="data-card-title">💨 Wind Conditions</span><div class="data-card-status"></div></div>
+                <div class="data-card-header"><span class="data-card-title"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg> Wind Conditions</span><div class="data-card-status"></div></div>
                 <div class="data-card-value" id="windSpeed">-- mph</div>
                 <div class="data-card-detail" id="windDetail">Direction: --</div>
             </div>
             <div class="data-card">
-                <div class="data-card-header"><span class="data-card-title">🚫 Airspace Restrictions</span><div class="data-card-status"></div></div>
+                <div class="data-card-header"><span class="data-card-title"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Airspace Restrictions</span><div class="data-card-status"></div></div>
                 <div class="data-card-value" id="tfrStatus">--</div>
                 <div class="data-card-detail" id="tfrDetail"><a href="https://tfr.faa.gov" target="_blank">Check FAA TFRs →</a></div>
             </div>
             <div class="data-card">
-                <div class="data-card-header"><span class="data-card-title">☀️ UV Index</span><div class="data-card-status"></div></div>
+                <div class="data-card-header"><span class="data-card-title"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> UV Index</span><div class="data-card-status"></div></div>
                 <div class="data-card-value" id="uvIndex">--</div>
                 <div class="data-card-detail" id="uvDetail">Enter location to load</div>
             </div>
             <div class="data-card">
-                <div class="data-card-header"><span class="data-card-title">🌬️ Air Quality (AQI)</span><div class="data-card-status"></div></div>
+                <div class="data-card-header"><span class="data-card-title"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg> Air Quality (AQI)</span><div class="data-card-status"></div></div>
                 <div class="data-card-value" id="aqiValue">--</div>
                 <div class="data-card-detail" id="aqiDetail">Enter location to load</div>
             </div>
             <div class="data-card">
-                <div class="data-card-header"><span class="data-card-title">🌍 Seismic Activity</span><div class="data-card-status"></div></div>
+                <div class="data-card-header"><span class="data-card-title"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Seismic Activity</span><div class="data-card-status"></div></div>
                 <div class="data-card-value" id="seismicStatus">--</div>
                 <div class="data-card-detail" id="seismicDetail">Enter location to load</div>
             </div>
             <div class="data-card daylight-card">
-                <div class="data-card-header"><span class="data-card-title">🌅 Daylight Window</span><div class="data-card-status"></div></div>
+                <div class="data-card-header"><span class="data-card-title"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8,6 12,2 16,6"/></svg> Daylight Window</span><div class="data-card-status"></div></div>
                 <div class="data-card-value" id="daylightHours">-- hrs</div>
                 <div class="data-card-detail">Civil twilight operational window</div>
                 <div class="daylight-timeline">
@@ -229,13 +237,24 @@
                 </div>
             </div>
             <div class="data-card">
-                <div class="data-card-header"><span class="data-card-title">🔥 Active Fires</span><div class="data-card-status"></div></div>
+                <div class="data-card-header"><span class="data-card-title"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Active Fires</span><div class="data-card-status"></div></div>
                 <div class="data-card-value" id="fireStatus">--</div>
                 <div class="data-card-detail"><a href="https://firms.modaps.eosdis.nasa.gov/map/" target="_blank">NASA FIRMS Map →</a></div>
             </div>
         </div>
+        
+        <!-- Windy Weather Map -->
+        <div class="windy-section">
+            <div class="windy-header">
+                <h3><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--cyan-400)" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg> Live Weather Map</h3>
+                <span class="windy-subtitle">Powered by Windy.com</span>
+            </div>
+            <div class="windy-wrapper">
+                <iframe id="windyEmbed" src="https://embed.windy.com/embed2.html?lat=37.5&lon=-78.5&detailLat=37.5&detailLon=-78.5&width=650&height=450&zoom=6&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1" frameborder="0"></iframe>
+            </div>
+        </div>
     </main>
-    <footer><p>Data: Open-Meteo, USGS, FAA, NASA | <a href="command-center.html">← Back to Command Center</a></p></footer>
+    <footer><p>Data: Open-Meteo, USGS, FAA, NASA, Windy | <a href="command-center.html">← Back to Command Center</a></p></footer>
     <script>
         const MAPBOX_TOKEN = 'pk.eyJ1IjoiYWVyb3N1cmUiLCJhIjoiY21qNTZvMTlyMHV5aTNnb2dib2JuaXFyMSJ9.WN3RY1Ne-VQjn0o51xvEkQ';
         mapboxgl.accessToken = MAPBOX_TOKEN;
@@ -269,7 +288,7 @@
             marker = new mapboxgl.Marker({ color: '#06b6d4' })
                 .setLngLat([lon, lat])
                 .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(`
-                    <strong style="font-size:1.1em;">📍 Mission Location</strong><br>
+                    <strong style="font-size:1.1em;">Mission Location</strong><br>
                     <span style="color:#94a3b8;">${locationName}</span><br>
                     <span style="color:#64748b;font-size:0.85em;">${lat.toFixed(5)}, ${lon.toFixed(5)}</span>
                 `))
@@ -304,7 +323,7 @@
                     marker = new mapboxgl.Marker({ color: '#06b6d4' })
                         .setLngLat([currentLon, currentLat])
                         .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(`
-                            <strong style="font-size:1.1em;">📍 Mission Location</strong><br>
+                            <strong style="font-size:1.1em;">Mission Location</strong><br>
                             <span style="color:#94a3b8;">${currentLocationName}</span><br>
                             <span style="color:#64748b;font-size:0.85em;">${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}</span>
                         `))
@@ -321,10 +340,10 @@
         setInterval(updateTime, 1000); updateTime();
         document.getElementById('gpsBtn').addEventListener('click', function() {
             if (navigator.geolocation) {
-                this.textContent = '⏳';
+                this.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="spin"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
                 navigator.geolocation.getCurrentPosition(
-                    (pos) => { document.getElementById('latInput').value = pos.coords.latitude.toFixed(4); document.getElementById('lonInput').value = pos.coords.longitude.toFixed(4); document.getElementById('zipInput').value = ''; document.getElementById('addressInput').value = ''; this.textContent = '📍'; loadLocation(); },
-                    (err) => { alert('Location error: ' + err.message); this.textContent = '📍'; }
+                    (pos) => { document.getElementById('latInput').value = pos.coords.latitude.toFixed(4); document.getElementById('lonInput').value = pos.coords.longitude.toFixed(4); document.getElementById('zipInput').value = ''; document.getElementById('addressInput').value = ''; this.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>'; loadLocation(); },
+                    (err) => { alert('Location error: ' + err.message); this.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>'; }
                 );
             } else { alert('Geolocation not supported'); }
         });
@@ -372,7 +391,7 @@
                 } else { throw new Error('Enter address, ZIP, or coordinates'); }
                 const badge = document.getElementById('currentLocationBadge');
                 badge.classList.remove('empty');
-                badge.innerHTML = `<span>📍</span><span>${currentLocationName}</span>`;
+                badge.innerHTML = `<span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><span>${currentLocationName}</span>`;
                 
                 // Update map
                 updateMap(currentLat, currentLon, currentLocationName);
@@ -464,9 +483,9 @@
         function updateMasterStatus(w) {
             const ind = document.getElementById('masterStatus'), txt = document.getElementById('masterStatusText');
             const wind = w.wind_speed_10m, vis = w.visibility/1609.34, precip = w.precipitation;
-            if (wind>25 || vis<3 || precip>5) { ind.className='status-indicator red'; ind.textContent='✕'; txt.className='status-text red'; txt.textContent='NO-GO'; }
-            else if (wind>15 || vis<5 || precip>0) { ind.className='status-indicator yellow'; ind.textContent='⚠'; txt.className='status-text yellow'; txt.textContent='CAUTION'; }
-            else { ind.className='status-indicator green'; ind.textContent='✓'; txt.className='status-text green'; txt.textContent='GO FOR FLIGHT'; }
+            if (wind>25 || vis<3 || precip>5) { ind.className='status-indicator red'; ind.innerHTML='<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="white" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'; txt.className='status-text red'; txt.textContent='NO-GO'; }
+            else if (wind>15 || vis<5 || precip>0) { ind.className='status-indicator yellow'; ind.innerHTML='<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="white" stroke-width="3"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'; txt.className='status-text yellow'; txt.textContent='CAUTION'; }
+            else { ind.className='status-indicator green'; ind.innerHTML='<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'; txt.className='status-text green'; txt.textContent='GO FOR FLIGHT'; }
         }
     </script>
 </body>
