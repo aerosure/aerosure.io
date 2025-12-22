@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join the Pilot Network | aerosure</title>
+    <title>Join the Pilot Network | AeroSure</title>
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -623,6 +623,207 @@
             color: var(--text-tertiary);
         }
 
+        /* Onboarding Process */
+        .onboarding-process {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .onboarding-process h4 {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-tertiary);
+            margin-bottom: 20px;
+        }
+
+        .onboarding-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .onboarding-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .onboarding-step:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.15));
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--cyan-400);
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content strong {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .step-content span {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Document Links */
+        .document-links {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .document-links h4 {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+        }
+
+        .doc-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+
+        .doc-link:last-child {
+            margin-bottom: 0;
+        }
+
+        .doc-link:hover {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: var(--border-glow);
+            color: var(--cyan-400);
+        }
+
+        .doc-link svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--cyan-400);
+            flex-shrink: 0;
+        }
+
+        .doc-link .doc-title {
+            flex: 1;
+        }
+
+        .doc-link .doc-format {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* File Upload Styles */
+        .file-upload-group {
+            margin-bottom: 24px;
+        }
+
+        .file-upload-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .file-upload-label .optional {
+            font-weight: 400;
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            border: 2px dashed var(--border-medium);
+            border-radius: 10px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .file-upload-wrapper:hover {
+            border-color: var(--border-glow);
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-content {
+            pointer-events: none;
+        }
+
+        .file-upload-content svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--text-tertiary);
+            margin-bottom: 8px;
+        }
+
+        .file-upload-content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .file-upload-content span {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .page-container {
@@ -694,7 +895,7 @@
                 </div>
                 <h1 class="page-title">
                     Fly With<br>
-                    <span class="gradient">aerosure</span>
+                    <span class="gradient">AeroSure</span>
                 </h1>
                 <p class="page-subtitle">
                     Join our nationwide network of vetted drone operators. Premium pay for premium work. Standardized missions. Institutional clients.
@@ -709,7 +910,7 @@
                         </div>
                         <div class="benefit-content">
                             <h3>Premium Pay</h3>
-                            <p>$350-$750 per mission depending on equipment tier and complexity. No haggling.</p>
+                            <p>$150-$500 per mission depending on pilot tier and complexity. Net 15 payment terms.</p>
                         </div>
                     </div>
 
@@ -746,16 +947,93 @@
                     </div>
                     <div class="requirement-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
-                        $1M Liability Insurance
+                        $1M Liability Insurance (AeroSure as Additional Insured)
                     </div>
                     <div class="requirement-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
-                        Thermal-Equipped Drone (Mavic 3T or equivalent)
+                        Thermal-Equipped Drone (Mavic 3T, M30T, or equivalent)
                     </div>
                     <div class="requirement-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
-                        Reliable Transportation
+                        50+ Commercial Flight Hours
                     </div>
+                    <div class="requirement-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                        Pass Background Check
+                    </div>
+                </div>
+
+                <div class="onboarding-process">
+                    <h4>Onboarding Process</h4>
+                    <div class="onboarding-steps">
+                        <div class="onboarding-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <strong>Application Review</strong>
+                                <span>We review credentials within 48 hours</span>
+                            </div>
+                        </div>
+                        <div class="onboarding-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <strong>Credential Verification</strong>
+                                <span>FAA certificate, insurance COI, background check</span>
+                            </div>
+                        </div>
+                        <div class="onboarding-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <strong>Agreement Signing</strong>
+                                <span>NDA and Pilot Services Agreement via DocuSign</span>
+                            </div>
+                        </div>
+                        <div class="onboarding-step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <strong>SOP Certification</strong>
+                                <span>6 training modules, 85%+ passing score required</span>
+                            </div>
+                        </div>
+                        <div class="onboarding-step">
+                            <div class="step-number">5</div>
+                            <div class="step-content">
+                                <strong>Test Mission</strong>
+                                <span>Supervised inspection with QC review</span>
+                            </div>
+                        </div>
+                        <div class="onboarding-step">
+                            <div class="step-number">6</div>
+                            <div class="step-content">
+                                <strong>Network Activation</strong>
+                                <span>Portal access, start accepting missions</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="document-links">
+                    <h4>Review Before Applying</h4>
+                    <a href="docs/AeroSure_Equipment_Insurance_Requirements.pdf" class="doc-link" target="_blank">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span class="doc-title">Equipment & Insurance Requirements</span>
+                        <span class="doc-format">PDF</span>
+                    </a>
+                    <a href="docs/AeroSure_Pilot_NDA.pdf" class="doc-link" target="_blank">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span class="doc-title">Non-Disclosure Agreement (Preview)</span>
+                        <span class="doc-format">PDF</span>
+                    </a>
+                    <a href="docs/AeroSure_Pilot_Services_Agreement.pdf" class="doc-link" target="_blank">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span class="doc-title">Pilot Services Agreement (Preview)</span>
+                        <span class="doc-format">PDF</span>
+                    </a>
                 </div>
             </div>
 
@@ -880,6 +1158,42 @@
                     </div>
 
                     <div class="section-divider">
+                        <span>Document Uploads (Optional)</span>
+                    </div>
+
+                    <p style="font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 20px;">
+                        Speed up your application by uploading credentials now. These can also be submitted later.
+                    </p>
+
+                    <div class="file-upload-group">
+                        <label class="file-upload-label">FAA Part 107 Certificate <span class="optional">(optional)</span></label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="part107_cert" accept=".pdf,.jpg,.jpeg,.png">
+                            <div class="file-upload-content">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                                <p>Click to upload or drag and drop</p>
+                                <span>PDF, JPG, or PNG (max 5MB)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-upload-group">
+                        <label class="file-upload-label">Certificate of Insurance (COI) <span class="optional">(optional)</span></label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="insurance_coi" accept=".pdf,.jpg,.jpeg,.png">
+                            <div class="file-upload-content">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                                <p>Click to upload or drag and drop</p>
+                                <span>PDF, JPG, or PNG (max 5MB)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">
                         <span>Experience</span>
                     </div>
 
@@ -939,7 +1253,7 @@
 
                     <div class="form-group">
                         <label>Tell Us About Yourself</label>
-                        <textarea name="about" placeholder="Brief background, relevant experience, and why you want to join the aerosure network..."></textarea>
+                        <textarea name="about" placeholder="Brief background, relevant experience, and why you want to join the AeroSure network..."></textarea>
                     </div>
 
                     <button type="submit" class="submit-btn">
