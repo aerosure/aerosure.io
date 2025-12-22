@@ -815,51 +815,6 @@
             line-height: 1.5;
         }
 
-        /* MissionTrack Card Special Styles */
-        .missiontrack-card {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(59, 130, 246, 0.05));
-            border-color: rgba(6, 182, 212, 0.2);
-        }
-
-        .missiontrack-card:hover {
-            border-color: var(--cyan-500);
-            box-shadow: 0 0 50px rgba(6, 182, 212, 0.2), 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .deliverable-logo {
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        .missiontrack-logo {
-            height: 50px;
-            width: auto;
-            margin-bottom: -10px;
-        }
-
-        .missiontrack-card h3 {
-            background: linear-gradient(135deg, #60a5fa, #38bdf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .learn-more {
-            display: inline-block;
-            margin-top: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--cyan-400);
-            transition: color 0.2s;
-        }
-
-        .missiontrack-card:hover .learn-more {
-            color: var(--text-primary);
-        }
-
         /* ===== HOW IT WORKS SECTION ===== */
         .how-section {
             background: var(--bg-primary);
@@ -1602,14 +1557,15 @@
                     <p>Standardized 1-100 site condition assessment for risk evaluation.</p>
                 </div>
 
-                <a href="missiontrack.html" class="deliverable-card missiontrack-card">
-                    <div class="deliverable-logo">
-                        <img src="MissionTrack_Logo1.png" alt="MissionTrack" class="missiontrack-logo">
+                <div class="deliverable-card">
+                    <div class="deliverable-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
                     </div>
-                    <h3>MissionTrack™</h3>
-                    <p>AI-powered roof inspection. 60-second reports from drone imagery.</p>
-                    <span class="learn-more">Learn More →</span>
-                </a>
+                    <h3>ClaimReady™</h3>
+                    <p>Post-loss damage documentation with severity classification and claims-ready reporting.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1782,10 +1738,12 @@
                 <div class="footer-col">
                     <h4>Deliverables</h4>
                     <ul class="footer-links">
+                        <li><a href="#deliverables">SiteScore™</a></li>
                         <li><a href="#deliverables">DrainageIQ™</a></li>
+                        <li><a href="#deliverables">TIV Validator™</a></li>
                         <li><a href="#deliverables">ProgressTrack™</a></li>
                         <li><a href="#deliverables">StormReady™</a></li>
-                        <li><a href="#deliverables">SiteScore™</a></li>
+                        <li><a href="#deliverables">ClaimReady™</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
