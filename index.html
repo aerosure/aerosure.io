@@ -558,6 +558,112 @@
             letter-spacing: 0.5px;
         }
 
+        /* Workflow Card Styles */
+        .workflow-header {
+            margin-bottom: 28px;
+        }
+
+        .workflow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #4ade80;
+            margin-bottom: 12px;
+        }
+
+        .workflow-badge svg {
+            stroke: #4ade80;
+        }
+
+        .workflow-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .workflow-step:hover {
+            background: rgba(6, 182, 212, 0.1);
+            transform: translateX(4px);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--cyan-500), var(--blue-500));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--bg-primary);
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .step-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .workflow-connector {
+            width: 2px;
+            height: 16px;
+            background: linear-gradient(180deg, var(--cyan-500), var(--blue-500));
+            margin-left: 31px;
+            opacity: 0.5;
+        }
+
+        .workflow-footer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .workflow-footer p {
+            font-size: 0.95rem;
+            color: var(--cyan-400);
+            font-weight: 500;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* Legacy comparison styles - keeping for other uses */
         .comparison-list {
             display: flex;
             flex-direction: column;
@@ -1756,43 +1862,40 @@
 
             <div class="hero-visual">
                 <div class="hero-card">
-                    <div class="card-header">
-                        <div class="card-header-col old">
-                            <div class="card-header-label">Traditional</div>
-                            <div class="card-header-value">Weeks</div>
+                    <div class="workflow-header">
+                        <div class="workflow-badge">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Zero Friction
                         </div>
-                        <div class="vs-badge">VS</div>
-                        <div class="card-header-col highlight">
-                            <div class="card-header-label">AeroSure</div>
-                            <div class="card-header-value">Hours</div>
+                        <h3 class="workflow-title">How It Works</h3>
+                    </div>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">Email us what you need</div>
+                                <div class="step-desc">Messy, incomplete, whatever. No portal. No forms. No passwords.</div>
+                            </div>
+                        </div>
+                        <div class="workflow-connector"></div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">We handle everything</div>
+                                <div class="step-desc">Scheduling, pilot dispatch, site coordination, FAA compliance.</div>
+                            </div>
+                        </div>
+                        <div class="workflow-connector"></div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">Data lands in your system</div>
+                                <div class="step-desc">LC360, Guidewire, SharePoint—wherever you need it. No filing.</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="comparison-list">
-                        <div class="comparison-item">
-                            <span class="label">Schedule + Report</span>
-                            <span class="old">2-4 wks + 30 days</span>
-                            <span class="new">24-48 hrs</span>
-                        </div>
-                        <div class="comparison-item">
-                            <span class="label">Roof Visibility</span>
-                            <span class="old">Ground level only</span>
-                            <span class="new">Full aerial + thermal</span>
-                        </div>
-                        <div class="comparison-item">
-                            <span class="label">Ordering</span>
-                            <span class="old">Portal / forms</span>
-                            <span class="new">Email AI intake</span>
-                        </div>
-                        <div class="comparison-item">
-                            <span class="label">Cost</span>
-                            <span class="old">$1,500 - $2,500</span>
-                            <span class="new">60% less</span>
-                        </div>
-                        <div class="comparison-item">
-                            <span class="label">Data Format</span>
-                            <span class="old">Static PDF</span>
-                            <span class="new">API-ready + archive</span>
-                        </div>
+                    <div class="workflow-footer">
+                        <p>You never log into anything. You never chase anyone. You never think about it again.</p>
                     </div>
                 </div>
             </div>
