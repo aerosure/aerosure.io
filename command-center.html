@@ -1175,21 +1175,19 @@
 
         // TFR toggle - Opens FAA TFR site in new tab (most reliable approach)
         // Note: FAA doesn't provide a CORS-friendly API for TFR data
-        document.getElementById('layer-tfr').addEventListener('change', (e) => {
-            if (e.target.checked) {
-                // Show TFR info modal/tooltip
-                const confirmed = confirm(
-                    'TFR data requires FAA verification.\n\n' +
-                    'Click OK to open the official FAA TFR map in a new tab.\n\n' +
-                    'Always verify TFRs at tfr.faa.gov before flight operations.'
-                );
-                
-                if (confirmed) {
-                    window.open('https://tfr.faa.gov/tfr_map_ims/html/index.html', '_blank');
-                }
-                
-                // Uncheck since we can't display inline
-                e.target.checked = false;
+        document.getElementById('layer-tfr').addEventListener('change', function(e) {
+            // Always uncheck - we're not displaying TFRs inline
+            this.checked = false;
+            
+            // Show TFR info and open FAA site
+            const confirmed = confirm(
+                'TFR data requires FAA verification.\n\n' +
+                'Click OK to open the official FAA TFR map in a new tab.\n\n' +
+                'Always verify TFRs at tfr.faa.gov before flight operations.'
+            );
+            
+            if (confirmed) {
+                window.open('https://tfr.faa.gov/tfr_map_ims/html/index.html', '_blank');
             }
         });
 
