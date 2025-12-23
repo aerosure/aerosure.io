@@ -872,7 +872,7 @@
                     <label class="layer-toggle">
                         <input type="checkbox" id="layer-tfr">
                         <span class="toggle-switch"></span>
-                        <span>TFRs</span>
+                        <span>TFRs ↗</span>
                     </label>
                     <label class="layer-toggle">
                         <input type="checkbox" id="layer-hurricanes" checked>
@@ -900,10 +900,6 @@
                     <div class="legend-item">
                         <span class="legend-color" style="background: #ff00ff;"></span>
                         Hurricane
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color" style="background: #ff0066; border-radius: 50%;"></span>
-                        TFR
                     </div>
                 </div>
             </div>
@@ -1177,161 +1173,24 @@
             if (map.getLayer('warnings-outline')) map.setLayoutProperty('warnings-outline', 'visibility', visibility);
         });
 
-        // Load TFRs (Temporary Flight Restrictions)
-        async function loadTFRs() {
-            try {
-                // FAA TFR data via tfr.faa.gov API
-                const response = await fetch('https://tfr.faa.gov/tfr2/list.json');
-                const data = await response.json();
-                
-                // Convert TFR data to GeoJSON points (TFRs don't have polygon data in public API)
-                const tfrFeatures = data.features || [];
-                
-                // Create circle markers for each TFR
-                const tfrGeoJSON = {
-                    type: 'FeatureCollection',
-                    features: tfrFeatures.map(tfr => {
-                        // Parse coordinates from the TFR data
-                        const coords = tfr.coreNOTAMData?.notam?.coordinates;
-                        if (!coords) return null;
-                        
-                        // Coordinates come as "lat/lon" string
-                        const [lat, lon] = coords.split('/').map(parseFloat);
-                        if (isNaN(lat) || isNaN(lon)) return null;
-                        
-                        return {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [lon, lat]
-                            },
-                            properties: {
-                                type: tfr.coreNOTAMData?.notam?.classification || 'TFR',
-                                notamNumber: tfr.coreNOTAMData?.notam?.number || 'Unknown',
-                                effectiveStart: tfr.coreNOTAMData?.notam?.effectiveStart || '',
-                                effectiveEnd: tfr.coreNOTAMData?.notam?.effectiveEnd || ''
-                            }
-                        };
-                    }).filter(f => f !== null)
-                };
-
-                if (map.getSource('tfrs')) {
-                    map.getSource('tfrs').setData(tfrGeoJSON);
-                } else {
-                    map.addSource('tfrs', { type: 'geojson', data: tfrGeoJSON });
-                    
-                    // Add TFR circles
-                    map.addLayer({
-                        id: 'tfrs-circle',
-                        type: 'circle',
-                        source: 'tfrs',
-                        paint: {
-                            'circle-radius': 12,
-                            'circle-color': '#ff0066',
-                            'circle-opacity': 0.7,
-                            'circle-stroke-width': 2,
-                            'circle-stroke-color': '#ff0066'
-                        },
-                        layout: {
-                            'visibility': 'none'  // Off by default
-                        }
-                    });
-                    
-                    // Add TFR halos for visibility
-                    map.addLayer({
-                        id: 'tfrs-halo',
-                        type: 'circle',
-                        source: 'tfrs',
-                        paint: {
-                            'circle-radius': 20,
-                            'circle-color': 'transparent',
-                            'circle-stroke-width': 2,
-                            'circle-stroke-color': '#ff0066',
-                            'circle-stroke-opacity': 0.5
-                        },
-                        layout: {
-                            'visibility': 'none'
-                        }
-                    });
-                }
-                
-                console.log(`Loaded ${tfrGeoJSON.features.length} TFRs`);
-            } catch (err) {
-                console.error('Failed to load TFRs:', err);
-                // Fallback: Try alternate approach using proxy or show message
-                loadTFRsFallback();
-            }
-        }
-
-        // Fallback TFR loading using known active TFR locations
-        async function loadTFRsFallback() {
-            try {
-                // Use FAA's NOTAM API endpoint
-                const response = await fetch('https://external-api.faa.gov/notamapi/v1/notams?responseFormat=geoJson&notamType=TFR&pageSize=100', {
-                    headers: {
-                        'Accept': 'application/geo+json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    // If API fails, show static TFR source as overlay
-                    console.log('Using TFR tile overlay');
-                    addTFRTileLayer();
-                    return;
-                }
-                
-                const data = await response.json();
-                if (map.getSource('tfrs')) {
-                    map.getSource('tfrs').setData(data);
-                }
-            } catch (err) {
-                console.error('TFR fallback failed:', err);
-                addTFRTileLayer();
-            }
-        }
-
-        // Add TFR as tile layer from SkyVector or similar
-        function addTFRTileLayer() {
-            if (map.getSource('tfr-tiles')) return;
-            
-            // Use FAA's sectional charts which show TFRs
-            map.addSource('tfr-tiles', {
-                type: 'raster',
-                tiles: [
-                    'https://wms.chartbundle.com/tms/1.0.0/sec/{z}/{x}/{y}.png?type=google'
-                ],
-                tileSize: 256
-            });
-            
-            map.addLayer({
-                id: 'tfr-tiles-layer',
-                type: 'raster',
-                source: 'tfr-tiles',
-                paint: { 'raster-opacity': 0.5 },
-                layout: { 'visibility': 'none' }
-            }, 'radar-layer');
-        }
-
-        // TFR toggle handler
+        // TFR toggle - Opens FAA TFR site in new tab (most reliable approach)
+        // Note: FAA doesn't provide a CORS-friendly API for TFR data
         document.getElementById('layer-tfr').addEventListener('change', (e) => {
-            const visibility = e.target.checked ? 'visible' : 'none';
-            
-            // Toggle point-based TFRs if they exist
-            if (map.getLayer('tfrs-circle')) map.setLayoutProperty('tfrs-circle', 'visibility', visibility);
-            if (map.getLayer('tfrs-halo')) map.setLayoutProperty('tfrs-halo', 'visibility', visibility);
-            
-            // Toggle tile-based TFRs if they exist
-            if (map.getLayer('tfr-tiles-layer')) map.setLayoutProperty('tfr-tiles-layer', 'visibility', visibility);
-            
-            // Load TFRs on first enable
-            if (e.target.checked && !map.getSource('tfrs') && !map.getSource('tfr-tiles')) {
-                loadTFRs();
+            if (e.target.checked) {
+                // Show TFR info modal/tooltip
+                const confirmed = confirm(
+                    'TFR data requires FAA verification.\n\n' +
+                    'Click OK to open the official FAA TFR map in a new tab.\n\n' +
+                    'Always verify TFRs at tfr.faa.gov before flight operations.'
+                );
+                
+                if (confirmed) {
+                    window.open('https://tfr.faa.gov/tfr_map_ims/html/index.html', '_blank');
+                }
+                
+                // Uncheck since we can't display inline
+                e.target.checked = false;
             }
-        });
-
-        // Load TFRs on map load (but hidden)
-        map.on('load', () => {
-            setTimeout(loadTFRs, 1000);
         });
 
         // Live Clock
