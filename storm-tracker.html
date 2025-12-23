@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Storm Tracker | aerosure Command Center</title>
+    <title>Storm Tracker | AeroSure</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -273,7 +273,7 @@
         <div class="nav-container">
             <a href="index.html" class="logo"><img src="aerosure_io_logo.png" alt="aerosure" class="logo-img"></a>
             <div class="nav-links">
-                <a href="command-center.html" class="nav-link">Command Center</a>
+                <a href="index.html" class="nav-link">Home</a>
                 <a href="airspace-ops.html" class="nav-link">Airspace Ops</a>
                 <a href="storm-tracker.html" class="nav-link active">Storm Tracker</a>
             </div>
@@ -338,7 +338,7 @@
                     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Insurance-grade imagery</li>
                 </ul>
             </div>
-            <a href="mailto:info@aerosure.io?subject=StormReady%20Emergency%20Request" class="emergency-cta">
+            <a href="/cdn-cgi/l/email-protection#137a7d757c537276617c606661763d7a7c2c606671797670672e40677c617e417672776a362123567e766174767d706a36212341766266766067" class="emergency-cta">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                 Activate StormReady™
             </a>
@@ -508,10 +508,10 @@
     </main>
     
     <footer>
-        <p>Data: Athenium BeaconHurricane™, NOAA, National Hurricane Center | <a href="command-center.html">← Back to Command Center</a></p>
+        <p>Data: Athenium BeaconHurricane™, NOAA, National Hurricane Center | <a href="index.html">← Back to Home</a></p>
     </footer>
     
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // ===========================================
         // ATHENIUM BEACON DATA - Updated: 2025-12-19 00:00Z
@@ -811,11 +811,4 @@
             L.control.scale({ imperial: true, metric: false }).addTo(stormMap);
         }
         
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            renderStormCards();
-            initMap();
-        });
-    </script>
-</body>
-</html>
+      
