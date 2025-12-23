@@ -106,26 +106,37 @@
         .metar-subtitle { font-size: 0.8rem; color: var(--text-tertiary); }
         .metar-content { }
         .airport-search { display: flex; gap: 12px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
-        .flight-category { padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
-        .flight-category.vfr { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }
-        .flight-category.mvfr { background: rgba(96, 165, 250, 0.2); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
-        .flight-category.ifr { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
-        .flight-category.lifr { background: rgba(192, 38, 211, 0.2); color: #c026d3; border: 1px solid rgba(192, 38, 211, 0.3); }
-        .metar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+        .awc-link { padding: 8px 16px; color: var(--cyan-400); text-decoration: none; font-size: 0.85rem; border: 1px solid var(--border-subtle); border-radius: 8px; transition: all 0.2s; }
+        .awc-link:hover { background: rgba(6,182,212,0.1); border-color: var(--cyan-500); }
+        .metar-embed-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
         .metar-card { background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; }
-        .metar-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .metar-card-title { font-size: 0.85rem; font-weight: 600; color: var(--cyan-400); }
-        .metar-time { font-size: 0.75rem; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace; }
-        .metar-raw { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-primary); background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; word-break: break-word; line-height: 1.6; }
-        .metar-decoded { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
-        .metar-item { text-align: center; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; }
-        .metar-item-value { font-size: 1.25rem; font-weight: 700; color: var(--cyan-400); }
-        .metar-item-label { font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+        .metar-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .metar-card-title { font-size: 0.9rem; font-weight: 600; color: var(--cyan-400); }
+        .metar-info-text { font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 16px; line-height: 1.5; }
+        .metar-fallback { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .fallback-label { font-size: 0.8rem; color: var(--text-tertiary); }
+        .fallback-link { padding: 8px 14px; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.2); border-radius: 6px; color: var(--cyan-400); text-decoration: none; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; transition: all 0.2s; }
+        .fallback-link:hover { background: rgba(6,182,212,0.2); border-color: var(--cyan-500); }
+        .flight-category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .fc-item { display: flex; align-items: center; gap: 10px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; }
+        .fc-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+        .fc-item.vfr .fc-dot { background: #4ade80; box-shadow: 0 0 10px rgba(74,222,128,0.5); }
+        .fc-item.mvfr .fc-dot { background: #60a5fa; box-shadow: 0 0 10px rgba(96,165,250,0.5); }
+        .fc-item.ifr .fc-dot { background: #f87171; box-shadow: 0 0 10px rgba(248,113,113,0.5); }
+        .fc-item.lifr .fc-dot { background: #c026d3; box-shadow: 0 0 10px rgba(192,38,211,0.5); }
+        .fc-name { font-weight: 700; font-size: 0.9rem; min-width: 50px; }
+        .fc-item.vfr .fc-name { color: #4ade80; }
+        .fc-item.mvfr .fc-name { color: #60a5fa; }
+        .fc-item.ifr .fc-name { color: #f87171; }
+        .fc-item.lifr .fc-name { color: #c026d3; }
+        .fc-desc { font-size: 0.75rem; color: var(--text-tertiary); }
+        .drone-reminder { margin-top: 16px; padding: 14px; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2); border-radius: 8px; display: flex; gap: 10px; align-items: flex-start; font-size: 0.8rem; color: var(--warning); }
+        .drone-reminder svg { flex-shrink: 0; margin-top: 2px; }
         .nearby-airports { margin-top: 20px; }
         .nearby-title { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; }
         .nearby-grid { display: flex; gap: 8px; flex-wrap: wrap; }
-        .nearby-btn { padding: 6px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 6px; color: var(--text-secondary); font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
-        .nearby-btn:hover { border-color: var(--cyan-500); color: var(--cyan-400); }
+        .nearby-btn { padding: 8px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 6px; color: var(--text-secondary); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
+        .nearby-btn:hover { border-color: var(--cyan-500); color: var(--cyan-400); background: rgba(6,182,212,0.1); }
         .windy-wrapper iframe { display: block; width: 100%; height: 450px; border: none; }
         
         /* Map Section */
@@ -278,32 +289,57 @@
         <div class="metar-section">
             <div class="metar-header">
                 <h3><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--cyan-400)" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Aviation Weather (METAR/TAF)</h3>
-                <span class="metar-subtitle">Live from Aviation Weather Center</span>
+                <span class="metar-subtitle">Flight category & airport conditions</span>
             </div>
             <div class="metar-content">
                 <div class="airport-search">
-                    <input type="text" id="airportInput" class="location-input" placeholder="Airport ICAO (e.g., KRIC, KJFK)" maxlength="4" style="text-transform: uppercase; max-width: 200px;">
-                    <button onclick="loadAviationWeather()" class="location-btn" id="metarBtn">Get METAR/TAF</button>
-                    <div class="flight-category" id="flightCategory">--</div>
+                    <input type="text" id="airportInput" class="location-input" placeholder="Airport ICAO (e.g., KRIC, KJFK)" maxlength="4" style="text-transform: uppercase; max-width: 200px;" value="KRIC">
+                    <button onclick="loadAviationWeather()" class="location-btn" id="metarBtn">Load Airport</button>
+                    <a href="https://aviationweather.gov" target="_blank" class="awc-link">Full AWC Site ↗</a>
                 </div>
-                <div class="metar-grid">
+                <div class="metar-embed-grid">
                     <div class="metar-card">
                         <div class="metar-card-header">
-                            <span class="metar-card-title">METAR (Current Conditions)</span>
-                            <span class="metar-time" id="metarTime">--</span>
+                            <span class="metar-card-title">METAR & TAF Quick Access</span>
                         </div>
-                        <div class="metar-raw" id="metarRaw">Enter airport code above</div>
-                        <div class="metar-decoded" id="metarDecoded"></div>
+                        <div class="metar-info-text">
+                            Click the links below to view live METAR/TAF data directly from the Aviation Weather Center. Due to browser security restrictions, aviation weather data cannot be embedded directly.
+                        </div>
+                        <div class="metar-fallback">
+                            <a href="https://aviationweather.gov/data/metar/?id=KRIC" target="_blank" id="metarLink" class="fallback-link">KRIC METAR ↗</a>
+                            <a href="https://aviationweather.gov/data/taf/?id=KRIC" target="_blank" id="tafLink" class="fallback-link">KRIC TAF ↗</a>
+                            <a href="https://aviationweather.gov/gfa/#obs" target="_blank" class="fallback-link">GFA Map ↗</a>
+                        </div>
                     </div>
                     <div class="metar-card">
                         <div class="metar-card-header">
-                            <span class="metar-card-title">TAF (Forecast)</span>
-                            <span class="metar-time" id="tafTime">--</span>
+                            <span class="metar-card-title">Flight Category Legend</span>
                         </div>
-                        <div class="metar-raw" id="tafRaw">Enter airport code above</div>
+                        <div class="flight-category-grid">
+                            <div class="fc-item vfr"><span class="fc-dot"></span><span class="fc-name">VFR</span><span class="fc-desc">> 5 SM, > 3000 ft</span></div>
+                            <div class="fc-item mvfr"><span class="fc-dot"></span><span class="fc-name">MVFR</span><span class="fc-desc">3-5 SM, 1000-3000 ft</span></div>
+                            <div class="fc-item ifr"><span class="fc-dot"></span><span class="fc-name">IFR</span><span class="fc-desc">1-3 SM, 500-1000 ft</span></div>
+                            <div class="fc-item lifr"><span class="fc-dot"></span><span class="fc-name">LIFR</span><span class="fc-desc">< 1 SM, < 500 ft</span></div>
+                        </div>
+                        <div class="drone-reminder">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <span><strong>Part 107 Reminder:</strong> VFR weather minimums required. 3 SM visibility, 500 ft below clouds, 2000 ft horizontal from clouds.</span>
+                        </div>
                     </div>
                 </div>
-                <div class="nearby-airports" id="nearbyAirports"></div>
+                <div class="nearby-airports">
+                    <div class="nearby-title">Quick Access - Major Airports</div>
+                    <div class="nearby-grid">
+                        <button class="nearby-btn" onclick="setAirport('KRIC')">KRIC</button>
+                        <button class="nearby-btn" onclick="setAirport('KORF')">KORF</button>
+                        <button class="nearby-btn" onclick="setAirport('KIAD')">KIAD</button>
+                        <button class="nearby-btn" onclick="setAirport('KDCA')">KDCA</button>
+                        <button class="nearby-btn" onclick="setAirport('KBWI')">KBWI</button>
+                        <button class="nearby-btn" onclick="setAirport('KRDU')">KRDU</button>
+                        <button class="nearby-btn" onclick="setAirport('KJFK')">KJFK</button>
+                        <button class="nearby-btn" onclick="setAirport('KATL')">KATL</button>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -565,9 +601,8 @@
             if (e.key === 'Enter') loadAviationWeather();
         });
         
-        async function loadAviationWeather() {
+        function loadAviationWeather() {
             const input = document.getElementById('airportInput');
-            const btn = document.getElementById('metarBtn');
             let icao = input.value.trim().toUpperCase();
             
             if (!icao) {
@@ -581,139 +616,20 @@
                 input.value = icao;
             }
             
-            btn.disabled = true;
-            btn.textContent = 'Loading...';
-            
-            try {
-                // Fetch METAR
-                const metarRes = await fetch(`https://aviationweather.gov/api/data/metar?ids=${icao}&format=json`);
-                const metarData = await metarRes.json();
-                
-                // Fetch TAF
-                const tafRes = await fetch(`https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`);
-                const tafData = await tafRes.json();
-                
-                if (!metarData || metarData.length === 0) {
-                    throw new Error(`No METAR found for ${icao}. Check the airport code.`);
-                }
-                
-                displayMETAR(metarData[0]);
-                displayTAF(tafData[0]);
-                
-                // Show nearby airports
-                showNearbyAirports(icao);
-                
-            } catch (err) {
-                console.error('Aviation weather error:', err);
-                document.getElementById('metarRaw').textContent = `Error: ${err.message}`;
-                document.getElementById('tafRaw').textContent = 'Unable to load TAF';
-                document.getElementById('flightCategory').textContent = '--';
-                document.getElementById('flightCategory').className = 'flight-category';
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Get METAR/TAF';
-            }
+            // Update links
+            document.getElementById('metarLink').href = `https://aviationweather.gov/data/metar/?id=${icao}`;
+            document.getElementById('metarLink').textContent = `${icao} METAR ↗`;
+            document.getElementById('tafLink').href = `https://aviationweather.gov/data/taf/?id=${icao}`;
+            document.getElementById('tafLink').textContent = `${icao} TAF ↗`;
         }
         
-        function displayMETAR(metar) {
-            // Raw METAR
-            document.getElementById('metarRaw').textContent = metar.rawOb || 'No data';
-            
-            // Observation time
-            const obsTime = new Date(metar.obsTime * 1000);
-            document.getElementById('metarTime').textContent = obsTime.toLocaleTimeString('en-US', {
-                hour: '2-digit', minute: '2-digit', timeZoneName: 'short'
-            });
-            
-            // Flight category with color
-            const catEl = document.getElementById('flightCategory');
-            const cat = metar.fltcat || 'UNK';
-            catEl.textContent = cat;
-            catEl.className = `flight-category ${cat.toLowerCase()}`;
-            
-            // Decoded values
-            const decoded = document.getElementById('metarDecoded');
-            decoded.innerHTML = `
-                <div class="metar-item">
-                    <div class="metar-item-value">${metar.temp !== undefined ? Math.round(metar.temp * 9/5 + 32) + '°F' : '--'}</div>
-                    <div class="metar-item-label">Temp</div>
-                </div>
-                <div class="metar-item">
-                    <div class="metar-item-value">${metar.dewp !== undefined ? Math.round(metar.dewp * 9/5 + 32) + '°F' : '--'}</div>
-                    <div class="metar-item-label">Dewpoint</div>
-                </div>
-                <div class="metar-item">
-                    <div class="metar-item-value">${metar.wdir !== undefined ? metar.wdir + '°' : '--'}</div>
-                    <div class="metar-item-label">Wind Dir</div>
-                </div>
-                <div class="metar-item">
-                    <div class="metar-item-value">${metar.wspd !== undefined ? metar.wspd + ' kt' : '--'}</div>
-                    <div class="metar-item-label">Wind Spd</div>
-                </div>
-                <div class="metar-item">
-                    <div class="metar-item-value">${metar.wgst ? metar.wgst + ' kt' : '--'}</div>
-                    <div class="metar-item-label">Gusts</div>
-                </div>
-                <div class="metar-item">
-                    <div class="metar-item-value">${metar.visib !== undefined ? (metar.visib >= 10 ? '10+' : metar.visib) + ' SM' : '--'}</div>
-                    <div class="metar-item-label">Visibility</div>
-                </div>
-                <div class="metar-item">
-                    <div class="metar-item-value">${metar.altim !== undefined ? (metar.altim / 100).toFixed(2) : '--'}</div>
-                    <div class="metar-item-label">Altimeter</div>
-                </div>
-                <div class="metar-item">
-                    <div class="metar-item-value">${metar.cover || '--'}</div>
-                    <div class="metar-item-label">Sky</div>
-                </div>
-            `;
+        function setAirport(icao) {
+            document.getElementById('airportInput').value = icao;
+            loadAviationWeather();
         }
         
-        function displayTAF(taf) {
-            if (!taf) {
-                document.getElementById('tafRaw').textContent = 'No TAF available for this airport';
-                document.getElementById('tafTime').textContent = '--';
-                return;
-            }
-            
-            // Raw TAF
-            document.getElementById('tafRaw').textContent = taf.rawTAF || 'No data';
-            
-            // Issue time
-            if (taf.issueTime) {
-                const issueTime = new Date(taf.issueTime * 1000);
-                document.getElementById('tafTime').textContent = issueTime.toLocaleTimeString('en-US', {
-                    hour: '2-digit', minute: '2-digit', timeZoneName: 'short'
-                });
-            }
-        }
-        
-        function showNearbyAirports(currentIcao) {
-            // Common airports - you could enhance this with actual nearby airport lookup
-            const commonAirports = {
-                // Virginia / Mid-Atlantic
-                'KRIC': ['KORF', 'KIAD', 'KDCA', 'KRDU', 'KPHF'],
-                'KORF': ['KRIC', 'KPHF', 'KNGU', 'KPVG', 'KCHO'],
-                'KIAD': ['KDCA', 'KBWI', 'KRIC', 'KCHO', 'KHEF'],
-                'KDCA': ['KIAD', 'KBWI', 'KRIC', 'KCHO', 'KADW'],
-                // Default nearby
-                'default': ['KJFK', 'KLAX', 'KORD', 'KATL', 'KDFW']
-            };
-            
-            const nearby = commonAirports[currentIcao] || commonAirports['default'];
-            
-            const container = document.getElementById('nearbyAirports');
-            container.innerHTML = `
-                <div class="nearby-title">Quick Access - Nearby Airports</div>
-                <div class="nearby-grid">
-                    ${nearby.map(icao => `<button class="nearby-btn" onclick="document.getElementById('airportInput').value='${icao}'; loadAviationWeather();">${icao}</button>`).join('')}
-                </div>
-            `;
-        }
-        
-        // Auto-load KRIC on page load as default
+        // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('airportInput').value = 'KRIC';
             loadAviationWeather();
         });
     </script>
