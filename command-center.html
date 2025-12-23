@@ -3,30 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Center | aerosure</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <title>Command Center | AeroSure</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.css">
+    <script src="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.js"></script>
     <style>
         :root {
             --cyan-400: #22d3ee;
             --cyan-500: #06b6d4;
-            --blue-400: #60a5fa;
-            --blue-500: #3b82f6;
-            --purple-500: #8b5cf6;
-            --orange-400: #fb923c;
+            --red-500: #ef4444;
+            --red-600: #dc2626;
             --orange-500: #f97316;
-            
-            --glow-cyan: rgba(6, 182, 212, 0.5);
-            --glow-orange: rgba(249, 115, 22, 0.4);
+            --yellow-500: #eab308;
+            --green-500: #22c55e;
+            --purple-500: #8b5cf6;
             
             --bg-primary: #030712;
             --bg-secondary: #0a0f1a;
-            --bg-card: rgba(15, 23, 42, 0.6);
-            --bg-card-hover: rgba(22, 33, 54, 0.8);
+            --bg-panel: rgba(10, 15, 26, 0.95);
+            --bg-card: rgba(15, 23, 42, 0.8);
             
             --border-subtle: rgba(255, 255, 255, 0.06);
             --border-medium: rgba(255, 255, 255, 0.1);
@@ -35,10 +33,6 @@
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --text-tertiary: #64748b;
-            
-            --success: #4ade80;
-            --warning: #fbbf24;
-            --error: #f87171;
         }
 
         * {
@@ -48,902 +42,1193 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        /* Background Effects */
-        .bg-noise {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.015;
-            pointer-events: none;
-            z-index: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-        }
-
-        .bg-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 64px 64px;
-            pointer-events: none;
-            z-index: 0;
-            mask-image: radial-gradient(ellipse at center, black 0%, transparent 80%);
-        }
-
-        .bg-orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .bg-orb-1 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
-            top: -150px;
-            right: -100px;
-        }
-
-        .bg-orb-2 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
-            bottom: -100px;
-            left: -100px;
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 1rem 2rem;
-            background: rgba(3, 7, 18, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .nav-container {
-            max-width: 1280px;
-            margin: 0 auto;
+        /* Top Header Bar */
+        .header-bar {
+            height: 56px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border-medium);
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
+            padding: 0 20px;
+            position: relative;
+            z-index: 100;
         }
 
-        .logo {
+        .header-left {
             display: flex;
             align-items: center;
-            text-decoration: none;
+            gap: 24px;
         }
 
         .logo-img {
-            height: 45px;
-            width: auto;
+            height: 36px;
         }
 
-        .back-link {
+        .header-title {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s;
+            gap: 12px;
+            padding-left: 24px;
+            border-left: 1px solid var(--border-medium);
         }
 
-        .back-link:hover {
-            color: var(--cyan-400);
-        }
-
-        /* Main Content */
-        main {
-            position: relative;
-            z-index: 1;
-            padding: 120px 2rem 80px;
-        }
-
-        .page-container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        /* Hero */
-        .hero {
-            text-align: center;
-            margin-bottom: 64px;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(249, 115, 22, 0.1);
-            border: 1px solid rgba(249, 115, 22, 0.2);
-            border-radius: 100px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--orange-400);
-            margin-bottom: 24px;
-        }
-
-        .hero-badge-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--orange-400);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
-            font-weight: 800;
-            letter-spacing: -1.5px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-        }
-
-        .hero h1 svg {
-            flex-shrink: 0;
-        }
-
-        .hero h1 .gradient {
-            background: linear-gradient(135deg, var(--orange-400), var(--cyan-400));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            font-size: 1.15rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Weather Lookup Widget */
-        .weather-section {
-            margin-bottom: 64px;
-        }
-
-        .weather-widget {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-medium);
-            border-radius: 24px;
-            padding: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .weather-widget::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--orange-500), var(--cyan-500));
-        }
-
-        .weather-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .weather-header h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .weather-header p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .weather-input-row {
-            display: flex;
-            gap: 16px;
-            max-width: 500px;
-            margin: 0 auto 32px;
-        }
-
-        .weather-input {
-            flex: 1;
-            padding: 16px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-medium);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.2s;
-        }
-
-        .weather-input::placeholder {
-            color: var(--text-tertiary);
-        }
-
-        .weather-input:focus {
-            outline: none;
-            border-color: var(--cyan-500);
-            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-        }
-
-        .weather-btn {
-            padding: 16px 32px;
-            background: linear-gradient(135deg, var(--orange-400), var(--orange-500));
-            border: none;
-            border-radius: 12px;
-            color: white;
+        .header-title h1 {
             font-size: 1rem;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px var(--glow-orange);
+            letter-spacing: 0.5px;
         }
 
-        .weather-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 30px var(--glow-orange);
-        }
-
-        .weather-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Weather Results */
-        .weather-results {
-            display: none;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 20px;
-            padding-top: 32px;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .weather-results.active {
-            display: grid;
-        }
-
-        .weather-stat {
-            text-align: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-        }
-
-        .weather-stat-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .weather-stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .weather-stat-label {
-            font-size: 0.8rem;
-            color: var(--text-tertiary);
+        .header-title .badge {
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--cyan-400);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Flight Status */
-        .flight-status {
-            text-align: center;
-            padding: 24px;
-            border-radius: 16px;
-            margin-top: 24px;
-            display: none;
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 32px;
         }
 
-        .flight-status.active {
-            display: block;
-        }
-
-        .flight-status.go {
-            background: rgba(74, 222, 128, 0.1);
-            border: 1px solid rgba(74, 222, 128, 0.3);
-        }
-
-        .flight-status.caution {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-
-        .flight-status.no-go {
-            background: rgba(248, 113, 113, 0.1);
-            border: 1px solid rgba(248, 113, 113, 0.3);
-        }
-
-        .flight-status-icon {
-            font-size: 3rem;
-            margin-bottom: 12px;
-        }
-
-        .flight-status.go .flight-status-icon { color: var(--success); }
-        .flight-status.caution .flight-status-icon { color: var(--warning); }
-        .flight-status.no-go .flight-status-icon { color: var(--error); }
-
-        .flight-status h3 {
-            font-size: 1.25rem;
-            margin-bottom: 8px;
-        }
-
-        .flight-status p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .weather-location {
-            text-align: center;
-            margin-bottom: 24px;
-            display: none;
-        }
-
-        .weather-location.active {
-            display: block;
-        }
-
-        .weather-location h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .weather-location h3 span {
-            color: var(--text-primary);
-        }
-
-        /* Tools Grid */
-        .tools-section {
-            margin-bottom: 64px;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .section-badge {
-            display: inline-flex;
+        .status-indicator {
+            display: flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 14px;
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.15);
-            border-radius: 100px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green-500);
+            box-shadow: 0 0 10px var(--green-500);
+            animation: pulse-glow 2s infinite;
+        }
+
+        .status-dot.warning {
+            background: var(--yellow-500);
+            box-shadow: 0 0 10px var(--yellow-500);
+        }
+
+        .status-dot.critical {
+            background: var(--red-500);
+            box-shadow: 0 0 10px var(--red-500);
+            animation: pulse-critical 1s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes pulse-critical {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .live-clock {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .live-clock .date {
             font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-right: 12px;
+        }
+
+        .cat-mode-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--red-600), var(--red-500));
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--cyan-400);
-            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
         }
 
-        .section-header h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
+        .cat-mode-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
         }
 
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
+        .cat-mode-btn.active {
+            animation: cat-pulse 1.5s infinite;
         }
 
-        .tool-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            padding: 36px;
+        @keyframes cat-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.8); }
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
             text-decoration: none;
-            color: inherit;
-            transition: all 0.4s;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--cyan-400);
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            grid-template-rows: 1fr auto;
+            height: calc(100vh - 56px);
+            gap: 0;
+        }
+
+        /* Map Panel */
+        .map-panel {
             position: relative;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-medium);
+        }
+
+        #threat-map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .map-control-group {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            padding: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .map-control-group h4 {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            margin-bottom: 10px;
+        }
+
+        .layer-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .layer-toggle:hover {
+            opacity: 0.8;
+        }
+
+        .layer-toggle input {
+            display: none;
+        }
+
+        .layer-toggle .toggle-switch {
+            width: 36px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .layer-toggle input:checked + .toggle-switch {
+            background: var(--cyan-500);
+        }
+
+        .layer-toggle .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .layer-toggle input:checked + .toggle-switch::after {
+            transform: translateX(16px);
+        }
+
+        .layer-toggle span {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .map-legend {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            padding: 12px 16px;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .legend-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            margin-bottom: 10px;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
             overflow: hidden;
         }
 
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            opacity: 0;
-            transition: opacity 0.3s;
+        .panel-section {
+            border-bottom: 1px solid var(--border-medium);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        .tool-card.airspace::before {
-            background: linear-gradient(90deg, var(--cyan-500), var(--blue-500));
+        .panel-section.alerts {
+            flex: 1;
+            min-height: 200px;
         }
 
-        .tool-card.storm::before {
-            background: linear-gradient(90deg, var(--orange-500), var(--error));
+        .panel-section.missions {
+            flex: 1;
+            min-height: 200px;
         }
 
-        .tool-card:hover {
-            transform: translateY(-6px);
-            border-color: var(--border-glow);
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+        .panel-section.pilots {
+            height: 180px;
         }
 
-        .tool-card:hover::before {
-            opacity: 1;
-        }
-
-        .tool-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
+        .panel-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 1.75rem;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
         }
 
-        .tool-card.airspace .tool-icon {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(59, 130, 246, 0.1));
-            border: 1px solid rgba(6, 182, 212, 0.2);
-        }
-
-        .tool-card.storm .tool-icon {
-            background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(248, 113, 113, 0.1));
-            border: 1px solid rgba(249, 115, 22, 0.2);
-        }
-
-        .tool-card h3 {
-            font-size: 1.35rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .tool-card p {
+        .panel-header h3 {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .tool-features {
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
             gap: 8px;
-            margin-bottom: 24px;
         }
 
-        .tool-feature {
-            padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.05);
+        .panel-header .count {
+            background: var(--cyan-500);
+            color: var(--bg-primary);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .panel-header .count.warning {
+            background: var(--yellow-500);
+        }
+
+        .panel-header .count.critical {
+            background: var(--red-500);
+            color: white;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .panel-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .panel-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 3px;
+        }
+
+        /* Alert Cards */
+        .alert-card {
+            background: var(--bg-card);
             border: 1px solid var(--border-subtle);
-            border-radius: 100px;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--yellow-500);
+            transition: all 0.2s;
+        }
+
+        .alert-card:hover {
+            background: rgba(22, 33, 54, 0.9);
+            border-color: var(--border-medium);
+        }
+
+        .alert-card.warning {
+            border-left-color: var(--orange-500);
+        }
+
+        .alert-card.critical {
+            border-left-color: var(--red-500);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .alert-card.watch {
+            border-left-color: var(--yellow-500);
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .alert-type {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alert-type.warning { color: var(--orange-500); }
+        .alert-type.critical { color: var(--red-500); }
+        .alert-type.watch { color: var(--yellow-500); }
+
+        .alert-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+        }
+
+        .alert-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .alert-location {
             font-size: 0.75rem;
             color: var(--text-secondary);
         }
 
-        .tool-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--cyan-400);
-            transition: gap 0.2s;
-        }
-
-        .tool-card.storm .tool-cta {
-            color: var(--orange-400);
-        }
-
-        .tool-card:hover .tool-cta {
-            gap: 12px;
-        }
-
-        /* Status Bar */
-        .status-bar {
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            padding: 24px;
+        /* Mission Cards */
+        .mission-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
-            border-radius: 16px;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
         }
 
-        .status-item {
+        .mission-card:hover {
+            background: rgba(22, 33, 54, 0.9);
+            border-color: var(--border-medium);
+        }
+
+        .mission-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .mission-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--cyan-400);
+        }
+
+        .mission-status {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .mission-status.pending {
+            background: rgba(234, 179, 8, 0.2);
+            color: var(--yellow-500);
+        }
+
+        .mission-status.assigned {
+            background: rgba(6, 182, 212, 0.2);
+            color: var(--cyan-400);
+        }
+
+        .mission-status.in-progress {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--green-500);
+        }
+
+        .mission-status.urgent {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red-500);
+        }
+
+        .mission-address {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .mission-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .mission-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Pilot Status */
+        .pilot-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .pilot-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .status-dot {
-            width: 10px;
-            height: 10px;
+        .pilot-avatar {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 10px var(--success);
+            background: linear-gradient(135deg, var(--cyan-500), var(--purple-500));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
-        .status-dot.warning {
-            background: var(--warning);
-            box-shadow: 0 0 10px var(--warning);
+        .pilot-info {
+            flex: 1;
         }
 
-        .status-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
+        .pilot-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 40px 2rem;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        footer p {
-            font-size: 0.85rem;
+        .pilot-location {
+            font-size: 0.7rem;
             color: var(--text-tertiary);
         }
 
-        footer a {
-            color: var(--cyan-400);
-            text-decoration: none;
+        .pilot-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--green-500);
+            box-shadow: 0 0 8px var(--green-500);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
+        .pilot-status-dot.busy {
+            background: var(--yellow-500);
+            box-shadow: 0 0 8px var(--yellow-500);
+        }
 
-            .weather-input-row {
-                flex-direction: column;
-            }
+        .pilot-status-dot.offline {
+            background: var(--text-tertiary);
+            box-shadow: none;
+        }
 
-            .status-bar {
-                flex-direction: column;
-                gap: 16px;
-                align-items: center;
-            }
+        /* Bottom Ticker */
+        .bottom-ticker {
+            grid-column: 1 / -1;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid var(--border-medium);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
 
-            .weather-results {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .ticker-label {
+            background: var(--cyan-500);
+            color: var(--bg-primary);
+            padding: 0 16px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .ticker-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ticker-scroll {
+            display: flex;
+            animation: ticker-scroll 60s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 32px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .ticker-item .label {
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        .ticker-item .value {
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .ticker-item .value.positive {
+            color: var(--green-500);
+        }
+
+        .ticker-item .value.negative {
+            color: var(--red-500);
+        }
+
+        .ticker-divider {
+            color: var(--border-medium);
+            padding: 0 8px;
+        }
+
+        /* No Missions Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-tertiary);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--border-medium);
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 0.85rem;
+        }
+
+        /* CAT Mode Overlay */
+        .cat-mode-overlay {
+            display: none;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(239, 68, 68, 0.03);
+            pointer-events: none;
+            z-index: 50;
+            border: 3px solid var(--red-500);
+            animation: cat-border-pulse 2s infinite;
+        }
+
+        .cat-mode-overlay.active {
+            display: block;
+        }
+
+        @keyframes cat-border-pulse {
+            0%, 100% { border-color: rgba(239, 68, 68, 0.5); }
+            50% { border-color: rgba(239, 68, 68, 1); }
+        }
+
+        .cat-mode-banner {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--red-500);
+            color: white;
+            padding: 8px 32px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 0 0 8px 8px;
+            animation: cat-banner-pulse 1.5s infinite;
+            pointer-events: auto;
+        }
+
+        .cat-mode-banner.active {
+            display: block;
+        }
+
+        @keyframes cat-banner-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Loading shimmer */
+        .loading-shimmer {
+            background: linear-gradient(90deg, 
+                var(--bg-card) 25%, 
+                rgba(255, 255, 255, 0.05) 50%, 
+                var(--bg-card) 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
     </style>
 </head>
 <body>
-    <div class="bg-noise"></div>
-    <div class="bg-grid"></div>
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <img src="aerosure_io_logo.png" alt="aerosure" class="logo-img">
+    <!-- Header Bar -->
+    <header class="header-bar">
+        <div class="header-left">
+            <a href="index.html">
+                <img src="aerosure_io_logo.png" alt="AeroSure" class="logo-img">
             </a>
-            <a href="index.html" class="back-link">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+            <div class="header-title">
+                <h1>COMMAND CENTER</h1>
+                <span class="badge">Beta</span>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span>All Systems Operational</span>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot warning" id="weather-status"></span>
+                <span id="active-alerts-count">Loading alerts...</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <a href="airspace-ops.html" class="nav-link">Airspace Ops</a>
+            <a href="storm-tracker.html" class="nav-link">Storm Tracker</a>
+            <div class="live-clock">
+                <span class="date" id="clock-date"></span>
+                <span id="clock-time"></span>
+            </div>
+            <button class="cat-mode-btn" id="cat-mode-toggle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                 </svg>
-                Back to Home
-            </a>
+                CAT Mode
+            </button>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content -->
-    <main>
-        <div class="page-container">
-            <!-- Hero -->
-            <div class="hero">
-                <div class="hero-badge">
-                    <span class="hero-badge-dot"></span>
-                    Live Mission Intelligence
+    <!-- CAT Mode Overlay -->
+    <div class="cat-mode-overlay" id="cat-overlay"></div>
+    <div class="cat-mode-banner" id="cat-banner">⚡ CATASTROPHE RESPONSE ACTIVE ⚡</div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left: Threat Map -->
+        <div class="map-panel">
+            <div id="threat-map"></div>
+            
+            <div class="map-controls">
+                <div class="map-control-group">
+                    <h4>Threat Layers</h4>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-warnings" checked>
+                        <span class="toggle-switch"></span>
+                        <span>NWS Warnings</span>
+                    </label>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-radar" checked>
+                        <span class="toggle-switch"></span>
+                        <span>Radar</span>
+                    </label>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-tfr">
+                        <span class="toggle-switch"></span>
+                        <span>TFRs</span>
+                    </label>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-hurricanes" checked>
+                        <span class="toggle-switch"></span>
+                        <span>Tropical</span>
+                    </label>
                 </div>
-                <h1>
-                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="url(#cmdGrad)" stroke-width="1.5">
-                        <defs><linearGradient id="cmdGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fb923c"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs>
-                        <!-- Monitor/dashboard -->
-                        <rect x="2" y="3" width="20" height="14" rx="2"/>
-                        <path d="M8 21h8M12 17v4"/>
-                        <!-- Grid/dashboard elements -->
-                        <path d="M6 7h4v4H6zM14 7h4v2h-4zM14 11h4v2h-4zM6 13h4"/>
-                    </svg>
-                    <span class="gradient">Command Center</span>
-                </h1>
-                <p>Real-time weather intelligence, airspace monitoring, and storm tracking. Everything you need before, during, and after the mission.</p>
             </div>
 
-            <!-- Weather Lookup Widget -->
-            <section class="weather-section">
-                <div class="weather-widget">
-                    <div class="weather-header">
-                        <h2><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Quick Weather Check</h2>
-                        <p>Enter a ZIP code to get current conditions and flight status</p>
+            <div class="map-legend">
+                <div class="legend-title">Warning Types</div>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #ff0000;"></span>
+                        Tornado
                     </div>
-
-                    <div class="weather-input-row">
-                        <input type="text" class="weather-input" id="zipInput" placeholder="Enter ZIP code (e.g., 23220)" maxlength="5" pattern="[0-9]{5}">
-                        <button class="weather-btn" id="weatherBtn" onclick="getWeather()">
-                            Check Weather
-                        </button>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #ff9900;"></span>
+                        Severe T-Storm
                     </div>
-
-                    <div class="weather-location" id="weatherLocation">
-                        <h3>Current conditions for <span id="locationName">—</span></h3>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #00ff00;"></span>
+                        Flash Flood
                     </div>
-
-                    <div class="weather-results" id="weatherResults">
-                        <div class="weather-stat">
-                            <div class="weather-stat-icon" id="weatherIcon"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
-                            <div class="weather-stat-value" id="tempValue">--°</div>
-                            <div class="weather-stat-label">Temperature</div>
-                        </div>
-                        <div class="weather-stat">
-                            <div class="weather-stat-icon"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg></div>
-                            <div class="weather-stat-value" id="windValue">-- mph</div>
-                            <div class="weather-stat-label">Wind Speed</div>
-                        </div>
-                        <div class="weather-stat">
-                            <div class="weather-stat-icon"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
-                            <div class="weather-stat-value" id="humidityValue">--%</div>
-                            <div class="weather-stat-label">Humidity</div>
-                        </div>
-                        <div class="weather-stat">
-                            <div class="weather-stat-icon"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-                            <div class="weather-stat-value" id="visibilityValue">-- mi</div>
-                            <div class="weather-stat-label">Visibility</div>
-                        </div>
-                        <div class="weather-stat">
-                            <div class="weather-stat-icon"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div>
-                            <div class="weather-stat-value" id="cloudsValue">--%</div>
-                            <div class="weather-stat-label">Cloud Cover</div>
-                        </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #ff00ff;"></span>
+                        Hurricane
                     </div>
-
-                    <div class="flight-status" id="flightStatus">
-                        <div class="flight-status-icon" id="flightIcon">✓</div>
-                        <h3 id="flightTitle">Flight Status</h3>
-                        <p id="flightDesc">Conditions assessment</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Tools Grid -->
-            <section class="tools-section">
-                <div class="section-header">
-                    <div class="section-badge">Mission Tools</div>
-                    <h2>Intelligence Dashboards</h2>
-                </div>
-
-                <div class="tools-grid">
-                    <a href="airspace-ops.html" class="tool-card airspace">
-                        <div class="tool-icon"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <!-- Drone shape -->
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M12 9V4M12 20v-5"/>
-                            <path d="M9 12H4M20 12h-5"/>
-                            <!-- Propeller arms -->
-                            <path d="M7 7l2 2M15 15l2 2M7 17l2-2M15 9l2-2"/>
-                            <!-- Propellers -->
-                            <circle cx="5" cy="5" r="2"/>
-                            <circle cx="19" cy="5" r="2"/>
-                            <circle cx="5" cy="19" r="2"/>
-                            <circle cx="19" cy="19" r="2"/>
-                        </svg></div>
-                        <h3>Airspace Operations</h3>
-                        <p>Pre-flight intelligence dashboard. Check weather, UV index, air quality, TFRs, and seismic activity before every mission.</p>
-                        <div class="tool-features">
-                            <span class="tool-feature">Weather Conditions</span>
-                            <span class="tool-feature">TFR Alerts</span>
-                            <span class="tool-feature">Air Quality</span>
-                            <span class="tool-feature">UV Index</span>
-                            <span class="tool-feature">Daylight Hours</span>
-                        </div>
-                        <span class="tool-cta">
-                            Launch Dashboard
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </span>
-                    </a>
-
-                    <a href="storm-tracker.html" class="tool-card storm">
-                        <div class="tool-icon"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <!-- Hurricane/cyclone -->
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M12 2c-1.5 2-2.5 4.5-2.5 7s1 5 2.5 7"/>
-                            <path d="M12 22c1.5-2 2.5-4.5 2.5-7s-1-5-2.5-7"/>
-                            <path d="M2 12c2 1.5 4.5 2.5 7 2.5s5-1 7-2.5"/>
-                            <path d="M22 12c-2-1.5-4.5-2.5-7-2.5s-5 1-7 2.5"/>
-                        </svg></div>
-                        <h3>Storm Tracker</h3>
-                        <p>Live tropical cyclone monitoring with Athenium hurricane data. Track active storms, forecast paths, and coordinate emergency response.</p>
-                        <div class="tool-features">
-                            <span class="tool-feature">Live Storm Tracks</span>
-                            <span class="tool-feature">Wind Swaths</span>
-                            <span class="tool-feature">Forecast Models</span>
-                            <span class="tool-feature">Emergency Response</span>
-                        </div>
-                        <span class="tool-cta">
-                            Launch Tracker
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </span>
-                    </a>
-                </div>
-            </section>
-
-            <!-- Status Bar -->
-            <div class="status-bar">
-                <div class="status-item">
-                    <div class="status-dot"></div>
-                    <span class="status-label">Weather API Online</span>
-                </div>
-                <div class="status-item">
-                    <div class="status-dot"></div>
-                    <span class="status-label">Athenium Connected</span>
-                </div>
-                <div class="status-item">
-                    <div class="status-dot"></div>
-                    <span class="status-label">FAA Data Feed Active</span>
                 </div>
             </div>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <footer>
-        <p>© 2025 aerosure LLC | <a href="index.html">aerosure.io</a> | <a href="mailto:info@aerosure.io">info@aerosure.io</a> | <a href="tel:+18042501243">(804) 250-1243</a></p>
-    </footer>
+        <!-- Right: Info Panels -->
+        <div class="right-panel">
+            <!-- Active Alerts -->
+            <div class="panel-section alerts">
+                <div class="panel-header">
+                    <h3>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        Active Alerts
+                    </h3>
+                    <span class="count critical" id="alert-count">--</span>
+                </div>
+                <div class="panel-content" id="alerts-container">
+                    <div class="loading-shimmer" style="height: 80px; border-radius: 8px; margin-bottom: 10px;"></div>
+                    <div class="loading-shimmer" style="height: 80px; border-radius: 8px; margin-bottom: 10px;"></div>
+                    <div class="loading-shimmer" style="height: 80px; border-radius: 8px;"></div>
+                </div>
+            </div>
+
+            <!-- Mission Queue -->
+            <div class="panel-section missions">
+                <div class="panel-header">
+                    <h3>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Mission Queue
+                    </h3>
+                    <span class="count" id="mission-count">0</span>
+                </div>
+                <div class="panel-content" id="missions-container">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <p>No active missions</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilot Network -->
+            <div class="panel-section pilots">
+                <div class="panel-header">
+                    <h3>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Pilot Network
+                    </h3>
+                    <span class="count" id="pilot-count">1</span>
+                </div>
+                <div class="panel-content">
+                    <div class="pilot-grid">
+                        <div class="pilot-card">
+                            <div class="pilot-avatar">DJ</div>
+                            <div class="pilot-info">
+                                <div class="pilot-name">Dustin Jones</div>
+                                <div class="pilot-location">Richmond, VA</div>
+                            </div>
+                            <span class="pilot-status-dot"></span>
+                        </div>
+                        <div class="pilot-card" style="opacity: 0.5;">
+                            <div class="pilot-avatar" style="background: var(--border-medium);">+</div>
+                            <div class="pilot-info">
+                                <div class="pilot-name" style="color: var(--text-tertiary);">Recruiting</div>
+                                <div class="pilot-location">Mid-Atlantic</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ticker -->
+        <div class="bottom-ticker">
+            <div class="ticker-label">LIVE FEED</div>
+            <div class="ticker-content">
+                <div class="ticker-scroll" id="ticker-scroll">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // OpenWeather API (free tier)
-        const OPENWEATHER_API_KEY = ''; // Add your key here for production
-        
-        // Allow Enter key to trigger search
-        document.getElementById('zipInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                getWeather();
+        // Initialize Map
+        const map = new maplibregl.Map({
+            container: 'threat-map',
+            style: {
+                version: 8,
+                sources: {
+                    'carto-dark': {
+                        type: 'raster',
+                        tiles: [
+                            'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+                            'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+                            'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'
+                        ],
+                        tileSize: 256,
+                        attribution: '© CartoDB © OpenStreetMap'
+                    }
+                },
+                layers: [{
+                    id: 'carto-dark-layer',
+                    type: 'raster',
+                    source: 'carto-dark',
+                    minzoom: 0,
+                    maxzoom: 19
+                }]
+            },
+            center: [-98, 39],
+            zoom: 4
+        });
+
+        map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+
+        // Add radar layer when map loads
+        map.on('load', () => {
+            // NWS Radar
+            map.addSource('radar', {
+                type: 'raster',
+                tiles: ['https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png'],
+                tileSize: 256
+            });
+            map.addLayer({
+                id: 'radar-layer',
+                type: 'raster',
+                source: 'radar',
+                paint: { 'raster-opacity': 0.7 }
+            });
+
+            // Load NWS warnings
+            loadNWSWarnings();
+        });
+
+        // Layer toggle handlers
+        document.getElementById('layer-radar').addEventListener('change', (e) => {
+            map.setLayoutProperty('radar-layer', 'visibility', e.target.checked ? 'visible' : 'none');
+        });
+
+        // Load NWS Warnings
+        async function loadNWSWarnings() {
+            try {
+                const response = await fetch('https://api.weather.gov/alerts/active?status=actual&message_type=alert');
+                const data = await response.json();
+                
+                const severeAlerts = data.features.filter(f => 
+                    ['Tornado Warning', 'Severe Thunderstorm Warning', 'Flash Flood Warning', 
+                     'Hurricane Warning', 'Tropical Storm Warning', 'Tornado Watch', 
+                     'Severe Thunderstorm Watch', 'Hurricane Watch'].includes(f.properties.event)
+                );
+                
+                // Update alert count
+                document.getElementById('alert-count').textContent = severeAlerts.length;
+                document.getElementById('active-alerts-count').textContent = `${severeAlerts.length} Active Warnings`;
+                
+                // Update status dot
+                const statusDot = document.getElementById('weather-status');
+                if (severeAlerts.some(a => a.properties.event.includes('Tornado Warning') || a.properties.event.includes('Hurricane Warning'))) {
+                    statusDot.className = 'status-dot critical';
+                } else if (severeAlerts.length > 0) {
+                    statusDot.className = 'status-dot warning';
+                } else {
+                    statusDot.className = 'status-dot';
+                }
+
+                // Add warnings to map
+                const warningsGeoJSON = {
+                    type: 'FeatureCollection',
+                    features: severeAlerts.filter(f => f.geometry).slice(0, 100)
+                };
+
+                if (map.getSource('warnings')) {
+                    map.getSource('warnings').setData(warningsGeoJSON);
+                } else {
+                    map.addSource('warnings', { type: 'geojson', data: warningsGeoJSON });
+                    map.addLayer({
+                        id: 'warnings-fill',
+                        type: 'fill',
+                        source: 'warnings',
+                        paint: {
+                            'fill-color': [
+                                'match', ['get', 'event'],
+                                'Tornado Warning', '#ff0000',
+                                'Severe Thunderstorm Warning', '#ff9900',
+                                'Flash Flood Warning', '#00ff00',
+                                'Hurricane Warning', '#ff00ff',
+                                'Tropical Storm Warning', '#ff66ff',
+                                'Tornado Watch', '#ffff00',
+                                'Severe Thunderstorm Watch', '#ffcc00',
+                                'Hurricane Watch', '#ff99ff',
+                                '#888888'
+                            ],
+                            'fill-opacity': 0.4
+                        }
+                    });
+                    map.addLayer({
+                        id: 'warnings-outline',
+                        type: 'line',
+                        source: 'warnings',
+                        paint: {
+                            'line-color': [
+                                'match', ['get', 'event'],
+                                'Tornado Warning', '#ff0000',
+                                'Severe Thunderstorm Warning', '#ff9900',
+                                'Flash Flood Warning', '#00ff00',
+                                'Hurricane Warning', '#ff00ff',
+                                'Tropical Storm Warning', '#ff66ff',
+                                'Tornado Watch', '#ffff00',
+                                'Severe Thunderstorm Watch', '#ffcc00',
+                                'Hurricane Watch', '#ff99ff',
+                                '#888888'
+                            ],
+                            'line-width': 2
+                        }
+                    });
+                }
+
+                // Populate alerts panel
+                const alertsContainer = document.getElementById('alerts-container');
+                if (severeAlerts.length === 0) {
+                    alertsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <p>No severe weather alerts</p>
+                        </div>
+                    `;
+                } else {
+                    alertsContainer.innerHTML = severeAlerts.slice(0, 15).map(alert => {
+                        const props = alert.properties;
+                        const alertClass = props.event.includes('Tornado') || props.event.includes('Hurricane') ? 'critical' : 
+                                          props.event.includes('Watch') ? 'watch' : 'warning';
+                        const time = new Date(props.onset || props.effective).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                        
+                        return `
+                            <div class="alert-card ${alertClass}">
+                                <div class="alert-header">
+                                    <span class="alert-type ${alertClass}">${props.event}</span>
+                                    <span class="alert-time">${time}</span>
+                                </div>
+                                <div class="alert-title">${props.headline ? props.headline.substring(0, 60) + '...' : props.event}</div>
+                                <div class="alert-location">${props.areaDesc ? props.areaDesc.substring(0, 50) : 'Multiple Areas'}...</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error('Failed to load warnings:', err);
+                document.getElementById('alerts-container').innerHTML = `
+                    <div class="empty-state">
+                        <p>Unable to load alerts</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Layer toggle for warnings
+        document.getElementById('layer-warnings').addEventListener('change', (e) => {
+            const visibility = e.target.checked ? 'visible' : 'none';
+            if (map.getLayer('warnings-fill')) map.setLayoutProperty('warnings-fill', 'visibility', visibility);
+            if (map.getLayer('warnings-outline')) map.setLayoutProperty('warnings-outline', 'visibility', visibility);
+        });
+
+        // Live Clock
+        function updateClock() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('clock-date').textContent = dateStr;
+            document.getElementById('clock-time').textContent = timeStr;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // CAT Mode Toggle
+        const catBtn = document.getElementById('cat-mode-toggle');
+        const catOverlay = document.getElementById('cat-overlay');
+        const catBanner = document.getElementById('cat-banner');
+        let catMode = false;
+
+        catBtn.addEventListener('click', () => {
+            catMode = !catMode;
+            catBtn.classList.toggle('active', catMode);
+            catOverlay.classList.toggle('active', catMode);
+            catBanner.classList.toggle('active', catMode);
+            
+            if (catMode) {
+                // Zoom to show CONUS
+                map.flyTo({ center: [-95, 37], zoom: 4.5, duration: 1500 });
             }
         });
 
-        async function getWeather() {
-            const zip = document.getElementById('zipInput').value.trim();
-            
-            if (!/^\d{5}$/.test(zip)) {
-                alert('Please enter a valid 5-digit ZIP code');
-                return;
-            }
+        // Ticker Content
+        function initTicker() {
+            const tickerData = [
+                { label: 'SPC Outlook', value: 'Day 1: Slight Risk - Central Plains' },
+                { label: 'Active Hurricanes', value: 'Monitoring: 0' },
+                { label: 'Network Status', value: '1 Pilot Online', positive: true },
+                { label: 'Last Mission', value: 'N/A' },
+                { label: 'System Uptime', value: '99.9%', positive: true },
+                { label: 'NWS Alerts', value: document.getElementById('alert-count').textContent || '--' },
+                { label: 'Weather Intel', value: 'Refreshed ' + new Date().toLocaleTimeString() }
+            ];
 
-            const btn = document.getElementById('weatherBtn');
-            btn.disabled = true;
-            btn.textContent = 'Loading...';
+            const tickerHTML = tickerData.map(item => `
+                <span class="ticker-item">
+                    <span class="label">${item.label}:</span>
+                    <span class="value ${item.positive ? 'positive' : ''}">${item.value}</span>
+                </span>
+                <span class="ticker-divider">|</span>
+            `).join('');
 
-            try {
-                // Use OpenWeather API with ZIP code
-                // For demo, using a free weather API that doesn't require key
-                const geoResponse = await fetch(
-                    `https://api.zippopotam.us/us/${zip}`
-                );
-                
-                if (!geoResponse.ok) {
-                    throw new Error('Invalid ZIP code');
-                }
-                
-                const geoData = await geoResponse.json();
-                const place = geoData.places[0];
-                const lat = parseFloat(place.latitude);
-                const lon = parseFloat(place.longitude);
-                const cityName = `${place['place name']}, ${place['state abbreviation']}`;
-
-                // Get weather from Open-Meteo (free, no API key required)
-                const weatherResponse = await fetch(
-                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,cloud_cover,visibility&temperature_unit=fahrenheit&wind_speed_unit=mph`
-                );
-                
-                const weatherData = await weatherResponse.json();
-                const current = weatherData.current;
-
-                // Update display
-                document.getElementById('locationName').textContent = cityName;
-                document.getElementById('weatherLocation').classList.add('active');
-                
-                const temp = Math.round(current.temperature_2m);
-                const wind = Math.round(current.wind_speed_10m);
-                const humidity = current.relative_humidity_2m;
-                const clouds = current.cloud_cover;
-                const visibility = Math.round((current.visibility || 10000) / 1609.34); // meters to miles
-
-                document.getElementById('tempValue').textContent = `${temp}°F`;
-                document.getElementById('windValue').textContent = `${wind} mph`;
-                document.getElementById('humidityValue').textContent = `${humidity}%`;
-                document.getElementById('cloudsValue').textContent = `${clouds}%`;
-                document.getElementById('visibilityValue').textContent = `${visibility} mi`;
-
-                // Set weather icon based on conditions
-                const weatherIconEl = document.getElementById('weatherIcon');
-                let iconSvg = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-                if (clouds > 80) iconSvg = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>';
-                else if (clouds > 50) iconSvg = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><circle cx="6" cy="6" r="3"/></svg>';
-                else if (clouds > 20) iconSvg = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>';
-                weatherIconEl.innerHTML = iconSvg;
-
-                // Determine flight status
-                const flightStatus = document.getElementById('flightStatus');
-                const flightIcon = document.getElementById('flightIcon');
-                const flightTitle = document.getElementById('flightTitle');
-                const flightDesc = document.getElementById('flightDesc');
-
-                flightStatus.className = 'flight-status active';
-                
-                if (wind > 25 || visibility < 3) {
-                    flightStatus.classList.add('no-go');
-                    flightIcon.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-                    flightTitle.textContent = 'NO-GO — Unfavorable Conditions';
-                    flightDesc.textContent = wind > 25 
-                        ? `Wind speed of ${wind} mph exceeds safe operating limits.`
-                        : `Visibility of ${visibility} mi is below minimum requirements.`;
-                } else if (wind > 15 || visibility < 5 || clouds > 90) {
-                    flightStatus.classList.add('caution');
-                    flightIcon.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
-                    flightTitle.textContent = 'CAUTION — Marginal Conditions';
-                    flightDesc.textContent = 'Flight possible but exercise caution. Monitor conditions closely.';
-                } else {
-                    flightStatus.classList.add('go');
-                    flightIcon.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-                    flightTitle.textContent = 'GO — Favorable Conditions';
-                    flightDesc.textContent = 'Weather conditions are suitable for drone operations.';
-                }
-
-                document.getElementById('weatherResults').classList.add('active');
-
-            } catch (error) {
-                console.error('Weather fetch error:', error);
-                alert('Could not fetch weather data. Please check the ZIP code and try again.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Check Weather';
-            }
+            document.getElementById('ticker-scroll').innerHTML = tickerHTML + tickerHTML;
         }
+        
+        setTimeout(initTicker, 2000);
+
+        // Refresh alerts every 2 minutes
+        setInterval(loadNWSWarnings, 120000);
     </script>
 </body>
 </html>
