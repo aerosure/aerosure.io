@@ -958,6 +958,62 @@
             line-height: 1.5;
         }
 
+        /* SiteScore Live Badge */
+        .deliverable-card.sitescore-live {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 182, 212, 0.05));
+            position: relative;
+        }
+
+        .deliverable-card.sitescore-live:hover {
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 0 50px rgba(16, 185, 129, 0.2), 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .deliverable-card.sitescore-live .deliverable-icon {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.15));
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .deliverable-card.sitescore-live .deliverable-icon svg {
+            stroke: #10b981;
+        }
+
+        .live-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-radius: 100px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.6); }
+        }
+
+        .launch-hint {
+            margin-top: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #10b981;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s ease;
+        }
+
+        .deliverable-card.sitescore-live:hover .launch-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* ===== HOW IT WORKS SECTION ===== */
         .how-section {
             background: var(--bg-primary);
@@ -2010,7 +2066,8 @@
                     <p>Photogrammetric measurement of installed materials vs. reported values.</p>
                 </div>
 
-                <div class="deliverable-card">
+                <a href="/sitescore/" class="deliverable-card sitescore-live">
+                    <div class="live-badge">LIVE</div>
                     <div class="deliverable-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <circle cx="12" cy="12" r="10"/>
@@ -2019,8 +2076,9 @@
                         </svg>
                     </div>
                     <h3>SiteScore™</h3>
-                    <p>Standardized 1-100 site condition assessment for risk evaluation.</p>
-                </div>
+                    <p>Pre-underwriting site risk intelligence. Karst, seismic, wildfire, flood, subsidence scoring.</p>
+                    <div class="launch-hint">Launch Tool →</div>
+                </a>
 
                 <div class="deliverable-card">
                     <div class="deliverable-icon">
@@ -2210,7 +2268,7 @@
                 <div class="footer-col">
                     <h4>Deliverables</h4>
                     <ul class="footer-links">
-                        <li><a href="#deliverables">SiteScore™</a></li>
+                        <li><a href="/sitescore/">SiteScore™</a></li>
                         <li><a href="#deliverables">DrainageIQ™</a></li>
                         <li><a href="#deliverables">TIV Validator™</a></li>
                         <li><a href="#deliverables">ProgressTrack™</a></li>
