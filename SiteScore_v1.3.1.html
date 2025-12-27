@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteScore™ v1.3.1 | Know Before You Bind</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        :root {
+            --bg-primary:#080b10;--bg-secondary:#0d1117;--bg-tertiary:#161b22;--bg-card:#0d1117;--bg-elevated:#1c2433;
+            --border-color:#30363d;--border-light:#484f58;--text-primary:#f0f6fc;--text-secondary:#8b949e;--text-muted:#6e7681;
+            --brand-primary:#2ea043;--brand-secondary:#58a6ff;--brand-accent:#a371f7;
+            --status-critical:#f85149;--status-high:#f0883e;--status-moderate:#d29922;--status-low:#2ea043;--status-info:#58a6ff;
+            --gradient-brand:linear-gradient(135deg,#2ea043 0%,#58a6ff 100%);
+            --gradient-header:linear-gradient(135deg,#238636 0%,#1f6feb 100%);
+            --gradient-glow:radial-gradient(ellipse at center,rgba(46,160,67,0.15) 0%,transparent 70%);
+            --shadow-glow:0 0 40px rgba(46,160,67,0.2);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow:hidden}
+        
+        /* Header */
+        .header{background:var(--gradient-header);padding:0 24px;height:56px;display:flex;justify-content:space-between;align-items:center;position:relative;border-bottom:1px solid rgba(255,255,255,0.1)}
+        .header::before{content:'';position:absolute;inset:0;background:var(--gradient-glow);pointer-events:none}
+        .header-left{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+        .logo{display:flex;align-items:center;gap:10px}
+        .logo-mark{width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2)}
+        .logo-text{font-size:20px;font-weight:800;color:white;letter-spacing:-0.5px}
+        .logo-text span{font-weight:400;opacity:0.9}
+        .version{font-size:10px;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px;color:white;font-weight:600}
+        .tagline{font-size:10px;color:rgba(255,255,255,0.8);text-transform:uppercase;letter-spacing:1.5px;padding-left:16px;border-left:1px solid rgba(255,255,255,0.3)}
+        .header-scores{display:flex;align-items:center;gap:4px;position:relative;z-index:1}
+        .score-pill{display:flex;flex-direction:column;align-items:center;padding:6px 14px;background:rgba(0,0,0,0.2);border-radius:8px;min-width:70px;border:1px solid rgba(255,255,255,0.1)}
+        .score-pill-value{font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;color:white}
+        .score-pill-label{font-size:8px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(255,255,255,0.7)}
+        .score-pill.main{background:rgba(0,0,0,0.3);border-color:rgba(255,255,255,0.2)}
+        .score-pill.main .score-pill-value{font-size:20px}
+
+        /* Layout */
+        .main-container{display:grid;grid-template-columns:360px 1fr 380px;height:calc(100vh - 56px)}
+        .panel{background:var(--bg-secondary);display:flex;flex-direction:column;overflow:hidden}
+        .panel-left{border-right:1px solid var(--border-color)}
+        .panel-right{border-left:1px solid var(--border-color)}
+        .panel-header{padding:12px 16px;background:var(--bg-tertiary);border-bottom:1px solid var(--border-color);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);display:flex;align-items:center;gap:8px;flex-shrink:0}
+        .panel-content{flex:1;overflow-y:auto;padding:14px}
+
+        /* Input Section */
+        .input-section{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:14px;margin-bottom:14px}
+        .input-field{margin-bottom:10px}
+        .input-field label{display:block;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px}
+        .input-field input{width:100%;padding:9px 11px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-size:13px;transition:all 0.2s}
+        .input-field input:focus{outline:none;border-color:var(--brand-primary);box-shadow:0 0 0 3px rgba(46,160,67,0.15)}
+        .input-row{display:flex;gap:8px}
+        .input-row input{flex:1}
+        .input-row button{padding:9px 12px;background:var(--brand-secondary);border:none;border-radius:6px;color:white;font-weight:600;font-size:10px;cursor:pointer;white-space:nowrap}
+        .coord-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .coord-row input{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+        /* Analyze Button */
+        .analyze-btn{width:100%;padding:11px;background:var(--gradient-brand);border:none;border-radius:8px;color:white;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-glow);transition:all 0.2s;position:relative;overflow:hidden}
+        .analyze-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);transform:translateX(-100%);transition:transform 0.5s}
+        .analyze-btn:hover::before{transform:translateX(100%)}
+        .analyze-btn:disabled{opacity:0.6;cursor:not-allowed}
+        .analyze-btn .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* Quick Locations */
+        .quick-locations{margin-top:12px;padding-top:12px;border-top:1px solid var(--border-color)}
+        .quick-title{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px}
+        .quick-btn{width:100%;padding:8px 10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-secondary);font-size:10px;text-align:left;cursor:pointer;margin-bottom:5px;display:flex;align-items:center;gap:8px;transition:all 0.15s}
+        .quick-btn:hover{border-color:var(--brand-primary);color:var(--text-primary);background:var(--bg-elevated)}
+        .quick-btn .icon{font-size:14px}
+        .quick-btn .name{font-weight:600;flex:1}
+        .quick-btn .tag{font-size:7px;padding:2px 5px;border-radius:3px;font-weight:700;text-transform:uppercase}
+        .tag-critical{background:rgba(248,81,73,0.2);color:var(--status-critical)}
+        .tag-high{background:rgba(240,136,62,0.2);color:var(--status-high)}
+        .tag-moderate{background:rgba(210,153,34,0.2);color:var(--status-moderate)}
+        .tag-low{background:rgba(46,160,67,0.2);color:var(--status-low)}
+        .tag-subsidence{background:rgba(136,57,239,0.2);color:#8839ef}
+        .tag-seismic{background:rgba(163,113,247,0.2);color:var(--brand-accent)}
+
+        /* Result Cards */
+        .result-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;margin-bottom:12px;overflow:hidden}
+        .result-header{padding:10px 12px;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:space-between}
+        .result-title{font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px}
+        .result-badge{font-size:8px;padding:3px 7px;border-radius:4px;font-weight:700;text-transform:uppercase}
+        .badge-critical{background:rgba(248,81,73,0.15);color:var(--status-critical)}
+        .badge-high{background:rgba(240,136,62,0.15);color:var(--status-high)}
+        .badge-moderate{background:rgba(210,153,34,0.15);color:var(--status-moderate)}
+        .badge-low{background:rgba(46,160,67,0.15);color:var(--status-low)}
+        .badge-info{background:rgba(88,166,255,0.15);color:var(--status-info)}
+        .result-content{padding:12px}
+
+        /* Data Displays */
+        .data-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+        .data-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+        .data-grid.cols-6{grid-template-columns:repeat(6,1fr)}
+        .data-item{background:var(--bg-tertiary);padding:10px 8px;border-radius:6px;text-align:center}
+        .data-item.full{grid-column:span 2}
+        .data-label{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:3px}
+        .data-value{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace}
+        .data-value.xl{font-size:22px}
+        .data-value.sm{font-size:11px;font-family:'Inter',sans-serif;font-weight:600}
+
+        /* Risk Flags */
+        .risk-flag{padding:10px 12px;background:var(--bg-tertiary);border-radius:6px;margin-bottom:6px;border-left:3px solid}
+        .risk-flag.critical{border-left-color:var(--status-critical);background:rgba(248,81,73,0.05)}
+        .risk-flag.high{border-left-color:var(--status-high);background:rgba(240,136,62,0.05)}
+        .risk-flag.moderate{border-left-color:var(--status-moderate);background:rgba(210,153,34,0.05)}
+        .risk-title{font-size:11px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:5px}
+        .risk-detail{font-size:10px;color:var(--text-secondary);line-height:1.4}
+
+        /* Score Card */
+        .score-card{background:linear-gradient(135deg,rgba(46,160,67,0.08),rgba(88,166,255,0.08));border:1px solid rgba(46,160,67,0.25)}
+        .score-card .result-header{background:linear-gradient(135deg,rgba(46,160,67,0.15),rgba(88,166,255,0.15))}
+        .overall-score{text-align:center;padding:16px;background:var(--bg-primary);border-radius:8px;margin-bottom:10px;position:relative;overflow:hidden}
+        .overall-score::before{content:'';position:absolute;inset:0;background:var(--gradient-glow);opacity:0.5}
+        .overall-score-label{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:4px;position:relative}
+        .overall-score-value{font-size:44px;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1;position:relative}
+        .overall-score-scale{font-size:9px;color:var(--text-muted);margin-top:4px;position:relative}
+        .score-breakdown{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:10px}
+        .score-item{background:var(--bg-tertiary);padding:8px 4px;border-radius:6px;text-align:center}
+        .score-item-label{font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px;color:var(--text-muted);margin-bottom:2px}
+        .score-item-value{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace}
+        .score-item-weight{font-size:7px;color:var(--text-muted)}
+        .recommendation-box{text-align:center;padding:12px;background:var(--bg-primary);border-radius:8px;margin-top:10px}
+        .recommendation-label{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:4px}
+        .recommendation-value{font-size:14px;font-weight:800}
+
+        /* Special Cards */
+        .seismic-card{background:linear-gradient(135deg,rgba(163,113,247,0.08),rgba(88,166,255,0.08));border:1px solid rgba(163,113,247,0.25)}
+        .seismic-card .result-header{background:linear-gradient(135deg,rgba(163,113,247,0.15),rgba(88,166,255,0.15))}
+        .wui-card{background:linear-gradient(135deg,rgba(248,81,73,0.08),rgba(240,136,62,0.08));border:1px solid rgba(248,81,73,0.25)}
+        .wui-card .result-header{background:linear-gradient(135deg,rgba(248,81,73,0.15),rgba(240,136,62,0.15))}
+        .subsidence-card{background:linear-gradient(135deg,rgba(136,57,239,0.08),rgba(163,113,247,0.08));border:1px solid rgba(136,57,239,0.25)}
+        .subsidence-card .result-header{background:linear-gradient(135deg,rgba(136,57,239,0.15),rgba(163,113,247,0.15))}
+        .athenium-card{background:linear-gradient(135deg,rgba(88,166,255,0.08),rgba(163,113,247,0.08));border:1px solid rgba(88,166,255,0.25)}
+        .athenium-card .result-header{background:linear-gradient(135deg,rgba(88,166,255,0.15),rgba(163,113,247,0.15))}
+
+        /* Athenium Input */
+        .athenium-paste{width:100%;min-height:90px;padding:10px;background:var(--bg-tertiary);border:1px dashed var(--border-color);border-radius:6px;color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:9px;resize:vertical;margin-bottom:8px}
+        .athenium-paste:focus{outline:none;border-color:var(--status-info);border-style:solid}
+        .parse-btn{width:100%;padding:9px;background:var(--status-info);border:none;border-radius:6px;color:white;font-weight:700;font-size:11px;cursor:pointer}
+        .athenium-display{margin-top:10px;background:var(--bg-tertiary);border-radius:6px;padding:10px}
+        .athenium-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:10px;border-bottom:1px solid var(--border-color)}
+        .athenium-row:last-child{border-bottom:none}
+
+        /* Export */
+        .export-section{padding:12px;background:var(--bg-tertiary);border-top:1px solid var(--border-color);flex-shrink:0}
+        .export-btn{width:100%;padding:10px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px}
+        .export-btn:last-child{margin-bottom:0}
+        .export-btn.primary{background:var(--gradient-brand);border:none;color:white}
+        .export-btn.secondary{background:var(--bg-primary);border:1px solid var(--border-color);color:var(--text-primary)}
+
+        /* Map */
+        .map-container{position:relative;background:var(--bg-primary)}
+        #map{width:100%;height:100%}
+        .map-loading{position:absolute;inset:0;background:rgba(8,11,16,0.9);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
+        .map-loading.active{display:flex}
+        .loading-spinner{width:36px;height:36px;border:3px solid var(--border-color);border-top-color:var(--brand-primary);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px}
+        .loading-text{font-size:13px;color:var(--text-secondary)}
+        .loading-detail{font-size:10px;color:var(--text-muted);margin-top:4px}
+        .loading-steps{margin-top:12px;text-align:left}
+        .loading-step{font-size:9px;color:var(--text-muted);padding:3px 0;display:flex;align-items:center;gap:6px}
+        .loading-step.active{color:var(--brand-primary)}
+        .loading-step.done{color:var(--status-low)}
+        .loading-step .check{color:var(--status-low)}
+
+        /* Map Controls */
+        .map-controls{position:absolute;top:12px;left:12px;z-index:10;display:flex;flex-direction:column;gap:6px}
+        .map-control-card{background:rgba(8,11,16,0.92);border:1px solid var(--border-color);border-radius:8px;padding:10px;backdrop-filter:blur(12px);min-width:150px}
+        .map-control-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+        .map-control-title .dot{width:5px;height:5px;border-radius:50%;background:var(--brand-primary)}
+        .map-toggle{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:10px;color:var(--text-secondary);cursor:pointer}
+        .map-toggle:hover{color:var(--text-primary)}
+        .map-toggle input{accent-color:var(--brand-primary);width:12px;height:12px}
+        .map-toggle .badge{font-size:7px;padding:1px 4px;background:var(--brand-accent);color:white;border-radius:3px;font-weight:600;margin-left:auto}
+
+        /* Map Info */
+        .map-info{position:absolute;top:12px;right:12px;background:rgba(8,11,16,0.92);border:1px solid var(--border-color);border-radius:10px;padding:12px;backdrop-filter:blur(12px);min-width:200px;z-index:10}
+        .map-info-header{display:flex;align-items:center;gap:6px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border-color)}
+        .map-info-title{font-size:12px;font-weight:700}
+        .map-info-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:10px;border-bottom:1px solid var(--border-color)}
+        .map-info-row:last-child{border-bottom:none}
+        .map-info-label{color:var(--text-muted)}
+        .map-info-value{font-weight:600;font-family:'JetBrains Mono',monospace;font-size:9px}
+
+        /* Map Legend */
+        .map-legend{position:absolute;bottom:24px;left:12px;background:rgba(8,11,16,0.92);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;backdrop-filter:blur(12px);z-index:10}
+        .legend-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:6px}
+        .legend-item{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--text-secondary);margin-bottom:3px}
+        .legend-item:last-child{margin-bottom:0}
+        .legend-dot{width:10px;height:10px;border-radius:50%;border:2px solid rgba(255,255,255,0.8)}
+        .legend-line{width:16px;height:3px;border-radius:2px}
+        .legend-rect{width:16px;height:10px;border-radius:2px;opacity:0.7}
+
+        /* Tip Box */
+        .tip-box{background:var(--bg-card);border:1px dashed var(--border-color);border-radius:8px;padding:12px;text-align:center}
+        .tip-icon{font-size:20px;margin-bottom:6px}
+        .tip-text{font-size:10px;color:var(--text-muted);line-height:1.4}
+        .tip-text strong{color:var(--text-secondary)}
+
+        /* Scrollbar */
+        ::-webkit-scrollbar{width:6px}
+        ::-webkit-scrollbar-track{background:var(--bg-primary)}
+        ::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:3px}
+
+        /* Mapbox Popup */
+        .mapboxgl-popup-content{background:var(--bg-card);color:var(--text-primary);border-radius:8px;padding:10px 12px;border:1px solid var(--border-color);box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+        .mapboxgl-popup-tip{border-top-color:var(--bg-card)}
+        .popup-title{font-size:11px;font-weight:700;margin-bottom:3px}
+        .popup-detail{font-size:9px;color:var(--text-secondary)}
+
+        /* Animations */
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+        @keyframes glow{0%,100%{box-shadow:0 0 20px rgba(46,160,67,0.3)}50%{box-shadow:0 0 40px rgba(46,160,67,0.5)}}
+        .pulse{animation:pulse 2s ease-in-out infinite}
+        .glow{animation:glow 2s ease-in-out infinite}
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-mark">📍</div>
+                <div class="logo-text">Site<span>Score</span>™</div>
+            </div>
+            <span class="version">v1.3.1</span>
+            <div class="tagline">Know Before You Bind</div>
+        </div>
+        <div class="header-scores">
+            <div class="score-pill main"><div class="score-pill-value" id="headerScore">—</div><div class="score-pill-label">Score</div></div>
+            <div class="score-pill"><div class="score-pill-value" id="headerKarst">—</div><div class="score-pill-label">Karst</div></div>
+            <div class="score-pill"><div class="score-pill-value" id="headerSeismic">—</div><div class="score-pill-label">Seismic</div></div>
+            <div class="score-pill"><div class="score-pill-value" id="headerFlood">—</div><div class="score-pill-label">Flood</div></div>
+            <div class="score-pill"><div class="score-pill-value" id="headerWildfire">—</div><div class="score-pill-label">Fire</div></div>
+            <div class="score-pill"><div class="score-pill-value" id="headerWind">—</div><div class="score-pill-label">Wind</div></div>
+        </div>
+    </header>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-container">
+        <!-- LEFT PANEL: Input & Results -->
+        <div class="panel panel-left">
+            <div class="panel-header"><span>📍</span> Site Analysis</div>
+            <div class="panel-content">
+                <div class="input-section">
+                    <div class="input-field">
+                        <label>Address Lookup</label>
+                        <div class="input-row">
+                            <input type="text" id="addressInput" placeholder="123 Main St, City, State">
+                            <button onclick="geocodeAddress()">🔍 Find</button>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label>Project Name</label>
+                        <input type="text" id="projectName" placeholder="e.g., Norfolk State Science Building">
+                    </div>
+                    <div class="coord-row">
+                        <div class="input-field"><label>Latitude</label><input type="text" id="lat" placeholder="35.9427"></div>
+                        <div class="input-field"><label>Longitude</label><input type="text" id="lon" placeholder="-83.9510"></div>
+                    </div>
+                    <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()"><span>⚡</span> Analyze Site</button>
+                    <div class="quick-locations">
+                        <div class="quick-title">Test Locations</div>
+                        <button class="quick-btn" onclick="setLocation('UT MFR Research',35.9427,-83.9510)"><span class="icon">🕳️</span><span class="name">Knoxville TN</span><span class="tag tag-critical">KARST</span></button>
+                        <button class="quick-btn" onclick="setLocation('LA Office Tower',34.0522,-118.2437)"><span class="icon">🌋</span><span class="name">Los Angeles CA</span><span class="tag tag-seismic">SEISMIC</span></button>
+                        <button class="quick-btn" onclick="setLocation('Lake Arrowhead Resort',34.248,-117.189)"><span class="icon">🔥</span><span class="name">Lake Arrowhead CA</span><span class="tag tag-critical">WUI</span></button>
+                        <button class="quick-btn" onclick="setLocation('Miami Distribution',25.76,-80.19)"><span class="icon">🌊</span><span class="name">Miami FL</span><span class="tag tag-high">FLOOD</span></button>
+                        <button class="quick-btn" onclick="setLocation('Denver Tech',39.74,-104.99)"><span class="icon">✅</span><span class="name">Denver CO</span><span class="tag tag-low">LOW</span></button>
+                        <button class="quick-btn" onclick="setLocation('Corcoran Ag Facility',36.098,-119.56)"><span class="icon">📉</span><span class="name">Corcoran CA</span><span class="tag tag-subsidence">SUBSIDENCE</span></button>
+                    </div>
+                    <div style="font-size:9px;color:var(--text-muted);margin-top:10px;padding:8px;background:var(--bg-tertiary);border-radius:6px;text-align:center">💡 Click map to set coordinates</div>
+                </div>
+                <div id="resultsContainer"></div>
+            </div>
+            <div class="export-section">
+                <button class="export-btn primary" onclick="generateReport()">📄 Generate Report</button>
+                <button class="export-btn secondary" onclick="copyJSON()">📋 Copy JSON</button>
+            </div>
+        </div>
+
+        <!-- CENTER: Map -->
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="map-loading" id="mapLoading">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Analyzing Site...</div>
+                <div class="loading-detail" id="loadingDetail">Initializing...</div>
+                <div class="loading-steps" id="loadingSteps"></div>
+            </div>
+            <div class="map-controls">
+                <div class="map-control-card">
+                    <div class="map-control-title"><div class="dot"></div> Basemap</div>
+                    <label class="map-toggle"><input type="radio" name="basemap" value="terrain" checked onchange="setBasemap('terrain')"> Terrain</label>
+                    <label class="map-toggle"><input type="radio" name="basemap" value="satellite" onchange="setBasemap('satellite')"> Satellite</label>
+                </div>
+                <div class="map-control-card">
+                    <div class="map-control-title"><div class="dot"></div> Karst Data</div>
+                    <label class="map-toggle"><input type="checkbox" id="toggleSinks" checked onchange="toggleFeatures('sink')"> 🕳️ Sinks</label>
+                    <label class="map-toggle"><input type="checkbox" id="toggleSprings" checked onchange="toggleFeatures('spring')"> 💧 Springs</label>
+                    <label class="map-toggle"><input type="checkbox" id="toggleFlowlines" checked onchange="toggleFlowlines()"> 🌊 Flowlines</label>
+                    <label class="map-toggle"><input type="checkbox" id="toggleKarstTerrain" onchange="toggleKarstTerrain()"> 🗺️ Karst Terrain<span class="badge">NEW</span></label>
+                </div>
+                <div class="map-control-card">
+                    <div class="map-control-title"><div class="dot"></div> USGS Overlays</div>
+                    <label class="map-toggle"><input type="checkbox" id="toggleHillshade" onchange="toggleUSGSLayer('hillshade')"> 🏔️ Hillshade</label>
+                    <label class="map-toggle"><input type="checkbox" id="toggleContours" onchange="toggleUSGSLayer('contours')"> 📏 Contours</label>
+                </div>
+                <div class="map-control-card">
+                    <div class="map-control-title"><div class="dot"></div> Hazard Zones</div>
+                    <label class="map-toggle"><input type="checkbox" id="toggleFemaFlood" onchange="toggleFEMAFlood()"> 🌊 FEMA Flood</label>
+                    <label class="map-toggle"><input type="checkbox" id="toggleWUI" onchange="toggleWUILayer()"> 🔥 WUI National</label>
+                    <label class="map-toggle"><input type="checkbox" id="toggleFHSZ" onchange="toggleFHSZLayer()"> 🔥 CA Fire Hazard</label>
+                    <label class="map-toggle"><input type="checkbox" id="toggleCASubsidence" onchange="toggleCASubsidenceLayer()"> 📉 CA Subsidence<span class="badge">NEW</span></label>
+                </div>
+            </div>
+            <div class="map-info">
+                <div class="map-info-header"><span style="font-size:14px">📍</span><span class="map-info-title">Site Info</span></div>
+                <div class="map-info-row"><span class="map-info-label">Coordinates</span><span class="map-info-value" id="infoCoords">—</span></div>
+                <div class="map-info-row"><span class="map-info-label">Elevation</span><span class="map-info-value" id="infoElevation">—</span></div>
+                <div class="map-info-row"><span class="map-info-label">Nearest Sink</span><span class="map-info-value" id="infoSink">—</span></div>
+                <div class="map-info-row"><span class="map-info-label">Karst Terrain</span><span class="map-info-value" id="infoKarstTerrain">—</span></div>
+                <div class="map-info-row"><span class="map-info-label">Seismic PGA</span><span class="map-info-value" id="infoPGA">—</span></div>
+                <div class="map-info-row"><span class="map-info-label">WUI Class</span><span class="map-info-value" id="infoWUI">—</span></div>
+                <div class="map-info-row"><span class="map-info-label">CA Fire Zone</span><span class="map-info-value" id="infoFHSZ">—</span></div>
+                <div class="map-info-row"><span class="map-info-label">CA Subsidence</span><span class="map-info-value" id="infoSubsidence">—</span></div>
+                <div class="map-info-row"><span class="map-info-label">Soil Type</span><span class="map-info-value" id="infoSoil">—</span></div>
+            </div>
+            <div class="map-legend">
+                <div class="legend-title">Legend</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#f85149"></div> Site</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#a371f7"></div> Sink</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#58a6ff"></div> Spring</div>
+                <div class="legend-item"><div class="legend-line" style="background:#58a6ff"></div> Flowline</div>
+                <div class="legend-item"><div class="legend-rect" style="background:#6366f1"></div> Karst Terrain</div>
+                <div class="legend-item"><div class="legend-rect" style="background:rgba(0,112,255,0.5)"></div> FEMA Flood</div>
+                <div class="legend-item"><div class="legend-rect" style="background:#f97316"></div> WUI Zone</div>
+                <div class="legend-item"><div class="legend-rect" style="background:#dc2626"></div> CA Subsidence</div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Scoring -->
+        <div class="panel panel-right">
+            <div class="panel-header"><span>🎯</span> Risk Scoring</div>
+            <div class="panel-content">
+                <div class="result-card score-card" id="scoreCard" style="display:none">
+                    <div class="result-header"><div class="result-title"><span>🎯</span> Site Risk Score</div></div>
+                    <div class="result-content">
+                        <div class="overall-score">
+                            <div class="overall-score-label">Overall Risk Score</div>
+                            <div class="overall-score-value" id="overallScore">—</div>
+                            <div class="overall-score-scale">0 = Best • 10 = Worst</div>
+                        </div>
+                        <div class="score-breakdown" style="grid-template-columns:repeat(7,1fr)">
+                            <div class="score-item"><div class="score-item-label">Karst</div><div class="score-item-value" id="scoreKarst">—</div><div class="score-item-weight">15%</div></div>
+                            <div class="score-item"><div class="score-item-label">Seismic</div><div class="score-item-value" id="scoreSeismic">—</div><div class="score-item-weight">15%</div></div>
+                            <div class="score-item"><div class="score-item-label">Flood</div><div class="score-item-value" id="scoreFlood">—</div><div class="score-item-weight">20%</div></div>
+                            <div class="score-item"><div class="score-item-label">Wildfire</div><div class="score-item-value" id="scoreWildfire">—</div><div class="score-item-weight">15%</div></div>
+                            <div class="score-item"><div class="score-item-label">Wind</div><div class="score-item-value" id="scoreWind">—</div><div class="score-item-weight">15%</div></div>
+                            <div class="score-item"><div class="score-item-label">Soil</div><div class="score-item-value" id="scoreSoil">—</div><div class="score-item-weight">10%</div></div>
+                            <div class="score-item"><div class="score-item-label">Subsid.</div><div class="score-item-value" id="scoreSubsidence">—</div><div class="score-item-weight">10%</div></div>
+                        </div>
+                        <div class="recommendation-box">
+                            <div class="recommendation-label">Recommendation</div>
+                            <div class="recommendation-value" id="recommendation">—</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-card seismic-card" id="seismicCard" style="display:none">
+                    <div class="result-header"><div class="result-title"><span>🌋</span> USGS Seismic</div><span class="result-badge badge-low" id="seismicBadge">—</span></div>
+                    <div class="result-content">
+                        <div class="data-grid cols-3">
+                            <div class="data-item"><div class="data-label">PGA</div><div class="data-value" id="seismicPGA">—</div></div>
+                            <div class="data-item"><div class="data-label">Score</div><div class="data-value" id="seismicScore">—</div></div>
+                            <div class="data-item"><div class="data-label">SDC</div><div class="data-value" id="seismicSDC">—</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-card wui-card" id="wuiCard" style="display:none">
+                    <div class="result-header"><div class="result-title"><span>🔥</span> Wildfire / WUI</div><span class="result-badge badge-low" id="wuiBadge">—</span></div>
+                    <div class="result-content">
+                        <div class="data-grid">
+                            <div class="data-item"><div class="data-label">WUI Class</div><div class="data-value sm" id="wuiClass">—</div></div>
+                            <div class="data-item"><div class="data-label">Fire Score</div><div class="data-value" id="wuiScore">—</div></div>
+                            <div class="data-item"><div class="data-label">CA FHSZ</div><div class="data-value" id="caFireSeverity">—</div></div>
+                            <div class="data-item"><div class="data-label">Veg Cover</div><div class="data-value" id="wuiVeg">—</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-card subsidence-card" id="subsidenceCard" style="display:none">
+                    <div class="result-header"><div class="result-title"><span>📉</span> CA Ground Subsidence</div><span class="result-badge badge-low" id="subsidenceBadge">—</span></div>
+                    <div class="result-content">
+                        <div class="data-grid">
+                            <div class="data-item"><div class="data-label">Annual Rate</div><div class="data-value" id="subsidenceRate">—</div></div>
+                            <div class="data-item"><div class="data-label">Score</div><div class="data-value" id="subsidenceScore">—</div></div>
+                            <div class="data-item"><div class="data-label">Total (2015+)</div><div class="data-value" id="subsidenceTotal">—</div></div>
+                            <div class="data-item"><div class="data-label">Data Source</div><div class="data-value sm" id="subsidenceSource">—</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-card athenium-card">
+                    <div class="result-header"><div class="result-title"><span>📊</span> Athenium Climate Data</div></div>
+                    <div class="result-content">
+                        <textarea class="athenium-paste" id="atheniumPaste" placeholder="Paste Athenium MCP output...
+
+River Flood Score: 0.4/10
+Flash Flood Score: 3.6/10
+Wildfire: 7/10
+Wind: 9/10
+Hail: 5/10"></textarea>
+                        <button class="parse-btn" onclick="parseAthenium()">Parse & Recalculate</button>
+                        <div class="athenium-display" id="atheniumDisplay" style="display:none"><div id="atheniumParsed"></div></div>
+                    </div>
+                </div>
+                <div class="tip-box">
+                    <div class="tip-icon">💡</div>
+                    <div class="tip-text"><strong>Higher Score = Higher Risk</strong><br>Paste Athenium flood/wind data to complete the composite score calculation.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        // TODO: Move to environment variable for production
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYWVyb3N1cmUiLCJhIjoiY21qNTZvMTlyMHV5aTNnb2dib2JuaXFyMSJ9.WN3RY1Ne-VQjn0o51xvEkQ';
+        
+        const API = {
+            THREEDP: 'https://3dhp.nationalmap.gov/arcgis/rest/services/usgs_3dhp_all/FeatureServer',
+            SSURGO_WFS: 'https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWGS84Geographic.wfs',
+            SSURGO_SQL: 'https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest',
+            USGS_ELEV: 'https://epqs.nationalmap.gov/v1/json',
+            USGS_SEISMIC: 'https://earthquake.usgs.gov/ws/designmaps',
+            USGS_WMS: 'https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WMSServer',
+            FEMA_NFHL: 'https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer',
+            USFS_WUI: 'https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_WUI_2020_01/MapServer/0',
+            CA_FHSZ_SRA: 'https://services.gis.ca.gov/arcgis/rest/services/Environment/Fire_Severity_Zones/MapServer/0',
+            CA_FHSZ_LRA: 'https://services.gis.ca.gov/arcgis/rest/services/Environment/Fire_Severity_Zones/MapServer/1',
+            USGS_KARST: 'https://mrdata.usgs.gov/services/karst',
+            // California DWR InSAR Subsidence Data (TRE ALTAMIRA)
+            CA_SUBSIDENCE_POINTS: 'https://gis.water.ca.gov/arcgis/rest/services/Elevation/Vertical_Displacement_Point_Data_Locations_2024Q1/MapServer/0',
+            CA_SUBSIDENCE_RASTER: 'https://gis.water.ca.gov/arcgisimg/rest/services/SAR/Vertical_Displacement_TRE_ALTAMIRA_Annual_Rate_20230101_20240101/ImageServer'
+        };
+
+        // Scoring weights - evenly distributed across major perils
+        const WEIGHTS = {
+            karst: 0.15,
+            seismic: 0.15,
+            flood: 0.20,
+            wildfire: 0.15,
+            wind: 0.15,
+            soil: 0.10,
+            subsidence: 0.10  // California InSAR ground motion data
+        };
+
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        let map, siteMarker = null, featureMarkers = [];
+        let layerStates = { femaFlood: false, wui: false, fhsz: false, hillshade: false, contours: false, karstTerrain: false, caSubsidence: false };
+        
+        const data = {
+            project: null,
+            coordinates: null,
+            elevation: null,
+            karst: null,
+            karstTerrain: null,
+            soil: null,
+            seismic: null,
+            wui: null,
+            subsidence: null,  // California InSAR subsidence data
+            athenium: null,
+            flags: [],
+            scores: { karst: null, seismic: null, flood: null, wildfire: null, wind: null, soil: null, subsidence: null, overall: null },
+            timestamp: null
+        };
+
+        // ============================================
+        // MAP INITIALIZATION
+        // ============================================
+        function initMap() {
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/outdoors-v12',
+                center: [-98, 39],
+                zoom: 4,
+                preserveDrawingBuffer: true
+            });
+
+            map.on('load', function() {
+                // Add terrain
+                map.addSource('mapbox-dem', { type: 'raster-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512 });
+                map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
+                console.log('SiteScore v1.3.1: Map initialized');
+            });
+
+            map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+            map.addControl(new mapboxgl.ScaleControl({ unit: 'imperial' }), 'bottom-left');
+
+            // Click to set coordinates
+            map.on('click', async function(e) {
+                document.getElementById('lat').value = e.lngLat.lat.toFixed(6);
+                document.getElementById('lon').value = e.lngLat.lng.toFixed(6);
+                document.getElementById('infoCoords').textContent = e.lngLat.lat.toFixed(4) + ', ' + e.lngLat.lng.toFixed(4);
+                // Fetch elevation on click
+                const elev = await fetchElevation(e.lngLat.lat, e.lngLat.lng);
+                if (elev !== null) document.getElementById('infoElevation').textContent = elev.toFixed(1) + ' ft';
+            });
+        }
+
+        // ============================================
+        // BASEMAP & LAYER CONTROLS
+        // ============================================
+        function setBasemap(style) {
+            const styles = {
+                terrain: 'mapbox://styles/mapbox/outdoors-v12',
+                satellite: 'mapbox://styles/mapbox/satellite-streets-v12'
+            };
+            
+            // Store current layer states before style change
+            const savedStates = { ...layerStates };
+            
+            map.setStyle(styles[style]);
+            
+            map.once('style.load', function() {
+                // Restore terrain
+                if (!map.getSource('mapbox-dem')) {
+                    map.addSource('mapbox-dem', { type: 'raster-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512 });
+                }
+                map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
+                
+                // Restore all active layers
+                if (savedStates.femaFlood) { layerStates.femaFlood = false; document.getElementById('toggleFemaFlood').checked = true; toggleFEMAFlood(); }
+                if (savedStates.wui) { layerStates.wui = false; document.getElementById('toggleWUI').checked = true; toggleWUILayer(); }
+                if (savedStates.fhsz) { layerStates.fhsz = false; document.getElementById('toggleFHSZ').checked = true; toggleFHSZLayer(); }
+                if (savedStates.hillshade) { layerStates.hillshade = false; document.getElementById('toggleHillshade').checked = true; toggleUSGSLayer('hillshade'); }
+                if (savedStates.contours) { layerStates.contours = false; document.getElementById('toggleContours').checked = true; toggleUSGSLayer('contours'); }
+                if (savedStates.karstTerrain) { layerStates.karstTerrain = false; document.getElementById('toggleKarstTerrain').checked = true; toggleKarstTerrain(); }
+                if (savedStates.caSubsidence) { layerStates.caSubsidence = false; document.getElementById('toggleCASubsidence').checked = true; toggleCASubsidenceLayer(); }
+            });
+        }
+
+        function toggleUSGSLayer(layer) {
+            const checkbox = document.getElementById('toggle' + layer.charAt(0).toUpperCase() + layer.slice(1));
+            const layerId = 'usgs-' + layer;
+            const sourceId = 'usgs-' + layer;
+            
+            if (checkbox.checked) {
+                if (map.getLayer(layerId)) { map.removeLayer(layerId); }
+                if (map.getSource(sourceId)) { map.removeSource(sourceId); }
+                
+                const wmsLayer = layer === 'hillshade' ? '3DEPElevation:Hillshade%20Multidirectional' : '3DEPElevation:Contour%2025';
+                map.addSource(sourceId, {
+                    type: 'raster',
+                    tiles: [API.USGS_WMS + '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=' + wmsLayer + '&FORMAT=image/png&TRANSPARENT=true&SRS=EPSG:3857&BBOX={bbox-epsg-3857}&WIDTH=256&HEIGHT=256'],
+                    tileSize: 256
+                });
+                map.addLayer({ id: layerId, type: 'raster', source: sourceId, paint: { 'raster-opacity': layer === 'hillshade' ? 0.6 : 0.8 } }, 'road-label');
+                layerStates[layer] = true;
+            } else {
+                if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none');
+                layerStates[layer] = false;
+            }
+        }
+
+        function toggleFEMAFlood() {
+            const checkbox = document.getElementById('toggleFemaFlood');
+            const layerId = 'fema-flood';
+            const sourceId = 'fema-flood-source';
+            
+            if (checkbox.checked) {
+                if (map.getLayer(layerId)) map.removeLayer(layerId);
+                if (map.getSource(sourceId)) map.removeSource(sourceId);
+                
+                map.addSource(sourceId, {
+                    type: 'raster',
+                    tiles: ['https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&layers=show:28&f=image'],
+                    tileSize: 256
+                });
+                map.addLayer({ id: layerId, type: 'raster', source: sourceId, paint: { 'raster-opacity': 0.6 }, minzoom: 9 });
+                layerStates.femaFlood = true;
+            } else {
+                if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none');
+                layerStates.femaFlood = false;
+            }
+        }
+
+        function toggleWUILayer() {
+            const checkbox = document.getElementById('toggleWUI');
+            const layerId = 'wui-layer';
+            const sourceId = 'wui-source';
+            
+            if (checkbox.checked) {
+                if (map.getLayer(layerId)) map.removeLayer(layerId);
+                if (map.getSource(sourceId)) map.removeSource(sourceId);
+                
+                map.addSource(sourceId, {
+                    type: 'raster',
+                    tiles: ['https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_WUI_2020_01/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&layers=show:0&f=image'],
+                    tileSize: 256
+                });
+                map.addLayer({ id: layerId, type: 'raster', source: sourceId, paint: { 'raster-opacity': 0.55 }, minzoom: 8 });
+                layerStates.wui = true;
+            } else {
+                if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none');
+                layerStates.wui = false;
+            }
+        }
+
+        function toggleFHSZLayer() {
+            const checkbox = document.getElementById('toggleFHSZ');
+            const layerId = 'fhsz-layer';
+            const sourceId = 'fhsz-source';
+            
+            if (checkbox.checked) {
+                if (map.getLayer(layerId)) map.removeLayer(layerId);
+                if (map.getSource(sourceId)) map.removeSource(sourceId);
+                
+                map.addSource(sourceId, {
+                    type: 'raster',
+                    tiles: ['https://services.gis.ca.gov/arcgis/rest/services/Environment/Fire_Severity_Zones/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&layers=show:0,1,2,3,4,5&f=image'],
+                    tileSize: 256
+                });
+                map.addLayer({ id: layerId, type: 'raster', source: sourceId, paint: { 'raster-opacity': 0.5 }, minzoom: 8 });
+                layerStates.fhsz = true;
+            } else {
+                if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none');
+                layerStates.fhsz = false;
+            }
+        }
+
+        function toggleKarstTerrain() {
+            const checkbox = document.getElementById('toggleKarstTerrain');
+            const layerId = 'karst-terrain-layer';
+            const sourceId = 'karst-terrain-source';
+            
+            if (checkbox.checked) {
+                if (map.getLayer(layerId)) map.removeLayer(layerId);
+                if (map.getSource(sourceId)) map.removeSource(sourceId);
+                
+                // Esri ArcGIS Online Carbonate Karst tiles (USGS OFR 2014-1156)
+                map.addSource(sourceId, {
+                    type: 'raster',
+                    tiles: ['https://tiles.arcgis.com/tiles/hoKRg7d6zCP8hwp2/arcgis/rest/services/Carbonate_Karst/MapServer/tile/{z}/{y}/{x}'],
+                    tileSize: 256,
+                    attribution: 'USGS OFR 2014-1156 / Esri'
+                });
+                map.addLayer({ id: layerId, type: 'raster', source: sourceId, paint: { 'raster-opacity': 0.6 }, minzoom: 5 });
+                layerStates.karstTerrain = true;
+            } else {
+                if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none');
+                layerStates.karstTerrain = false;
+            }
+        }
+
+        function toggleCASubsidenceLayer() {
+            const checkbox = document.getElementById('toggleCASubsidence');
+            const layerId = 'ca-subsidence-layer';
+            const sourceId = 'ca-subsidence-source';
+            
+            if (checkbox.checked) {
+                if (map.getLayer(layerId)) map.removeLayer(layerId);
+                if (map.getSource(sourceId)) map.removeSource(sourceId);
+                
+                // CA DWR TRE ALTAMIRA Annual Subsidence Rate (Jan 2023 - Jan 2024)
+                // Uses ImageServer export with pre-rendered symbology
+                map.addSource(sourceId, {
+                    type: 'raster',
+                    tiles: ['https://gis.water.ca.gov/arcgisimg/rest/services/SAR/Vertical_Displacement_TRE_ALTAMIRA_Annual_Rate_20230101_20240101/ImageServer/exportImage?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&f=image'],
+                    tileSize: 256,
+                    attribution: 'CA DWR / TRE ALTAMIRA InSAR'
+                });
+                map.addLayer({ id: layerId, type: 'raster', source: sourceId, paint: { 'raster-opacity': 0.7 }, minzoom: 8 });
+                layerStates.caSubsidence = true;
+                console.log('CA Subsidence layer enabled');
+            } else {
+                if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none');
+                layerStates.caSubsidence = false;
+            }
+        }
+
+        function toggleFeatures(type) {
+            const checkbox = document.getElementById('toggle' + (type === 'sink' ? 'Sinks' : 'Springs'));
+            featureMarkers.filter(m => m._type === type).forEach(m => {
+                m.getElement().style.display = checkbox.checked ? 'block' : 'none';
+            });
+        }
+
+        function toggleFlowlines() {
+            const checkbox = document.getElementById('toggleFlowlines');
+            if (map.getLayer('flowlines-layer')) {
+                map.setLayoutProperty('flowlines-layer', 'visibility', checkbox.checked ? 'visible' : 'none');
+            }
+        }
+        // ============================================
+        // API QUERY FUNCTIONS
+        // ============================================
+        
+        async function geocodeAddress() {
+            const address = document.getElementById('addressInput').value.trim();
+            if (!address) { alert('Enter an address'); return; }
+            try {
+                const url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + encodeURIComponent(address) + '.json?access_token=' + mapboxgl.accessToken + '&country=US&limit=1';
+                const res = await fetch(url).then(r => r.json());
+                if (res.features && res.features.length) {
+                    const [lon, lat] = res.features[0].center;
+                    document.getElementById('lat').value = lat.toFixed(6);
+                    document.getElementById('lon').value = lon.toFixed(6);
+                    if (!document.getElementById('projectName').value) {
+                        document.getElementById('projectName').value = res.features[0].place_name.split(',')[0];
+                    }
+                    map.flyTo({ center: [lon, lat], zoom: 14 });
+                } else { alert('Address not found'); }
+            } catch (e) { console.error('Geocode error:', e); alert('Geocoding failed'); }
+        }
+
+        async function fetchElevation(lat, lon) {
+            try {
+                const url = API.USGS_ELEV + '?x=' + lon + '&y=' + lat + '&units=Feet&wkid=4326';
+                const res = await fetch(url).then(r => r.json());
+                if (res.value !== undefined) { data.elevation = res.value; return res.value; }
+                return null;
+            } catch (e) { console.error('Elevation error:', e); return null; }
+        }
+
+        async function fetch3DHP(lat, lon) {
+            const radiusKm = 10, buffer = radiusKm / 111;
+            const bbox = (lon - buffer) + ',' + (lat - buffer) + ',' + (lon + buffer) + ',' + (lat + buffer);
+            const baseParams = '&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&returnGeometry=true&outSR=4326&f=json&resultRecordCount=100';
+            
+            const [sinks, springs, flowlines] = await Promise.all([
+                fetch(API.THREEDP + '/20/query?where=featuretype%3D8&geometry=' + bbox + baseParams).then(r => r.json()),
+                fetch(API.THREEDP + '/20/query?where=featuretype%3D7&geometry=' + bbox + baseParams).then(r => r.json()),
+                fetch(API.THREEDP + '/50/query?where=1%3D1&geometry=' + bbox + baseParams + '&resultRecordCount=50').then(r => r.json())
+            ]);
+            
+            return { sinks: sinks.features || [], springs: springs.features || [], flowlines: flowlines.features || [] };
+        }
+
+        async function fetchKarstTerrain(lat, lon) {
+            // Query USGS Karst Map to determine if site is in karst terrain
+            // NOTE: USGS mrdata.usgs.gov service may be intermittently unavailable
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+                
+                const url = 'https://mrdata.usgs.gov/services/karst?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=karstus&BBOX=' + 
+                    (lon - 0.01) + ',' + (lat - 0.01) + ',' + (lon + 0.01) + ',' + (lat + 0.01) + '&SRSNAME=EPSG:4326&MAXFEATURES=1';
+                const res = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                const text = await res.text();
+                
+                // Check for valid WFS response (not error page)
+                if (text.includes('Unable to access') || text.includes('404') || text.includes('Error')) {
+                    console.warn('Karst terrain WFS service unavailable - use map layer toggle for visual reference');
+                    return { inKarst: false, rockType: null, serviceUnavailable: true };
+                }
+                
+                // Check if any karst features returned
+                if (text.includes('karstus') && text.includes('gml:featureMember')) {
+                    // Parse rock type if available
+                    const rockMatch = text.match(/<ms:rock_type>([^<]+)<\/ms:rock_type>/);
+                    return { inKarst: true, rockType: rockMatch ? rockMatch[1] : 'Carbonate' };
+                }
+                return { inKarst: false, rockType: null };
+            } catch (e) {
+                console.warn('Karst terrain query timeout/error - use map layer toggle for visual reference:', e.message);
+                return { inKarst: false, rockType: null, serviceUnavailable: true };
+            }
+        }
+
+        async function fetchSSURGO(lat, lon) {
+            try {
+                const buffer = 0.005;
+                const wfsUrl = API.SSURGO_WFS + '?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=mapunitpoly&BBOX=' + 
+                    (lon - buffer) + ',' + (lat - buffer) + ',' + (lon + buffer) + ',' + (lat + buffer) + '&SRSNAME=EPSG:4326&MAXFEATURES=1';
+                const wfsRes = await fetch(wfsUrl);
+                const wfsText = await wfsRes.text();
+                const mukeyMatch = wfsText.match(/<ms:mukey>(\d+)<\/ms:mukey>/);
+                if (!mukeyMatch) return null;
+                
+                const sqlQuery = "SELECT TOP 1 mu.mukey, mu.muname, c.compname, c.comppct_r, c.drainagecl, c.hydgrp, c.corcon, c.corsteel FROM mapunit mu INNER JOIN component c ON c.mukey = mu.mukey WHERE mu.mukey = '" + mukeyMatch[1] + "' ORDER BY c.comppct_r DESC";
+                const sqlRes = await fetch(API.SSURGO_SQL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: sqlQuery }) });
+                const sqlText = await sqlRes.text();
+                
+                const get = tag => { const m = sqlText.match(new RegExp('<' + tag + '>([^<]*)</' + tag + '>')); return m ? m[1] : null; };
+                const muname = get('muname');
+                if (!muname) return null;
+                
+                return { mukey: get('mukey'), mapunit: muname, component: get('compname'), drainage: get('drainagecl'), hydro: get('hydgrp'), corConcrete: get('corcon'), corSteel: get('corsteel') };
+            } catch (e) { console.error('SSURGO error:', e); return null; }
+        }
+
+        async function fetchSeismic(lat, lon) {
+            try {
+                const url = API.USGS_SEISMIC + '/asce7-16.json?latitude=' + lat + '&longitude=' + lon + '&riskCategory=II&siteClass=D&title=SiteScore';
+                const res = await fetch(url).then(r => r.json());
+                if (res.response && res.response.data) {
+                    const d = res.response.data;
+                    return { pga: d.pga, ss: d.ss, s1: d.s1, sds: d.sds, sd1: d.sd1, sdc: d.sdc };
+                }
+                return null;
+            } catch (e) { console.error('Seismic error:', e); return null; }
+        }
+
+        async function fetchWUI(lat, lon) {
+            try {
+                const result = { wuiClass: null, housingDensity: null, vegPercent: null, caFireSeverity: null, inWUI: false, score: 0 };
+                
+                // Query USFS National WUI 2020
+                const wuiUrl = API.USFS_WUI + '/query?geometry=' + lon + ',' + lat + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=WUICLASS2020,HUDEN2020,VEG2019PC&returnGeometry=false&f=json';
+                const wuiRes = await fetch(wuiUrl).then(r => r.json());
+                
+                if (wuiRes.features && wuiRes.features.length > 0) {
+                    const attrs = wuiRes.features[0].attributes;
+                    result.wuiClass = attrs.WUICLASS2020;
+                    result.housingDensity = attrs.HUDEN2020;
+                    result.vegPercent = attrs.VEG2019PC;
+                    if (result.wuiClass && (result.wuiClass.indexOf('Intermix') >= 0 || result.wuiClass.indexOf('Interface') >= 0)) {
+                        result.inWUI = true;
+                    }
+                }
+                
+                // Query California Fire Hazard Severity Zones if in CA
+                if (lon >= -124.5 && lon <= -114 && lat >= 32.5 && lat <= 42) {
+                    // Try SRA first
+                    const sraUrl = API.CA_FHSZ_SRA + '/query?geometry=' + lon + ',' + lat + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=HAZ_CLASS&returnGeometry=false&f=json';
+                    const sraRes = await fetch(sraUrl).then(r => r.json());
+                    if (sraRes.features && sraRes.features.length > 0) {
+                        result.caFireSeverity = sraRes.features[0].attributes.HAZ_CLASS;
+                    } else {
+                        // Try LRA
+                        const lraUrl = API.CA_FHSZ_LRA + '/query?geometry=' + lon + ',' + lat + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=HAZ_CLASS&returnGeometry=false&f=json';
+                        const lraRes = await fetch(lraUrl).then(r => r.json());
+                        if (lraRes.features && lraRes.features.length > 0) {
+                            result.caFireSeverity = lraRes.features[0].attributes.HAZ_CLASS;
+                        }
+                    }
+                }
+                
+                // Calculate WUI/Wildfire score (0-10)
+                let score = 0;
+                if (result.caFireSeverity === 'Very High') score = 10;
+                else if (result.caFireSeverity === 'High') score = 8;
+                else if (result.caFireSeverity === 'Moderate') score = 5;
+                else if (result.wuiClass) {
+                    if (result.wuiClass.indexOf('High_Dens_Intermix') >= 0) score = 9;
+                    else if (result.wuiClass.indexOf('Med_Dens_Intermix') >= 0) score = 8;
+                    else if (result.wuiClass.indexOf('Low_Dens_Intermix') >= 0) score = 7;
+                    else if (result.wuiClass.indexOf('High_Dens_Interface') >= 0) score = 7;
+                    else if (result.wuiClass.indexOf('Med_Dens_Interface') >= 0) score = 6;
+                    else if (result.wuiClass.indexOf('Low_Dens_Interface') >= 0) score = 5;
+                    else if (result.wuiClass.indexOf('Veg') >= 0 && result.wuiClass.indexOf('NoVeg') < 0) score = 3;
+                }
+                if (result.inWUI && result.vegPercent > 75) score = Math.min(10, score + 1);
+                
+                result.score = score;
+                result.risk = score >= 8 ? 'EXTREME' : score >= 6 ? 'HIGH' : score >= 4 ? 'MODERATE' : score >= 2 ? 'LOW' : 'MINIMAL';
+                
+                return result;
+            } catch (e) { console.error('WUI error:', e); return null; }
+        }
+
+        // ============================================
+        // DATA PROCESSING
+        // ============================================
+        
+        function haversine(lat1, lon1, lat2, lon2) {
+            const R = 3959, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        function processKarst(karstData, karstTerrain, lat, lon) {
+            const sinks = karstData.sinks.map(f => ({
+                name: (f.attributes && f.attributes.gnisidlabel) || 'Unnamed Sink',
+                dist: haversine(lat, lon, f.geometry.y, f.geometry.x),
+                geometry: f.geometry
+            })).sort((a, b) => a.dist - b.dist);
+            
+            const springs = karstData.springs.map(f => ({
+                name: (f.attributes && f.attributes.gnisidlabel) || 'Unnamed Spring',
+                dist: haversine(lat, lon, f.geometry.y, f.geometry.x),
+                geometry: f.geometry
+            })).sort((a, b) => a.dist - b.dist);
+            
+            const all = [...sinks, ...springs].sort((a, b) => a.dist - b.dist);
+            const nearest = all[0] || null;
+            
+            // Score based on distance to nearest feature
+            let score = 0;
+            if (nearest) {
+                if (nearest.dist < 0.5) score = 10;
+                else if (nearest.dist < 1) score = 9;
+                else if (nearest.dist < 2) score = 8;
+                else if (nearest.dist < 3) score = 7;
+                else if (nearest.dist < 4) score = 6;  // Fixed: was missing 4mi threshold
+                else if (nearest.dist < 5) score = 5;
+                else if (nearest.dist < 7) score = 3;
+                else score = 1;
+            }
+            
+            // Density modifiers
+            if (sinks.length + springs.length > 20) score = Math.min(10, score + 2);
+            else if (sinks.length + springs.length > 10) score = Math.min(10, score + 1);
+            
+            // Karst terrain modifier - if in karst terrain, minimum score of 3
+            if (karstTerrain && karstTerrain.inKarst && score < 3) {
+                score = 3;
+            }
+            
+            const risk = score >= 8 ? 'EXTREME' : score >= 6 ? 'HIGH' : score >= 4 ? 'MODERATE' : score >= 2 ? 'LOW' : 'MINIMAL';
+            
+            return { sinks, springs, flowlines: karstData.flowlines.length, nearest, score, risk, inKarstTerrain: karstTerrain?.inKarst || false, rockType: karstTerrain?.rockType };
+        }
+
+        // ============================================
+        // CALIFORNIA SUBSIDENCE DATA (DWR InSAR)
+        // ============================================
+        async function fetchCASubsidence(lat, lon) {
+            // Only query if in California (roughly lon -124.5 to -114, lat 32.5 to 42)
+            if (lon < -124.5 || lon > -114 || lat < 32.5 || lat > 42) {
+                console.log('Outside California - skipping subsidence query');
+                return null;
+            }
+            
+            try {
+                // Query the point data locations layer (100m resolution InSAR data)
+                const buffer = 0.002; // ~200m buffer
+                const geometry = encodeURIComponent(JSON.stringify({
+                    xmin: lon - buffer, ymin: lat - buffer,
+                    xmax: lon + buffer, ymax: lat + buffer,
+                    spatialReference: { wkid: 4326 }
+                }));
+                
+                const url = API.CA_SUBSIDENCE_POINTS + '/query?' + new URLSearchParams({
+                    geometry: geometry,
+                    geometryType: 'esriGeometryEnvelope',
+                    spatialRel: 'esriSpatialRelIntersects',
+                    outFields: '*',
+                    returnGeometry: false,
+                    f: 'json'
+                });
+                
+                const res = await fetch(url);
+                const json = await res.json();
+                
+                if (!json.features || json.features.length === 0) {
+                    console.log('No subsidence data at location (may be outside monitored basins)');
+                    return { hasData: false, inMonitoredArea: false };
+                }
+                
+                // Get the nearest point's attributes
+                // The data includes cumulative displacement and annual rates
+                const attrs = json.features[0].attributes;
+                
+                // Key fields from TRE ALTAMIRA data:
+                // - Total displacement since June 2015 (in feet, typically negative for subsidence)
+                // - We need to find the most recent displacement value
+                
+                // Look for common field patterns in DWR data
+                let totalDisplacement = null;
+                let annualRate = null;
+                
+                // Check various possible field names
+                const fieldNames = Object.keys(attrs);
+                for (const field of fieldNames) {
+                    const lower = field.toLowerCase();
+                    // Look for total displacement (cumulative since 2015)
+                    if (lower.includes('total') || lower.includes('cum') || lower.includes('disp')) {
+                        if (attrs[field] !== null && typeof attrs[field] === 'number') {
+                            totalDisplacement = attrs[field];
+                        }
+                    }
+                    // Look for annual rate
+                    if (lower.includes('rate') || lower.includes('annual') || lower.includes('velocity')) {
+                        if (attrs[field] !== null && typeof attrs[field] === 'number') {
+                            annualRate = attrs[field];
+                        }
+                    }
+                }
+                
+                // Calculate score based on displacement magnitude
+                // DWR data is in feet, negative = subsidence
+                // Convert to annual inches for scoring (typical subsidence is 0.5-2+ inches/year in problem areas)
+                let score = 0;
+                const dispFeet = Math.abs(totalDisplacement || 0);
+                const dispInchesTotal = dispFeet * 12;
+                
+                // Since data spans ~9 years (2015-2024), estimate annual rate if not available
+                const yearsOfData = 9;
+                const estimatedAnnualInches = annualRate ? Math.abs(annualRate * 12) : dispInchesTotal / yearsOfData;
+                
+                // Scoring based on annual subsidence rate (inches/year)
+                // >6 in/year = extreme (seen in worst areas of Central Valley)
+                // 3-6 in/year = high
+                // 1-3 in/year = elevated  
+                // 0.5-1 in/year = moderate
+                // <0.5 in/year = low
+                if (estimatedAnnualInches >= 6) score = 10;
+                else if (estimatedAnnualInches >= 4) score = 9;
+                else if (estimatedAnnualInches >= 3) score = 8;
+                else if (estimatedAnnualInches >= 2) score = 7;
+                else if (estimatedAnnualInches >= 1) score = 6;
+                else if (estimatedAnnualInches >= 0.5) score = 4;
+                else if (estimatedAnnualInches >= 0.25) score = 2;
+                else score = 1;
+                
+                const risk = score >= 8 ? 'EXTREME' : score >= 6 ? 'HIGH' : score >= 4 ? 'MODERATE' : score >= 2 ? 'LOW' : 'MINIMAL';
+                
+                console.log('CA Subsidence:', { totalDisplacement, annualRate, estimatedAnnualInches, score, attrs });
+                
+                return {
+                    hasData: true,
+                    inMonitoredArea: true,
+                    totalDisplacementFt: totalDisplacement,
+                    totalDisplacementIn: dispInchesTotal,
+                    annualRateFt: annualRate,
+                    estimatedAnnualIn: estimatedAnnualInches,
+                    score,
+                    risk,
+                    dataSource: 'CA DWR TRE ALTAMIRA InSAR (2015-2024)'
+                };
+                
+            } catch (err) {
+                console.error('CA Subsidence query error:', err);
+                return null;
+            }
+        }
+
+        // ============================================
+        // SCORING & FLAGS
+        // ============================================
+        
+        function calculateScores() {
+            // Karst score
+            data.scores.karst = data.karst ? data.karst.score : 0;
+            
+            // Seismic score based on PGA
+            if (data.seismic && data.seismic.pga) {
+                const pga = data.seismic.pga;
+                if (pga >= 0.60) data.scores.seismic = 10;
+                else if (pga >= 0.50) data.scores.seismic = 9;
+                else if (pga >= 0.40) data.scores.seismic = 8;
+                else if (pga >= 0.30) data.scores.seismic = 7;
+                else if (pga >= 0.20) data.scores.seismic = 6;
+                else if (pga >= 0.15) data.scores.seismic = 5;
+                else if (pga >= 0.10) data.scores.seismic = 3;
+                else if (pga >= 0.05) data.scores.seismic = 2;
+                else data.scores.seismic = 1;
+            } else {
+                data.scores.seismic = null;
+            }
+            
+            // Soil score
+            if (data.soil) {
+                let soilScore = 2;
+                const drainage = (data.soil.drainage || '').toLowerCase();
+                const hydro = (data.soil.hydro || '').toUpperCase();
+                if (drainage.indexOf('very poor') >= 0) soilScore += 4;
+                else if (drainage.indexOf('poor') >= 0) soilScore += 3;
+                else if (drainage.indexOf('somewhat poor') >= 0) soilScore += 2;
+                if (hydro === 'D') soilScore += 3;
+                else if (hydro === 'C') soilScore += 2;
+                else if (hydro === 'A') soilScore -= 1;
+                if (data.soil.corSteel === 'High') soilScore += 2;
+                if (data.soil.corConcrete === 'High') soilScore += 1;
+                data.scores.soil = Math.max(0, Math.min(10, soilScore));
+            } else {
+                data.scores.soil = null;
+            }
+            
+            // WUI/Wildfire score
+            const wuiScore = (data.wui && data.wui.score > 0) ? data.wui.score : 0;
+            const atheniumWildfire = (data.athenium && data.athenium.wildfire) ? data.athenium.wildfire : 0;
+            if (wuiScore > 0 || atheniumWildfire > 0) {
+                data.scores.wildfire = Math.max(wuiScore, atheniumWildfire);
+            } else {
+                data.scores.wildfire = null;
+            }
+            
+            // Athenium-based scores
+            if (data.athenium) {
+                const flash = data.athenium.flash || 0;
+                const river = data.athenium.river || 0;
+                data.scores.flood = Math.max(flash, river) || null;
+                data.scores.wind = data.athenium.wind || null;
+            }
+            
+            // Subsidence score (California only)
+            if (data.subsidence && data.subsidence.hasData) {
+                data.scores.subsidence = data.subsidence.score;
+            } else {
+                data.scores.subsidence = null;
+            }
+            
+            // Calculate weighted overall score
+            let weightedSum = 0, totalWeight = 0;
+            if (data.scores.karst !== null) { weightedSum += data.scores.karst * WEIGHTS.karst; totalWeight += WEIGHTS.karst; }
+            if (data.scores.seismic !== null) { weightedSum += data.scores.seismic * WEIGHTS.seismic; totalWeight += WEIGHTS.seismic; }
+            if (data.scores.flood !== null) { weightedSum += data.scores.flood * WEIGHTS.flood; totalWeight += WEIGHTS.flood; }
+            if (data.scores.wildfire !== null) { weightedSum += data.scores.wildfire * WEIGHTS.wildfire; totalWeight += WEIGHTS.wildfire; }
+            if (data.scores.wind !== null) { weightedSum += data.scores.wind * WEIGHTS.wind; totalWeight += WEIGHTS.wind; }
+            if (data.scores.soil !== null) { weightedSum += data.scores.soil * WEIGHTS.soil; totalWeight += WEIGHTS.soil; }
+            if (data.scores.subsidence !== null) { weightedSum += data.scores.subsidence * WEIGHTS.subsidence; totalWeight += WEIGHTS.subsidence; }
+            
+            data.scores.overall = totalWeight > 0 ? Math.round((weightedSum / totalWeight) * 10) / 10 : null;
+        }
+
+        function generateFlags() {
+            data.flags = [];
+            const k = data.karst, s = data.soil, eq = data.seismic, a = data.athenium, w = data.wui;
+            
+            // Karst flags
+            if (k && k.score >= 8) {
+                data.flags.push({ severity: 'critical', title: 'EXTREME Karst Risk', detail: 'Nearest karst feature ' + k.nearest.dist.toFixed(2) + ' mi. Mandatory GPR/geotech evaluation.' });
+            } else if (k && k.score >= 6) {
+                data.flags.push({ severity: 'high', title: 'HIGH Karst Risk', detail: 'Nearest feature ' + k.nearest.dist.toFixed(2) + ' mi. Geotech strongly recommended.' });
+            } else if (k && k.score >= 4) {
+                data.flags.push({ severity: 'moderate', title: 'MODERATE Karst Risk', detail: 'Karst features within ' + k.nearest.dist.toFixed(1) + ' mi.' });
+            }
+            
+            // Karst terrain flag (even without nearby features)
+            if (k && k.inKarstTerrain && k.score < 6) {
+                data.flags.push({ severity: 'moderate', title: 'Karst Terrain', detail: 'Site located in ' + (k.rockType || 'carbonate') + ' karst terrain. Enhanced foundation review recommended.' });
+            }
+            
+            // Seismic flags
+            if (eq && eq.pga >= 0.40) {
+                data.flags.push({ severity: 'critical', title: 'EXTREME Seismic Zone', detail: 'PGA ' + (eq.pga * 100).toFixed(1) + '% g. SDC ' + eq.sdc + '.' });
+            } else if (eq && eq.pga >= 0.15) {
+                data.flags.push({ severity: 'high', title: 'HIGH Seismic Risk', detail: 'PGA ' + (eq.pga * 100).toFixed(1) + '% g. SDC ' + eq.sdc + '.' });
+            }
+            
+            // Soil flags
+            if (s && s.corSteel === 'High') {
+                data.flags.push({ severity: 'high', title: 'High Steel Corrosion', detail: 'Soil corrosivity to steel rated HIGH. Cathodic protection required.' });
+            }
+            if (s && s.drainage && s.drainage.toLowerCase().indexOf('poor') >= 0) {
+                data.flags.push({ severity: 'moderate', title: 'Poor Soil Drainage', detail: s.drainage + ' (Hydro Group ' + s.hydro + '). Dewatering may be required.' });
+            }
+            
+            // Flood flags (from Athenium)
+            if (a && a.flash >= 7) {
+                data.flags.push({ severity: 'critical', title: 'EXTREME Flash Flood', detail: 'Athenium flash flood score ' + a.flash + '/10.' });
+            } else if (a && a.flash >= 5) {
+                data.flags.push({ severity: 'high', title: 'HIGH Flash Flood Risk', detail: 'Athenium flash flood score ' + a.flash + '/10.' });
+            }
+            
+            // Wind flags
+            if (a && a.wind >= 8) {
+                data.flags.push({ severity: 'high', title: 'HIGH Wind Exposure', detail: 'Athenium wind score ' + a.wind + '/10. Verify tie-down protocols.' });
+            }
+            
+            // Wildfire flags (from Athenium)
+            if (a && a.wildfire >= 8) {
+                data.flags.push({ severity: 'critical', title: 'EXTREME Wildfire (Athenium)', detail: 'Athenium wildfire score ' + a.wildfire + '/10.' });
+            } else if (a && a.wildfire >= 6) {
+                data.flags.push({ severity: 'high', title: 'HIGH Wildfire (Athenium)', detail: 'Athenium wildfire score ' + a.wildfire + '/10.' });
+            }
+            
+            // WUI/CAL FIRE flags
+            if (w && w.caFireSeverity === 'Very High') {
+                data.flags.push({ severity: 'critical', title: 'CA Very High Fire Hazard', detail: 'CAL FIRE FHSZ: Very High severity. Mandatory fire-resistant construction.' });
+            } else if (w && w.caFireSeverity === 'High') {
+                data.flags.push({ severity: 'high', title: 'CA High Fire Hazard', detail: 'CAL FIRE FHSZ: High severity.' });
+            } else if (w && w.inWUI && w.wuiClass && w.wuiClass.indexOf('Intermix') >= 0) {
+                data.flags.push({ severity: 'high', title: 'WUI Intermix Zone', detail: 'USFS WUI 2020: ' + w.wuiClass.replace(/_/g, ' ') + '.' });
+            } else if (w && w.inWUI && w.wuiClass && w.wuiClass.indexOf('Interface') >= 0) {
+                data.flags.push({ severity: 'moderate', title: 'WUI Interface Zone', detail: 'USFS WUI 2020: ' + w.wuiClass.replace(/_/g, ' ') + '.' });
+            }
+            
+            // California Subsidence flags
+            const sub = data.subsidence;
+            if (sub && sub.hasData) {
+                if (sub.score >= 8) {
+                    data.flags.push({ 
+                        severity: 'critical', 
+                        title: 'EXTREME Ground Subsidence (CA)', 
+                        detail: 'InSAR data shows ~' + sub.estimatedAnnualIn.toFixed(1) + ' in/year subsidence. Total displacement: ' + sub.totalDisplacementIn.toFixed(1) + ' inches since 2015. Mandatory foundation engineering review.' 
+                    });
+                } else if (sub.score >= 6) {
+                    data.flags.push({ 
+                        severity: 'high', 
+                        title: 'HIGH Ground Subsidence (CA)', 
+                        detail: 'InSAR data shows ~' + sub.estimatedAnnualIn.toFixed(1) + ' in/year subsidence. Geotechnical review recommended.' 
+                    });
+                } else if (sub.score >= 4) {
+                    data.flags.push({ 
+                        severity: 'moderate', 
+                        title: 'MODERATE Ground Subsidence (CA)', 
+                        detail: 'InSAR data shows ~' + sub.estimatedAnnualIn.toFixed(1) + ' in/year subsidence. Monitor for long-term settlement.' 
+                    });
+                }
+            }
+        }
+
+        // ============================================
+        // MAIN ANALYSIS FUNCTION
+        // ============================================
+        
+        function setLocation(name, lat, lon) {
+            document.getElementById('projectName').value = name;
+            document.getElementById('lat').value = lat;
+            document.getElementById('lon').value = lon;
+        }
+
+        function updateLoadingStep(step, status) {
+            const steps = document.getElementById('loadingSteps');
+            const existing = document.getElementById('step-' + step);
+            const icon = status === 'done' ? '✓' : status === 'active' ? '◌' : '○';
+            const cls = status === 'done' ? 'done' : status === 'active' ? 'active' : '';
+            
+            if (existing) {
+                existing.className = 'loading-step ' + cls;
+                existing.innerHTML = '<span class="check">' + icon + '</span> ' + step;
+            } else {
+                steps.innerHTML += '<div id="step-' + step + '" class="loading-step ' + cls + '"><span class="check">' + icon + '</span> ' + step + '</div>';
+            }
+        }
+
+        async function runAnalysis() {
+            const name = document.getElementById('projectName').value || 'Unnamed Site';
+            const lat = parseFloat(document.getElementById('lat').value);
+            const lon = parseFloat(document.getElementById('lon').value);
+            
+            if (isNaN(lat) || isNaN(lon) || lat < 24 || lat > 50 || lon < -125 || lon > -66) {
+                alert('Enter valid CONUS coordinates (24-50°N, 66-125°W)');
+                return;
+            }
+            
+            // Initialize
+            data.project = name;
+            data.coordinates = { lat, lon };
+            data.timestamp = new Date().toISOString();
+            data.flags = [];
+            
+            const btn = document.getElementById('analyzeBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div> Analyzing...';
+            document.getElementById('mapLoading').classList.add('active');
+            document.getElementById('loadingSteps').innerHTML = '';
+            
+            try {
+                // Step 1: Elevation
+                updateLoadingStep('Elevation', 'active');
+                document.getElementById('loadingDetail').textContent = 'Querying USGS Elevation...';
+                data.elevation = await fetchElevation(lat, lon);
+                updateLoadingStep('Elevation', 'done');
+                
+                // Step 2: 3DHP Karst Features
+                updateLoadingStep('Karst Features', 'active');
+                document.getElementById('loadingDetail').textContent = 'Querying USGS 3DHP...';
+                const karstData = await fetch3DHP(lat, lon);
+                updateLoadingStep('Karst Features', 'done');
+                
+                // Step 3: Karst Terrain
+                updateLoadingStep('Karst Terrain', 'active');
+                document.getElementById('loadingDetail').textContent = 'Querying Karst Terrain Map...';
+                data.karstTerrain = await fetchKarstTerrain(lat, lon);
+                updateLoadingStep('Karst Terrain', 'done');
+                
+                // Step 4: Process Karst
+                data.karst = processKarst(karstData, data.karstTerrain, lat, lon);
+                
+                // Step 5: SSURGO Soil
+                updateLoadingStep('Soil Survey', 'active');
+                document.getElementById('loadingDetail').textContent = 'Querying USDA SSURGO...';
+                data.soil = await fetchSSURGO(lat, lon);
+                updateLoadingStep('Soil Survey', 'done');
+                
+                // Step 6: Seismic
+                updateLoadingStep('Seismic', 'active');
+                document.getElementById('loadingDetail').textContent = 'Querying USGS Seismic...';
+                data.seismic = await fetchSeismic(lat, lon);
+                updateLoadingStep('Seismic', 'done');
+                
+                // Step 7: WUI/Wildfire
+                updateLoadingStep('Wildfire/WUI', 'active');
+                document.getElementById('loadingDetail').textContent = 'Querying USFS WUI...';
+                data.wui = await fetchWUI(lat, lon);
+                updateLoadingStep('Wildfire/WUI', 'done');
+                
+                // Step 8: California Subsidence (if in CA)
+                if (lon >= -124.5 && lon <= -114 && lat >= 32.5 && lat <= 42) {
+                    updateLoadingStep('CA Subsidence', 'active');
+                    document.getElementById('loadingDetail').textContent = 'Querying CA DWR InSAR...';
+                    data.subsidence = await fetchCASubsidence(lat, lon);
+                    updateLoadingStep('CA Subsidence', 'done');
+                } else {
+                    data.subsidence = null;
+                }
+                
+                // Calculate and render
+                calculateScores();
+                generateFlags();
+                renderResults();
+                renderMapFeatures(karstData.sinks, karstData.springs, karstData.flowlines);
+                flyToSite(lat, lon);
+                updateMapInfo();
+                updateHeader();
+                updateScoreCard();
+                
+            } catch (err) {
+                console.error('Analysis error:', err);
+                alert('Analysis failed: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>⚡</span> Analyze Site';
+                document.getElementById('mapLoading').classList.remove('active');
+            }
+        }
+        // ============================================
+        // UI RENDERING
+        // ============================================
+        
+        function getScoreColor(score) {
+            if (score >= 8) return 'var(--status-critical)';
+            if (score >= 6) return 'var(--status-high)';
+            if (score >= 4) return 'var(--status-moderate)';
+            return 'var(--status-low)';
+        }
+
+        function renderResults() {
+            const container = document.getElementById('resultsContainer');
+            const k = data.karst, s = data.soil;
+            const karstColor = getScoreColor(k ? k.score : 0);
+            
+            let html = '<div class="result-card"><div class="result-header"><div class="result-title"><span>🕳️</span> USGS 3DHP - Karst</div><span class="result-badge ' + (k && k.score >= 8 ? 'badge-critical' : k && k.score >= 6 ? 'badge-high' : k && k.score >= 4 ? 'badge-moderate' : 'badge-low') + '">' + (k ? k.risk : '—') + '</span></div><div class="result-content"><div class="data-grid"><div class="data-item"><div class="data-label">Risk Score</div><div class="data-value xl" style="color:' + karstColor + '">' + (k ? k.score : '—') + '/10</div></div><div class="data-item"><div class="data-label">Nearest</div><div class="data-value">' + (k && k.nearest ? k.nearest.dist.toFixed(2) + ' mi' : 'None') + '</div></div><div class="data-item"><div class="data-label">Sinks</div><div class="data-value">' + (k ? k.sinks.length : 0) + '</div></div><div class="data-item"><div class="data-label">Springs</div><div class="data-value">' + (k ? k.springs.length : 0) + '</div></div></div>';
+            
+            if (k && k.inKarstTerrain) {
+                html += '<div style="margin-top:8px;padding:8px;background:rgba(163,113,247,0.1);border-radius:6px;border-left:3px solid var(--brand-accent);font-size:10px"><strong>⚠️ Karst Terrain:</strong> ' + (k.rockType || 'Carbonate') + '</div>';
+            }
+            html += '</div></div>';
+            
+            // Soil card
+            const soilBadge = s ? (s.corSteel === 'High' ? 'badge-high' : 'badge-low') : 'badge-info';
+            const soilLabel = s ? (s.corSteel === 'High' ? 'CORROSIVE' : 'OK') : 'N/A';
+            html += '<div class="result-card"><div class="result-header"><div class="result-title"><span>🪨</span> USDA SSURGO</div><span class="result-badge ' + soilBadge + '">' + soilLabel + '</span></div><div class="result-content">';
+            if (s) {
+                html += '<div class="data-grid"><div class="data-item full"><div class="data-label">Map Unit</div><div class="data-value sm">' + (s.mapunit || '—') + '</div></div><div class="data-item"><div class="data-label">Drainage</div><div class="data-value sm">' + (s.drainage || '—') + '</div></div><div class="data-item"><div class="data-label">Hydro</div><div class="data-value">' + (s.hydro || '—') + '</div></div><div class="data-item"><div class="data-label">Steel Corr.</div><div class="data-value" style="color:' + (s.corSteel === 'High' ? 'var(--status-critical)' : 'inherit') + '">' + (s.corSteel || '—') + '</div></div><div class="data-item"><div class="data-label">Concrete Corr.</div><div class="data-value" style="color:' + (s.corConcrete === 'High' ? 'var(--status-high)' : 'inherit') + '">' + (s.corConcrete || '—') + '</div></div></div>';
+            } else {
+                html += '<div style="text-align:center;padding:16px;color:var(--text-muted)">No SSURGO data available</div>';
+            }
+            html += '</div></div>';
+            
+            // Flags card
+            if (data.flags.length > 0) {
+                html += '<div class="result-card"><div class="result-header"><div class="result-title"><span>⚠️</span> Risk Flags (' + data.flags.length + ')</div></div><div class="result-content">';
+                data.flags.forEach(f => {
+                    const icon = f.severity === 'critical' ? '🚨' : f.severity === 'high' ? '⚠️' : '⚡';
+                    html += '<div class="risk-flag ' + f.severity + '"><div class="risk-title">' + icon + ' ' + f.title + '</div><div class="risk-detail">' + f.detail + '</div></div>';
+                });
+                html += '</div></div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function updateHeader() {
+            const s = data.scores;
+            
+            const setScore = (id, val) => {
+                const el = document.getElementById(id);
+                if (val !== null && val !== undefined) {
+                    el.textContent = typeof val === 'number' && val % 1 !== 0 ? val.toFixed(1) : val;
+                    el.style.color = val >= 7 ? '#f85149' : val >= 5 ? '#f0883e' : val >= 3 ? '#d29922' : '#2ea043';
+                } else {
+                    el.textContent = '—';
+                    el.style.color = '';
+                }
+            };
+            
+            setScore('headerScore', s.overall);
+            setScore('headerKarst', s.karst);
+            setScore('headerSeismic', s.seismic);
+            setScore('headerFlood', s.flood);
+            setScore('headerWildfire', s.wildfire);
+            setScore('headerWind', s.wind);
+        }
+
+        function updateScoreCard() {
+            const s = data.scores;
+            document.getElementById('scoreCard').style.display = 'block';
+            
+            const overall = document.getElementById('overallScore');
+            overall.textContent = s.overall !== null ? s.overall.toFixed(1) : '—';
+            overall.style.color = getScoreColor(s.overall || 0);
+            
+            const setItem = (id, val) => {
+                const el = document.getElementById(id);
+                el.textContent = val !== null ? val : '—';
+                el.style.color = getScoreColor(val || 0);
+            };
+            
+            setItem('scoreKarst', s.karst);
+            setItem('scoreSeismic', s.seismic);
+            setItem('scoreFlood', s.flood);
+            setItem('scoreWildfire', s.wildfire);
+            setItem('scoreWind', s.wind);
+            setItem('scoreSoil', s.soil);
+            setItem('scoreSubsidence', s.subsidence);
+            
+            // Recommendation based on flags
+            const criticals = data.flags.filter(f => f.severity === 'critical').length;
+            const highs = data.flags.filter(f => f.severity === 'high').length;
+            
+            let rec, color;
+            if (criticals >= 2) { rec = 'DECLINE / SPECIALIST'; color = 'var(--status-critical)'; }
+            else if (criticals >= 1) { rec = 'REQUEST GEOTECH'; color = 'var(--status-high)'; }
+            else if (highs >= 2) { rec = 'ENHANCED DD'; color = 'var(--status-moderate)'; }
+            else if (highs >= 1 || data.flags.length >= 3) { rec = 'STANDARD + CONDITIONS'; color = 'var(--status-moderate)'; }
+            else { rec = 'PROCEED STANDARD'; color = 'var(--status-low)'; }
+            
+            document.getElementById('recommendation').textContent = rec;
+            document.getElementById('recommendation').style.color = color;
+            
+            // Seismic card
+            const eq = data.seismic;
+            if (eq) {
+                document.getElementById('seismicCard').style.display = 'block';
+                document.getElementById('seismicPGA').textContent = (eq.pga * 100).toFixed(1) + '%';
+                document.getElementById('seismicPGA').style.color = eq.pga >= 0.15 ? 'var(--status-critical)' : 'var(--status-low)';
+                document.getElementById('seismicScore').textContent = s.seismic + '/10';
+                document.getElementById('seismicSDC').textContent = eq.sdc || '—';
+                const badge = document.getElementById('seismicBadge');
+                badge.textContent = eq.pga >= 0.40 ? 'EXTREME' : eq.pga >= 0.15 ? 'HIGH' : 'LOW';
+                badge.className = 'result-badge ' + (eq.pga >= 0.40 ? 'badge-critical' : eq.pga >= 0.15 ? 'badge-high' : 'badge-low');
+            }
+            
+            // WUI card
+            const w = data.wui;
+            if (w && (w.wuiClass || w.caFireSeverity || s.wildfire)) {
+                document.getElementById('wuiCard').style.display = 'block';
+                document.getElementById('wuiClass').textContent = w.wuiClass ? w.wuiClass.replace(/_/g, ' ').substring(0, 20) : '—';
+                document.getElementById('wuiScore').textContent = (s.wildfire || w.score || 0) + '/10';
+                document.getElementById('wuiScore').style.color = getScoreColor(s.wildfire || w.score || 0);
+                document.getElementById('caFireSeverity').textContent = w.caFireSeverity || '—';
+                document.getElementById('caFireSeverity').style.color = w.caFireSeverity === 'Very High' ? 'var(--status-critical)' : w.caFireSeverity === 'High' ? 'var(--status-high)' : 'var(--status-low)';
+                document.getElementById('wuiVeg').textContent = w.vegPercent != null ? w.vegPercent.toFixed(0) + '%' : '—';
+                const wuiBadge = document.getElementById('wuiBadge');
+                wuiBadge.textContent = w.risk || 'N/A';
+                wuiBadge.className = 'result-badge ' + (w.score >= 8 ? 'badge-critical' : w.score >= 6 ? 'badge-high' : w.score >= 4 ? 'badge-moderate' : 'badge-low');
+            }
+            
+            // Subsidence card (California only)
+            const sub = data.subsidence;
+            if (sub && sub.hasData) {
+                document.getElementById('subsidenceCard').style.display = 'block';
+                document.getElementById('subsidenceRate').textContent = sub.estimatedAnnualIn.toFixed(1) + ' in/yr';
+                document.getElementById('subsidenceRate').style.color = getScoreColor(sub.score);
+                document.getElementById('subsidenceScore').textContent = sub.score + '/10';
+                document.getElementById('subsidenceScore').style.color = getScoreColor(sub.score);
+                document.getElementById('subsidenceTotal').textContent = sub.totalDisplacementIn.toFixed(1) + ' in';
+                document.getElementById('subsidenceSource').textContent = 'TRE ALTAMIRA';
+                const subBadge = document.getElementById('subsidenceBadge');
+                subBadge.textContent = sub.risk;
+                subBadge.className = 'result-badge ' + (sub.score >= 8 ? 'badge-critical' : sub.score >= 6 ? 'badge-high' : sub.score >= 4 ? 'badge-moderate' : 'badge-low');
+            }
+        }
+
+        function updateMapInfo() {
+            const c = data.coordinates, k = data.karst, eq = data.seismic, s = data.soil, w = data.wui;
+            
+            document.getElementById('infoCoords').textContent = c.lat.toFixed(4) + ', ' + c.lon.toFixed(4);
+            document.getElementById('infoElevation').textContent = data.elevation !== null ? data.elevation.toFixed(1) + ' ft' : '—';
+            document.getElementById('infoSink').textContent = k && k.sinks[0] ? k.sinks[0].dist.toFixed(2) + ' mi' : 'None';
+            document.getElementById('infoKarstTerrain').textContent = k && k.inKarstTerrain ? (k.rockType || 'Yes') : 'No';
+            document.getElementById('infoKarstTerrain').style.color = k && k.inKarstTerrain ? 'var(--status-moderate)' : 'var(--status-low)';
+            document.getElementById('infoPGA').textContent = eq && eq.pga ? (eq.pga * 100).toFixed(1) + '% g' : '—';
+            document.getElementById('infoSoil').textContent = s ? s.component : '—';
+            
+            if (w) {
+                const wuiDisplay = w.wuiClass ? (w.wuiClass.indexOf('Intermix') >= 0 ? 'Intermix' : w.wuiClass.indexOf('Interface') >= 0 ? 'Interface' : 'Non-WUI') : 'Non-WUI';
+                document.getElementById('infoWUI').textContent = wuiDisplay;
+                document.getElementById('infoWUI').style.color = wuiDisplay === 'Intermix' ? 'var(--status-critical)' : wuiDisplay === 'Interface' ? 'var(--status-high)' : 'var(--status-low)';
+                document.getElementById('infoFHSZ').textContent = w.caFireSeverity || (c.lon >= -124.5 && c.lon <= -114 ? 'None' : 'N/A');
+                document.getElementById('infoFHSZ').style.color = w.caFireSeverity === 'Very High' ? 'var(--status-critical)' : w.caFireSeverity === 'High' ? 'var(--status-high)' : 'var(--status-low)';
+            }
+            
+            // Subsidence info (California only)
+            const sub = data.subsidence;
+            if (sub && sub.hasData) {
+                document.getElementById('infoSubsidence').textContent = sub.estimatedAnnualIn.toFixed(1) + ' in/yr';
+                document.getElementById('infoSubsidence').style.color = sub.score >= 8 ? 'var(--status-critical)' : sub.score >= 6 ? 'var(--status-high)' : sub.score >= 4 ? 'var(--status-moderate)' : 'var(--status-low)';
+            } else if (c.lon >= -124.5 && c.lon <= -114 && c.lat >= 32.5 && c.lat <= 42) {
+                document.getElementById('infoSubsidence').textContent = 'No data';
+                document.getElementById('infoSubsidence').style.color = 'var(--text-muted)';
+            } else {
+                document.getElementById('infoSubsidence').textContent = 'N/A';
+                document.getElementById('infoSubsidence').style.color = 'var(--text-muted)';
+            }
+        }
+
+        function parseAthenium() {
+            const text = document.getElementById('atheniumPaste').value;
+            if (!text.trim()) return;
+            
+            const patterns = {
+                river: /river\s*flood.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
+                flash: /flash\s*flood.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
+                elevation: /elevation.*?(\d+(?:,\d+)?(?:\.\d+)?)\s*(?:ft|feet)/i,
+                hurricaneWind: /hurricane\s*wind.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
+                wind: /(?:^|[^e]\s)wind.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
+                hail: /hail.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
+                tornado: /tornado.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
+                rainfall: /rainfall.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
+                wildfire: /wildfire.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
+                fema: /fema.*?zone[:\s]*([A-Z0-9]+)/i
+            };
+            
+            const parsed = {};
+            for (const key in patterns) {
+                const match = text.match(patterns[key]);
+                if (match) parsed[key] = key === 'fema' ? match[1] : parseFloat(match[1].replace(',', ''));
+            }
+            
+            // Use hurricane wind if regular wind not found
+            if (parsed.hurricaneWind && !parsed.wind) parsed.wind = parsed.hurricaneWind;
+            else if (parsed.hurricaneWind && parsed.wind) parsed.wind = Math.max(parsed.wind, parsed.hurricaneWind);
+            
+            data.athenium = parsed;
+            
+            document.getElementById('atheniumDisplay').style.display = 'block';
+            let html = '';
+            for (const k in parsed) {
+                const v = parsed[k];
+                const color = typeof v === 'number' && k !== 'elevation' && v >= 7 ? 'var(--status-critical)' : typeof v === 'number' && k !== 'elevation' && v >= 5 ? 'var(--status-moderate)' : 'var(--status-low)';
+                html += '<div class="athenium-row"><span class="label">' + k.toUpperCase() + '</span><span class="value" style="color:' + color + '">' + (typeof v === 'number' && k !== 'elevation' ? v + '/10' : v) + '</span></div>';
+            }
+            document.getElementById('atheniumParsed').innerHTML = html;
+            
+            // Recalculate
+            calculateScores();
+            generateFlags();
+            updateHeader();
+            updateScoreCard();
+            renderResults();
+        }
+        // ============================================
+        // MAP FEATURES
+        // ============================================
+        
+        function flyToSite(lat, lon) {
+            if (siteMarker) siteMarker.remove();
+            const el = document.createElement('div');
+            el.style.cssText = 'width:18px;height:18px;background:#f85149;border:3px solid white;border-radius:50%;box-shadow:0 2px 12px rgba(0,0,0,0.5);animation:glow 2s ease-in-out infinite';
+            siteMarker = new mapboxgl.Marker(el).setLngLat([lon, lat]).addTo(map);
+            map.flyTo({ center: [lon, lat], zoom: 13, pitch: 45, duration: 2000 });
+        }
+
+        function renderMapFeatures(sinks, springs, flowlines) {
+            featureMarkers.forEach(m => m.remove());
+            featureMarkers = [];
+            if (map.getLayer('flowlines-layer')) map.removeLayer('flowlines-layer');
+            if (map.getSource('flowlines')) map.removeSource('flowlines');
+            
+            sinks.forEach(f => {
+                const el = document.createElement('div');
+                el.style.cssText = 'width:10px;height:10px;background:#a371f7;border:2px solid white;border-radius:50%;cursor:pointer';
+                const marker = new mapboxgl.Marker(el)
+                    .setLngLat([f.geometry.x, f.geometry.y])
+                    .setPopup(new mapboxgl.Popup().setHTML('<div class="popup-title">🕳️ Sink</div><div class="popup-detail">' + (f.attributes?.gnisidlabel || 'Unnamed') + '</div>'))
+                    .addTo(map);
+                marker._type = 'sink';
+                featureMarkers.push(marker);
+            });
+            
+            springs.forEach(f => {
+                const el = document.createElement('div');
+                el.style.cssText = 'width:10px;height:10px;background:#58a6ff;border:2px solid white;border-radius:50%;cursor:pointer';
+                const marker = new mapboxgl.Marker(el)
+                    .setLngLat([f.geometry.x, f.geometry.y])
+                    .setPopup(new mapboxgl.Popup().setHTML('<div class="popup-title">💧 Spring</div><div class="popup-detail">' + (f.attributes?.gnisidlabel || 'Unnamed') + '</div>'))
+                    .addTo(map);
+                marker._type = 'spring';
+                featureMarkers.push(marker);
+            });
+            
+            if (flowlines.length) {
+                const geojson = {
+                    type: 'FeatureCollection',
+                    features: flowlines.filter(f => f.geometry?.paths).map(f => ({
+                        type: 'Feature',
+                        geometry: { type: 'LineString', coordinates: f.geometry.paths[0] }
+                    }))
+                };
+                map.addSource('flowlines', { type: 'geojson', data: geojson });
+                map.addLayer({ id: 'flowlines-layer', type: 'line', source: 'flowlines', paint: { 'line-color': '#58a6ff', 'line-width': 2, 'line-opacity': 0.7 } });
+            }
+        }
+
+        // ============================================
+        // EXPORT FUNCTIONS
+        // ============================================
+        
+        function copyJSON() {
+            navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(() => alert('JSON copied to clipboard'));
+        }
+
+        function generateReport() {
+            const c = data.coordinates, k = data.karst, s = data.soil, eq = data.seismic, w = data.wui, a = data.athenium, flags = data.flags, scores = data.scores;
+            const rec = document.getElementById('recommendation').textContent;
+            
+            // Capture map
+            let mapImage = null;
+            try { mapImage = map.getCanvas().toDataURL('image/png'); } catch (e) { console.warn('Map capture failed:', e); }
+            
+            // Active layers
+            const activeLayers = [];
+            if (document.getElementById('toggleSinks').checked) activeLayers.push('Sinks');
+            if (document.getElementById('toggleSprings').checked) activeLayers.push('Springs');
+            if (document.getElementById('toggleFlowlines').checked) activeLayers.push('Flowlines');
+            if (document.getElementById('toggleKarstTerrain').checked) activeLayers.push('Karst Terrain');
+            if (document.getElementById('toggleFemaFlood').checked) activeLayers.push('FEMA Flood');
+            if (document.getElementById('toggleWUI').checked) activeLayers.push('WUI');
+            if (document.getElementById('toggleFHSZ').checked) activeLayers.push('CA Fire Hazard');
+            if (document.getElementById('toggleCASubsidence').checked) activeLayers.push('CA Subsidence');
+            
+            const html = `<!DOCTYPE html><html><head><title>SiteScore Report - ${data.project}</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:900px;margin:0 auto;padding:40px;color:#1a1a2e;background:#f8fafc}
+@media print{body{padding:20px}.no-print{display:none!important}}
+.header{background:linear-gradient(135deg,#238636,#1f6feb);padding:24px;border-radius:12px;color:white;margin-bottom:24px}
+.header h1{margin:0 0 8px;font-size:24px}
+.score-box{background:linear-gradient(135deg,#238636,#1f6feb);padding:28px;border-radius:12px;text-align:center;color:white;margin-bottom:20px}
+.score-box .score{font-size:60px;font-weight:900;font-family:'JetBrains Mono',monospace}
+.section{background:white;padding:20px;border-radius:10px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.1);page-break-inside:avoid}
+.section h2{margin:0 0 16px;font-size:15px;color:#1a365d;border-bottom:2px solid #e2e8f0;padding-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.item{background:#f8fafc;padding:12px;border-radius:8px;text-align:center}
+.item.full{grid-column:span 3}
+.label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px}
+.value{font-size:16px;font-weight:700}
+.flag{padding:12px;margin-bottom:8px;border-left:4px solid;border-radius:0 8px 8px 0}
+.flag.critical{border-color:#f85149;background:#fef2f2}
+.flag.high{border-color:#f0883e;background:#fff7ed}
+.flag.moderate{border-color:#d29922;background:#fefce8}
+.flag-title{font-weight:700;margin-bottom:4px}
+.flag-detail{font-size:13px;color:#475569}
+.map-section{page-break-inside:avoid}
+.map-img{width:100%;border-radius:10px;border:1px solid #e2e8f0}
+.footer{margin-top:30px;padding-top:20px;border-top:1px solid #e2e8f0;font-size:10px;color:#94a3b8;text-align:center}
+</style></head><body>
+<div class="score-box"><div style="font-size:14px;opacity:0.8">SITE RISK SCORE</div><div class="score">${scores.overall !== null ? scores.overall.toFixed(1) : '—'}</div><div style="font-size:11px;opacity:0.7">0 = Best • 10 = Worst</div></div>
+<div class="header"><h1>📍 SiteScore™ v1.3.1 Report</h1><div style="font-size:18px">${data.project}</div><div style="font-size:12px;opacity:0.9">${c.lat.toFixed(6)}, ${c.lon.toFixed(6)}${data.elevation ? ' • Elev: ' + data.elevation.toFixed(0) + ' ft' : ''} • ${new Date().toLocaleString()}</div></div>
+${mapImage ? `<div class="section map-section"><h2>🗺️ Site Map</h2><img class="map-img" src="${mapImage}" alt="Site Map"><div style="font-size:10px;color:#94a3b8;margin-top:8px">Layers: ${activeLayers.length ? activeLayers.join(', ') : 'Base map only'}</div></div>` : ''}
+<div class="section"><h2>🕳️ Karst Analysis (USGS 3DHP)</h2><div class="grid"><div class="item"><div class="label">Risk Score</div><div class="value" style="color:${k && k.score >= 8 ? '#f85149' : k && k.score >= 6 ? '#f0883e' : '#2ea043'}">${k ? k.score : '—'}/10</div></div><div class="item"><div class="label">Risk Level</div><div class="value">${k ? k.risk : '—'}</div></div><div class="item"><div class="label">Nearest Feature</div><div class="value">${k && k.nearest ? k.nearest.dist.toFixed(2) + ' mi' : 'None'}</div></div><div class="item"><div class="label">Sinks (10km)</div><div class="value">${k ? k.sinks.length : 0}</div></div><div class="item"><div class="label">Springs (10km)</div><div class="value">${k ? k.springs.length : 0}</div></div><div class="item"><div class="label">Karst Terrain</div><div class="value">${k && k.inKarstTerrain ? k.rockType || 'Yes' : 'No'}</div></div></div></div>
+${eq ? `<div class="section"><h2>🌋 Seismic Risk (USGS Design Maps)</h2><div class="grid"><div class="item"><div class="label">PGA</div><div class="value" style="color:${eq.pga >= 0.40 ? '#f85149' : eq.pga >= 0.15 ? '#f0883e' : '#2ea043'}">${(eq.pga * 100).toFixed(1)}% g</div></div><div class="item"><div class="label">Score</div><div class="value">${scores.seismic}/10</div></div><div class="item"><div class="label">SDC</div><div class="value">${eq.sdc || '—'}</div></div><div class="item"><div class="label">Ss</div><div class="value">${eq.ss ? eq.ss.toFixed(2) + 'g' : '—'}</div></div><div class="item"><div class="label">S1</div><div class="value">${eq.s1 ? eq.s1.toFixed(2) + 'g' : '—'}</div></div><div class="item"><div class="label">Risk Category</div><div class="value">II</div></div></div></div>` : ''}
+${w && (w.wuiClass || w.caFireSeverity) ? `<div class="section"><h2>🔥 Wildfire / WUI (USFS + CAL FIRE)</h2><div class="grid"><div class="item"><div class="label">WUI Class</div><div class="value" style="font-size:11px">${w.wuiClass ? w.wuiClass.replace(/_/g, ' ') : '—'}</div></div><div class="item"><div class="label">Fire Score</div><div class="value" style="color:${w.score >= 8 ? '#f85149' : w.score >= 6 ? '#f0883e' : '#2ea043'}">${w.score}/10</div></div><div class="item"><div class="label">CA Fire Hazard</div><div class="value" style="color:${w.caFireSeverity === 'Very High' ? '#f85149' : w.caFireSeverity === 'High' ? '#f0883e' : '#2ea043'}">${w.caFireSeverity || 'N/A'}</div></div></div></div>` : ''}
+${data.subsidence && data.subsidence.hasData ? `<div class="section"><h2>📉 Ground Subsidence (CA DWR InSAR)</h2><div class="grid"><div class="item"><div class="label">Annual Rate</div><div class="value" style="color:${data.subsidence.score >= 8 ? '#f85149' : data.subsidence.score >= 6 ? '#f0883e' : data.subsidence.score >= 4 ? '#d29922' : '#2ea043'}">${data.subsidence.estimatedAnnualIn.toFixed(1)} in/yr</div></div><div class="item"><div class="label">Score</div><div class="value" style="color:${data.subsidence.score >= 8 ? '#f85149' : data.subsidence.score >= 6 ? '#f0883e' : '#2ea043'}">${data.subsidence.score}/10</div></div><div class="item"><div class="label">Risk Level</div><div class="value">${data.subsidence.risk}</div></div><div class="item"><div class="label">Total (2015+)</div><div class="value">${data.subsidence.totalDisplacementIn.toFixed(1)} in</div></div><div class="item"><div class="label">Data Source</div><div class="value" style="font-size:11px">TRE ALTAMIRA</div></div><div class="item"><div class="label">Coverage</div><div class="value" style="font-size:11px">2015-2024</div></div></div></div>` : ''}
+<div class="section"><h2>🪨 Soil Survey (USDA SSURGO)</h2>${s ? `<div class="grid"><div class="item full"><div class="label">Map Unit</div><div class="value" style="font-size:13px">${s.mapunit || '—'}</div></div><div class="item"><div class="label">Drainage</div><div class="value" style="font-size:12px">${s.drainage || '—'}</div></div><div class="item"><div class="label">Hydro Group</div><div class="value">${s.hydro || '—'}</div></div><div class="item"><div class="label">Steel Corr.</div><div class="value" style="color:${s.corSteel === 'High' ? '#f85149' : '#2ea043'}">${s.corSteel || '—'}</div></div></div>` : '<p style="color:#64748b">No SSURGO data available</p>'}</div>
+${a ? `<div class="section"><h2>🌊 Climate Intelligence (Athenium)</h2><div class="grid"><div class="item"><div class="label">Flash Flood</div><div class="value" style="color:${a.flash >= 7 ? '#f85149' : a.flash >= 5 ? '#d29922' : '#2ea043'}">${a.flash || '—'}/10</div></div><div class="item"><div class="label">River Flood</div><div class="value">${a.river || '—'}/10</div></div><div class="item"><div class="label">Wind</div><div class="value" style="color:${a.wind >= 8 ? '#f85149' : '#2ea043'}">${a.wind || '—'}/10</div></div><div class="item"><div class="label">Hail</div><div class="value">${a.hail || '—'}/10</div></div><div class="item"><div class="label">Wildfire</div><div class="value" style="color:${a.wildfire >= 7 ? '#f85149' : '#2ea043'}">${a.wildfire || '—'}/10</div></div><div class="item"><div class="label">FEMA Zone</div><div class="value">${a.fema || '—'}</div></div></div></div>` : ''}
+<div class="section"><h2>⚠️ Risk Flags (${flags.length})</h2>${flags.length ? flags.map(f => `<div class="flag ${f.severity}"><div class="flag-title">${f.severity === 'critical' ? '🚨' : f.severity === 'high' ? '⚠️' : '⚡'} ${f.title}</div><div class="flag-detail">${f.detail}</div></div>`).join('') : '<div class="flag" style="border-color:#2ea043;background:#f0fdf4"><div class="flag-title">✅ No Major Risk Flags</div><div class="flag-detail">Site meets standard underwriting criteria.</div></div>'}</div>
+<div class="section"><h2>🎯 Underwriting Recommendation</h2><div style="text-align:center;padding:20px;background:#f8fafc;border-radius:8px;font-size:22px;font-weight:800;color:${rec.indexOf('DECLINE') >= 0 ? '#f85149' : rec.indexOf('GEOTECH') >= 0 ? '#f0883e' : rec.indexOf('ENHANCED') >= 0 || rec.indexOf('CONDITIONS') >= 0 ? '#d29922' : '#2ea043'}">${rec}</div></div>
+<div class="section"><h2>📊 Score Breakdown</h2><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px"><div class="item"><div class="label">Karst 15%</div><div class="value">${scores.karst !== null ? scores.karst : '—'}</div></div><div class="item"><div class="label">Seismic 15%</div><div class="value">${scores.seismic !== null ? scores.seismic : '—'}</div></div><div class="item"><div class="label">Flood 20%</div><div class="value">${scores.flood !== null ? scores.flood : '—'}</div></div><div class="item"><div class="label">Fire 15%</div><div class="value">${scores.wildfire !== null ? scores.wildfire : '—'}</div></div><div class="item"><div class="label">Wind 15%</div><div class="value">${scores.wind !== null ? scores.wind : '—'}</div></div><div class="item"><div class="label">Soil 10%</div><div class="value">${scores.soil !== null ? scores.soil : '—'}</div></div><div class="item"><div class="label">Subsid 10%</div><div class="value">${scores.subsidence !== null ? scores.subsidence : '—'}</div></div></div></div>
+<div class="footer"><div>SiteScore™ v1.3.1 | Know Before You Bind | ${new Date().toLocaleString()}</div><div style="margin-top:8px">Data: USGS 3DHP, USDA SSURGO, USGS Design Maps, USFS WUI 2020, CAL FIRE FHSZ, CA DWR InSAR, Athenium Analytics</div><div style="margin-top:8px;font-style:italic">Pre-underwriting triage only. Does not replace site-specific geotechnical investigation.</div></div>
+<div class="no-print" style="text-align:center;margin-top:30px"><button onclick="window.print()" style="padding:14px 32px;background:linear-gradient(135deg,#238636,#1f6feb);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">🖨️ Print / Save PDF</button></div>
+</body></html>`;
+            
+            const win = window.open('', '_blank');
+            if (win) { win.document.write(html); win.document.close(); }
+            else { alert('Popup blocked - please allow popups'); }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+</body>
+</html>
