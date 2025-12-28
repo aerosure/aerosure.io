@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiteScore™ v1.3.1 | Know Before You Bind</title>
+    <title>SiteScoreâ"¢ v1.3.3 | Know Before You Bind</title>
     <link rel="icon" type="image/png" href="SiteScore_favicon.png">
     <link rel="apple-touch-icon" href="SiteScore_favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
         .header{background:var(--gradient-header);padding:0 24px;height:56px;display:flex;justify-content:space-between;align-items:center;position:relative;border-bottom:1px solid rgba(255,255,255,0.1)}
         .header::before{content:'';position:absolute;inset:0;background:var(--gradient-glow);pointer-events:none}
         .header-left{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
-        .logo-link{display:flex;align-items:center;text-decoration:none}
+        .logo-link{display:flex;align-items:center;text-decoration:none;min-height:40px;min-width:200px}
         .header-logo{height:40px;width:auto;filter:brightness(1.1)}
         .version{font-size:10px;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px;color:white;font-weight:600}
         .header-scores{display:flex;align-items:center;gap:4px;position:relative;z-index:1}
@@ -217,16 +217,34 @@
         @keyframes glow{0%,100%{box-shadow:0 0 20px rgba(46,160,67,0.3)}50%{box-shadow:0 0 40px rgba(46,160,67,0.5)}}
         .pulse{animation:pulse 2s ease-in-out infinite}
         .glow{animation:glow 2s ease-in-out infinite}
+    
+        /* Flood Risk Card */
+        .flood-card{background:linear-gradient(135deg,rgba(88,166,255,0.08),rgba(46,160,67,0.08));border:1px solid rgba(88,166,255,0.25)}
+        .flood-card .result-header{background:linear-gradient(135deg,rgba(88,166,255,0.15),rgba(46,160,67,0.15))}
+        .freeboard-warning{padding:8px;background:rgba(248,81,73,0.15);border-left:3px solid var(--status-critical);border-radius:0 6px 6px 0;margin-top:8px;font-size:10px}
+        .freeboard-ok{padding:8px;background:rgba(46,160,67,0.15);border-left:3px solid var(--status-low);border-radius:0 6px 6px 0;margin-top:8px;font-size:10px}
+        .freeboard-moderate{padding:8px;background:rgba(210,153,34,0.15);border-left:3px solid var(--status-moderate);border-radius:0 6px 6px 0;margin-top:8px;font-size:10px}
+        /* Historical Validation Card */
+        .history-card{background:linear-gradient(135deg,rgba(240,136,62,0.08),rgba(210,153,34,0.08));border:1px solid rgba(240,136,62,0.25)}
+        .history-card .result-header{background:linear-gradient(135deg,rgba(240,136,62,0.15),rgba(210,153,34,0.15))}
+        .hurricane-timeline{margin-top:10px;padding:10px;background:var(--bg-tertiary);border-radius:6px}
+        .hurricane-event{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-color);font-size:10px}
+        .hurricane-event:last-child{border-bottom:none}
+        .hurricane-name{font-weight:700}
+        .hurricane-date{color:var(--text-muted);font-size:9px}
+        .hurricane-wind{font-family:'JetBrains Mono',monospace;font-weight:600}
+
     </style>
 </head>
 <body>
     <!-- HEADER -->
     <header class="header">
         <div class="header-left">
-            <a href="https://aerosure.io" class="logo-link">
-                <img src="SiteScore_Logo.png" alt="SiteScore™" class="header-logo">
+            <a href="https://aerosure.io" class="logo-link" title="Back to aerosure.io">
+                <img src="SiteScore_Logo.png" alt="SiteScoreâ"¢" class="header-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                <span class="logo-fallback" style="display:none;color:white;font-weight:700;font-size:18px">SiteScoreâ"¢</span>
             </a>
-            <span class="version">v1.3.1</span>
+            <span class="version">v1.3.3</span>
         </div>
         <div class="header-scores">
             <div class="score-pill main"><div class="score-pill-value" id="headerScore">—</div><div class="score-pill-label">Score</div></div>
@@ -260,12 +278,13 @@
                         <div class="input-field"><label>Latitude</label><input type="text" id="lat" placeholder="35.9427"></div>
                         <div class="input-field"><label>Longitude</label><input type="text" id="lon" placeholder="-83.9510"></div>
                     </div>
-                    <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()"><span>⚡</span> Analyze Site</button>
+                    <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()"><span>âš¡</span> Analyze Site</button>
                     <div class="quick-locations">
                         <div class="quick-title">Test Locations</div>
                         <button class="quick-btn" onclick="setLocation('UT MFR Research',35.9427,-83.9510)"><span class="icon">🕳️</span><span class="name">Knoxville TN</span><span class="tag tag-critical">KARST</span></button>
                         <button class="quick-btn" onclick="setLocation('LA Office Tower',34.0522,-118.2437)"><span class="icon">🌋</span><span class="name">Los Angeles CA</span><span class="tag tag-seismic">SEISMIC</span></button>
                         <button class="quick-btn" onclick="setLocation('Lake Arrowhead Resort',34.248,-117.189)"><span class="icon">🔥</span><span class="name">Lake Arrowhead CA</span><span class="tag tag-critical">WUI</span></button>
+                        <button class="quick-btn" onclick="setLocation('USD Phase 1B',37.592665,-122.089949)"><span class="icon">🌊</span><span class="name">Union City CA</span><span class="tag tag-high">LIQUEFACTION</span></button>
                         <button class="quick-btn" onclick="setLocation('Miami Distribution',25.76,-80.19)"><span class="icon">🌊</span><span class="name">Miami FL</span><span class="tag tag-high">FLOOD</span></button>
                         <button class="quick-btn" onclick="setLocation('Denver Tech',39.74,-104.99)"><span class="icon">✅</span><span class="name">Denver CO</span><span class="tag tag-low">LOW</span></button>
                         <button class="quick-btn" onclick="setLocation('Corcoran Ag Facility',36.098,-119.56)"><span class="icon">📉</span><span class="name">Corcoran CA</span><span class="tag tag-subsidence">SUBSIDENCE</span></button>
@@ -325,6 +344,7 @@
                 <div class="map-info-row"><span class="map-info-label">WUI Class</span><span class="map-info-value" id="infoWUI">—</span></div>
                 <div class="map-info-row"><span class="map-info-label">CA Fire Zone</span><span class="map-info-value" id="infoFHSZ">—</span></div>
                 <div class="map-info-row"><span class="map-info-label">CA Subsidence</span><span class="map-info-value" id="infoSubsidence">—</span></div>
+                <div class="map-info-row"><span class="map-info-label">CA Liquefaction</span><span class="map-info-value" id="infoLiquefaction">—</span></div>
                 <div class="map-info-row"><span class="map-info-label">Soil Type</span><span class="map-info-value" id="infoSoil">—</span></div>
             </div>
             <div class="map-legend">
@@ -399,6 +419,39 @@
                         </div>
                     </div>
                 </div>
+                                <div class="result-card flood-card" id="floodRiskCard" style="display:none">
+                    <div class="result-header"><div class="result-title"><span>🌊</span> Flood Risk Analysis</div><span class="result-badge badge-info" id="floodRiskBadge">—</span></div>
+                    <div class="result-content">
+                        <div class="data-grid">
+                            <div class="data-item"><div class="data-label">River Flood</div><div class="data-value" id="floodRiver">—</div></div>
+                            <div class="data-item"><div class="data-label">Flash Flood</div><div class="data-value" id="floodFlash">—</div></div>
+                            <div class="data-item"><div class="data-label">FEMA Zone</div><div class="data-value" id="floodFema">—</div></div>
+                            <div class="data-item"><div class="data-label">BFE</div><div class="data-value" id="floodBfe">—</div></div>
+                            <div class="data-item"><div class="data-label">Elevation</div><div class="data-value" id="floodElev">—</div></div>
+                            <div class="data-item"><div class="data-label">Freeboard</div><div class="data-value" id="floodFreeboard">—</div></div>
+                        </div>
+                        <div id="freeboardAlert"></div>
+                        <div class="data-grid" style="margin-top:8px">
+                            <div class="data-item"><div class="data-label">100-yr Depth</div><div class="data-value" id="floodInund100">—</div></div>
+                            <div class="data-item"><div class="data-label">500-yr Depth</div><div class="data-value" id="floodInund500">—</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-card history-card" id="historyCard" style="display:none">
+                    <div class="result-header"><div class="result-title"><span>📜</span> Historical Validation</div><span class="result-badge badge-info" id="historyBadge">—</span></div>
+                    <div class="result-content">
+                        <div class="data-grid">
+                            <div class="data-item"><div class="data-label">Hail Events</div><div class="data-value" id="histHail">—</div></div>
+                            <div class="data-item"><div class="data-label">Wind Events</div><div class="data-value" id="histWind">—</div></div>
+                            <div class="data-item"><div class="data-label">Max Hail</div><div class="data-value" id="histMaxHail">—</div></div>
+                            <div class="data-item"><div class="data-label">Max Wind</div><div class="data-value" id="histMaxWind">—</div></div>
+                        </div>
+                        <div class="hurricane-timeline" id="hurricaneTimeline" style="display:none">
+                            <div style="font-size:9px;font-weight:600;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">🌀 Hurricane History</div>
+                            <div id="hurricaneEvents"></div>
+                        </div>
+                    </div>
+                </div>
                 <div class="result-card athenium-card">
                     <div class="result-header"><div class="result-title"><span>📊</span> Athenium Climate Data</div></div>
                     <div class="result-content">
@@ -441,7 +494,9 @@ Hail: 5/10"></textarea>
             USGS_KARST: 'https://mrdata.usgs.gov/services/karst',
             // California DWR InSAR Subsidence Data (TRE ALTAMIRA)
             CA_SUBSIDENCE_POINTS: 'https://gis.water.ca.gov/arcgis/rest/services/Elevation/Vertical_Displacement_Point_Data_Locations_2024Q1/MapServer/0',
-            CA_SUBSIDENCE_RASTER: 'https://gis.water.ca.gov/arcgisimg/rest/services/SAR/Vertical_Displacement_TRE_ALTAMIRA_Annual_Rate_20230101_20240101/ImageServer'
+            CA_SUBSIDENCE_RASTER: 'https://gis.water.ca.gov/arcgisimg/rest/services/SAR/Vertical_Displacement_TRE_ALTAMIRA_Annual_Rate_20230101_20240101/ImageServer',
+            // California Geological Survey - Seismic Hazard Zones (Liquefaction)
+            CA_CGS_LIQUEFACTION: 'https://services.gis.ca.gov/arcgis/rest/services/GeoscientificInformation/Liquefaction/MapServer/0'
         };
 
         // Scoring weights - evenly distributed across major perils
@@ -471,6 +526,7 @@ Hail: 5/10"></textarea>
             seismic: null,
             wui: null,
             subsidence: null,  // California InSAR subsidence data
+            liquefaction: null, // California CGS Liquefaction Zone
             athenium: null,
             flags: [],
             scores: { karst: null, seismic: null, flood: null, wildfire: null, wind: null, soil: null, subsidence: null, overall: null },
@@ -493,7 +549,7 @@ Hail: 5/10"></textarea>
                 // Add terrain
                 map.addSource('mapbox-dem', { type: 'raster-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512 });
                 map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
-                console.log('SiteScore v1.3.1: Map initialized');
+                console.log('SiteScore v1.3.3: Map initialized');
             });
 
             map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
@@ -1031,6 +1087,56 @@ Hail: 5/10"></textarea>
         }
 
         // ============================================
+        // CALIFORNIA CGS LIQUEFACTION ZONE (Seismic Hazard Mapping Act)
+        // ============================================
+        async function fetchCALiquefaction(lat, lon) {
+            // Only query if in California (roughly lon -124.5 to -114, lat 32.5 to 42)
+            if (lon < -124.5 || lon > -114 || lat < 32.5 || lat > 42) {
+                console.log('Outside California - skipping liquefaction zone query');
+                return null;
+            }
+            
+            try {
+                const url = API.CA_CGS_LIQUEFACTION + '/query?' + new URLSearchParams({
+                    geometry: lon + ',' + lat,
+                    geometryType: 'esriGeometryPoint',
+                    inSR: '4326',
+                    spatialRel: 'esriSpatialRelIntersects',
+                    outFields: '*',
+                    returnGeometry: 'false',
+                    f: 'json'
+                });
+                
+                const res = await fetch(url);
+                const json = await res.json();
+                
+                if (json.features && json.features.length > 0) {
+                    // Site is within a CGS Liquefaction Zone of Required Investigation
+                    console.log('CGS Liquefaction Zone: Site is IN ZONE', json.features[0]);
+                    return {
+                        inZone: true,
+                        zoneType: 'Liquefaction Zone of Required Investigation',
+                        authority: 'California Geological Survey',
+                        legalBasis: 'Seismic Hazards Mapping Act (PRC §2690-2699.6)',
+                        requirement: 'Site-specific geotechnical investigation required per CGS SP-117A'
+                    };
+                } else {
+                    // Site is NOT in a mapped liquefaction zone
+                    console.log('CGS Liquefaction Zone: Site is NOT in zone');
+                    return {
+                        inZone: false,
+                        zoneType: null,
+                        authority: 'California Geological Survey'
+                    };
+                }
+                
+            } catch (err) {
+                console.error('CGS Liquefaction query error:', err);
+                return null;
+            }
+        }
+
+        // ============================================
         // SCORING & FLAGS
         // ============================================
         
@@ -1195,6 +1301,156 @@ Hail: 5/10"></textarea>
                     });
                 }
             }
+            
+            // California CGS Liquefaction Zone flag
+            const liq = data.liquefaction;
+            if (liq && liq.inZone) {
+                // When in a CGS liquefaction zone, this is a regulatory requirement - always flag as HIGH
+                // because it triggers mandatory geotech investigation per California law
+                data.flags.push({
+                    severity: 'high',
+                    title: 'CA Liquefaction Zone (CGS)',
+                    detail: 'Site is within a California Seismic Hazard Zone of Required Investigation for liquefaction. Per Seismic Hazards Mapping Act (PRC §2690), site-specific geotechnical investigation required before development permits. Request geotech report per CGS SP-117A.'
+                });
+                
+                // If we also have high seismic PGA, escalate to critical
+                if (eq && eq.pga >= 0.40) {
+                    // Find and upgrade the liquefaction flag we just added
+                    const liqFlag = data.flags[data.flags.length - 1];
+                    liqFlag.severity = 'critical';
+                    liqFlag.title = 'CRITICAL: CA Liquefaction Zone + Extreme Seismic';
+                    liqFlag.detail = 'Site is in CGS Liquefaction Zone AND extreme seismic area (PGA ' + (eq.pga * 100).toFixed(1) + '% g). Mandatory geotechnical report with liquefaction analysis per CGS SP-117A. High potential for ground failure.';
+                }
+            }
+        }
+
+        // ============================================
+        // FLOOD & HISTORY CARD UPDATES (v1.3.3)
+        // ============================================
+        
+        function updateFloodRiskCard(parsed) {
+            const fd = parsed.floodDetails || {};
+            const hasFloodData = parsed.river || parsed.flash || fd.bfe || parsed.fema;
+            
+            if (!hasFloodData) {
+                document.getElementById('floodRiskCard').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('floodRiskCard').style.display = 'block';
+            
+            const riverEl = document.getElementById('floodRiver');
+            if (parsed.river) {
+                riverEl.textContent = parsed.river + '/10';
+                riverEl.style.color = parsed.river >= 8 ? 'var(--status-critical)' : parsed.river >= 6 ? 'var(--status-high)' : 'var(--status-low)';
+            }
+            
+            const flashEl = document.getElementById('floodFlash');
+            if (parsed.flash) {
+                flashEl.textContent = parsed.flash + '/10';
+                flashEl.style.color = parsed.flash >= 7 ? 'var(--status-critical)' : parsed.flash >= 5 ? 'var(--status-high)' : 'var(--status-low)';
+            }
+            
+            const femaEl = document.getElementById('floodFema');
+            if (parsed.fema) {
+                femaEl.textContent = parsed.fema;
+                const highRiskZones = ['A', 'AE', 'AH', 'AO', 'V', 'VE'];
+                femaEl.style.color = highRiskZones.includes(parsed.fema.toUpperCase()) ? 'var(--status-critical)' : 'var(--status-low)';
+            }
+            
+            if (fd.bfe) document.getElementById('floodBfe').textContent = fd.bfe.toFixed(1) + ' ft';
+            
+            const elev = parsed.elevation || data.elevation;
+            if (elev) document.getElementById('floodElev').textContent = elev.toFixed(1) + ' ft';
+            
+            const freeboardEl = document.getElementById('floodFreeboard');
+            const alertEl = document.getElementById('freeboardAlert');
+            
+            if (fd.freeboard !== undefined) {
+                freeboardEl.textContent = fd.freeboard.toFixed(1) + ' ft';
+                if (fd.freeboard < 0) {
+                    freeboardEl.style.color = 'var(--status-critical)';
+                    alertEl.innerHTML = '<div class="freeboard-warning">⚠️ <strong>CRITICAL:</strong> Property is ' + Math.abs(fd.freeboard).toFixed(1) + ' ft BELOW Base Flood Elevation</div>';
+                } else if (fd.freeboard < 2) {
+                    freeboardEl.style.color = 'var(--status-moderate)';
+                    alertEl.innerHTML = '<div class="freeboard-moderate">⚡ Low freeboard - only ' + fd.freeboard.toFixed(1) + ' ft above BFE</div>';
+                } else {
+                    freeboardEl.style.color = 'var(--status-low)';
+                    alertEl.innerHTML = '<div class="freeboard-ok">✓ Adequate freeboard: ' + fd.freeboard.toFixed(1) + ' ft above BFE</div>';
+                }
+            } else if (fd.bfe && elev) {
+                const calcFreeboard = elev - fd.bfe;
+                freeboardEl.textContent = calcFreeboard.toFixed(1) + ' ft';
+                if (calcFreeboard < 0) {
+                    freeboardEl.style.color = 'var(--status-critical)';
+                    alertEl.innerHTML = '<div class="freeboard-warning">⚠️ <strong>CRITICAL:</strong> Property is ' + Math.abs(calcFreeboard).toFixed(1) + ' ft BELOW Base Flood Elevation</div>';
+                } else if (calcFreeboard < 2) {
+                    freeboardEl.style.color = 'var(--status-moderate)';
+                    alertEl.innerHTML = '<div class="freeboard-moderate">⚡ Low freeboard - only ' + calcFreeboard.toFixed(1) + ' ft above BFE</div>';
+                } else {
+                    freeboardEl.style.color = 'var(--status-low)';
+                    alertEl.innerHTML = '<div class="freeboard-ok">✓ Adequate freeboard: ' + calcFreeboard.toFixed(1) + ' ft above BFE</div>';
+                }
+            }
+            
+            if (fd.inund100) {
+                const el = document.getElementById('floodInund100');
+                el.textContent = fd.inund100.toFixed(1) + ' ft';
+                el.style.color = fd.inund100 >= 10 ? 'var(--status-critical)' : fd.inund100 >= 5 ? 'var(--status-high)' : 'var(--status-moderate)';
+            }
+            if (fd.inund500) {
+                const el = document.getElementById('floodInund500');
+                el.textContent = fd.inund500.toFixed(1) + ' ft';
+                el.style.color = fd.inund500 >= 15 ? 'var(--status-critical)' : fd.inund500 >= 8 ? 'var(--status-high)' : 'var(--status-moderate)';
+            }
+            
+            const badge = document.getElementById('floodRiskBadge');
+            const maxFlood = Math.max(parsed.river || 0, parsed.flash || 0);
+            if (maxFlood >= 8) { badge.textContent = 'EXTREME'; badge.className = 'result-badge badge-critical'; }
+            else if (maxFlood >= 6) { badge.textContent = 'HIGH'; badge.className = 'result-badge badge-high'; }
+            else if (maxFlood >= 4) { badge.textContent = 'MODERATE'; badge.className = 'result-badge badge-moderate'; }
+            else { badge.textContent = 'LOW'; badge.className = 'result-badge badge-low'; }
+        }
+        
+        function updateHistoryCard(parsed) {
+            const h = parsed.history || {};
+            const hasHistory = h.hailEvents || h.windEvents || parsed.hurricanes?.length;
+            
+            if (!hasHistory) {
+                document.getElementById('historyCard').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('historyCard').style.display = 'block';
+            
+            if (h.hailEvents) document.getElementById('histHail').textContent = h.hailEvents;
+            if (h.windEvents) document.getElementById('histWind').textContent = h.windEvents;
+            if (h.maxHail) {
+                const el = document.getElementById('histMaxHail');
+                el.textContent = h.maxHail.toFixed(1) + '"';
+                el.style.color = h.maxHail >= 2 ? 'var(--status-critical)' : h.maxHail >= 1 ? 'var(--status-high)' : 'var(--status-low)';
+            }
+            if (h.maxWind) {
+                const el = document.getElementById('histMaxWind');
+                el.textContent = h.maxWind.toFixed(0) + ' mph';
+                el.style.color = h.maxWind >= 75 ? 'var(--status-critical)' : h.maxWind >= 58 ? 'var(--status-high)' : 'var(--status-low)';
+            }
+            
+            if (parsed.hurricanes && parsed.hurricanes.length > 0) {
+                document.getElementById('hurricaneTimeline').style.display = 'block';
+                let hHtml = '';
+                parsed.hurricanes.forEach(storm => {
+                    const windColor = storm.wind >= 111 ? 'var(--status-critical)' : storm.wind >= 96 ? 'var(--status-high)' : 'var(--status-moderate)';
+                    hHtml += '<div class="hurricane-event"><span class="hurricane-name">🌀 ' + storm.name.toUpperCase() + '</span><span class="hurricane-date">' + storm.date + '</span><span class="hurricane-wind" style="color:' + windColor + '">' + storm.wind.toFixed(0) + ' mph</span></div>';
+                });
+                document.getElementById('hurricaneEvents').innerHTML = hHtml;
+            }
+            
+            const badge = document.getElementById('historyBadge');
+            const totalEvents = (h.hailEvents || 0) + (h.windEvents || 0);
+            if (totalEvents >= 50 || parsed.hurricanes?.length >= 2) { badge.textContent = 'HIGH ACTIVITY'; badge.className = 'result-badge badge-high'; }
+            else if (totalEvents >= 20) { badge.textContent = 'MODERATE'; badge.className = 'result-badge badge-moderate'; }
+            else { badge.textContent = 'LOW'; badge.className = 'result-badge badge-low'; }
         }
 
         // ============================================
@@ -1289,8 +1545,15 @@ Hail: 5/10"></textarea>
                     document.getElementById('loadingDetail').textContent = 'Querying CA DWR InSAR...';
                     data.subsidence = await fetchCASubsidence(lat, lon);
                     updateLoadingStep('CA Subsidence', 'done');
+                    
+                    // Step 9: California CGS Liquefaction Zone
+                    updateLoadingStep('CA Liquefaction Zone', 'active');
+                    document.getElementById('loadingDetail').textContent = 'Querying CGS Seismic Hazard Zones...';
+                    data.liquefaction = await fetchCALiquefaction(lat, lon);
+                    updateLoadingStep('CA Liquefaction Zone', 'done');
                 } else {
                     data.subsidence = null;
+                    data.liquefaction = null;
                 }
                 
                 // Calculate and render
@@ -1308,7 +1571,7 @@ Hail: 5/10"></textarea>
                 alert('Analysis failed: ' + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<span>⚡</span> Analyze Site';
+                btn.innerHTML = '<span>âš¡</span> Analyze Site';
                 document.getElementById('mapLoading').classList.remove('active');
             }
         }
@@ -1492,12 +1755,26 @@ Hail: 5/10"></textarea>
                 document.getElementById('infoSubsidence').textContent = 'N/A';
                 document.getElementById('infoSubsidence').style.color = 'var(--text-muted)';
             }
+            
+            // Liquefaction Zone info (California only)
+            const liq = data.liquefaction;
+            if (liq && liq.inZone) {
+                document.getElementById('infoLiquefaction').textContent = 'IN ZONE';
+                document.getElementById('infoLiquefaction').style.color = 'var(--status-high)';
+            } else if (c.lon >= -124.5 && c.lon <= -114 && c.lat >= 32.5 && c.lat <= 42) {
+                document.getElementById('infoLiquefaction').textContent = liq ? 'Not in zone' : 'No data';
+                document.getElementById('infoLiquefaction').style.color = 'var(--status-low)';
+            } else {
+                document.getElementById('infoLiquefaction').textContent = 'N/A';
+                document.getElementById('infoLiquefaction').style.color = 'var(--text-muted)';
+            }
         }
 
         function parseAthenium() {
             const text = document.getElementById('atheniumPaste').value;
             if (!text.trim()) return;
             
+            // Risk score patterns
             const patterns = {
                 river: /river\s*flood.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
                 flash: /flash\s*flood.*?(\d+(?:\.\d+)?)\s*\/\s*10/i,
@@ -1511,10 +1788,54 @@ Hail: 5/10"></textarea>
                 fema: /fema.*?zone[:\s]*([A-Z0-9]+)/i
             };
             
+            // Flood detail patterns (v1.3.3)
+            const floodPatterns = {
+                bfe: /base\s*flood\s*elevation[:\s]*(\d+(?:\.\d+)?)\s*(?:ft|feet)/i,
+                freeboard: /freeboard[:\s]*([-]?\d+(?:\.\d+)?)\s*(?:ft|feet)/i,
+                inund100: /100[-\s]*(?:yr|year)\s*(?:inundation|depth|flood)[:\s]*(\d+(?:\.\d+)?)/i,
+                inund500: /500[-\s]*(?:yr|year)\s*(?:inundation|depth|flood)[:\s]*(\d+(?:\.\d+)?)/i
+            };
+            
+            // Historical patterns (v1.3.3)
+            const histPatterns = {
+                hailEvents: /hail\s*events[:\s]*(\d+)/i,
+                windEvents: /wind\s*events[:\s]*(\d+)/i,
+                maxHail: /max(?:imum)?\s*hail[:\s]*(\d+(?:\.\d+)?)\s*(?:in|inch|")/i,
+                maxWind: /max(?:imum)?\s*wind[:\s]*(\d+(?:\.\d+)?)\s*(?:mph)/i
+            };
+            
+            // Hurricane pattern (v1.3.3)
+            const hurricanePattern = /hurricane\s+(\w+)[:\s]*(\d+(?:\.\d+)?)\s*mph\s*\(([^)]+)\)/gi;
+            
             const parsed = {};
             for (const key in patterns) {
                 const match = text.match(patterns[key]);
                 if (match) parsed[key] = key === 'fema' ? match[1] : parseFloat(match[1].replace(',', ''));
+            }
+            
+            // Parse flood details
+            parsed.floodDetails = {};
+            for (const key in floodPatterns) {
+                const match = text.match(floodPatterns[key]);
+                if (match) parsed.floodDetails[key] = parseFloat(match[1]);
+            }
+            
+            // Parse historical data
+            parsed.history = {};
+            for (const key in histPatterns) {
+                const match = text.match(histPatterns[key]);
+                if (match) parsed.history[key] = parseFloat(match[1]);
+            }
+            
+            // Parse hurricanes
+            parsed.hurricanes = [];
+            let hMatch;
+            while ((hMatch = hurricanePattern.exec(text)) !== null) {
+                parsed.hurricanes.push({
+                    name: hMatch[1],
+                    wind: parseFloat(hMatch[2]),
+                    date: hMatch[3]
+                });
             }
             
             // Use hurricane wind if regular wind not found
@@ -1523,14 +1844,22 @@ Hail: 5/10"></textarea>
             
             data.athenium = parsed;
             
+            // Update Athenium display
             document.getElementById('atheniumDisplay').style.display = 'block';
             let html = '';
-            for (const k in parsed) {
-                const v = parsed[k];
-                const color = typeof v === 'number' && k !== 'elevation' && v >= 7 ? 'var(--status-critical)' : typeof v === 'number' && k !== 'elevation' && v >= 5 ? 'var(--status-moderate)' : 'var(--status-low)';
-                html += '<div class="athenium-row"><span class="label">' + k.toUpperCase() + '</span><span class="value" style="color:' + color + '">' + (typeof v === 'number' && k !== 'elevation' ? v + '/10' : v) + '</span></div>';
+            const displayKeys = ['river', 'flash', 'wind', 'hail', 'wildfire', 'tornado', 'fema'];
+            for (const k of displayKeys) {
+                if (parsed[k] !== undefined) {
+                    const v = parsed[k];
+                    const color = typeof v === 'number' && v >= 7 ? 'var(--status-critical)' : typeof v === 'number' && v >= 5 ? 'var(--status-moderate)' : 'var(--status-low)';
+                    html += '<div class="athenium-row"><span class="label">' + k.toUpperCase() + '</span><span class="value" style="color:' + color + '">' + (typeof v === 'number' ? v + '/10' : v) + '</span></div>';
+                }
             }
             document.getElementById('atheniumParsed').innerHTML = html;
+            
+            // Update new cards (v1.3.3)
+            updateFloodRiskCard(parsed);
+            updateHistoryCard(parsed);
             
             // Recalculate
             calculateScores();
@@ -1644,20 +1973,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:900px;mar
 .map-section{page-break-inside:avoid}
 .map-img{width:100%;border-radius:10px;border:1px solid #e2e8f0}
 .footer{margin-top:30px;padding-top:20px;border-top:1px solid #e2e8f0;font-size:10px;color:#94a3b8;text-align:center}
-</style></head><body>
+
+        /* Flood Risk Card */
+        .flood-card{background:linear-gradient(135deg,rgba(88,166,255,0.08),rgba(46,160,67,0.08));border:1px solid rgba(88,166,255,0.25)}
+        .flood-card .result-header{background:linear-gradient(135deg,rgba(88,166,255,0.15),rgba(46,160,67,0.15))}
+        .freeboard-warning{padding:8px;background:rgba(248,81,73,0.15);border-left:3px solid var(--status-critical);border-radius:0 6px 6px 0;margin-top:8px;font-size:10px}
+        .freeboard-ok{padding:8px;background:rgba(46,160,67,0.15);border-left:3px solid var(--status-low);border-radius:0 6px 6px 0;margin-top:8px;font-size:10px}
+        .freeboard-moderate{padding:8px;background:rgba(210,153,34,0.15);border-left:3px solid var(--status-moderate);border-radius:0 6px 6px 0;margin-top:8px;font-size:10px}
+        /* Historical Validation Card */
+        .history-card{background:linear-gradient(135deg,rgba(240,136,62,0.08),rgba(210,153,34,0.08));border:1px solid rgba(240,136,62,0.25)}
+        .history-card .result-header{background:linear-gradient(135deg,rgba(240,136,62,0.15),rgba(210,153,34,0.15))}
+        .hurricane-timeline{margin-top:10px;padding:10px;background:var(--bg-tertiary);border-radius:6px}
+        .hurricane-event{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-color);font-size:10px}
+        .hurricane-event:last-child{border-bottom:none}
+        .hurricane-name{font-weight:700}
+        .hurricane-date{color:var(--text-muted);font-size:9px}
+        .hurricane-wind{font-family:'JetBrains Mono',monospace;font-weight:600}
+
+    </style></head><body>
 <div class="score-box"><div style="font-size:14px;opacity:0.8">SITE RISK SCORE</div><div class="score">${scores.overall !== null ? scores.overall.toFixed(1) : '—'}</div><div style="font-size:11px;opacity:0.7">0 = Best • 10 = Worst</div></div>
-<div class="header"><h1>📍 SiteScore™ v1.3.1 Report</h1><div style="font-size:18px">${data.project}</div><div style="font-size:12px;opacity:0.9">${c.lat.toFixed(6)}, ${c.lon.toFixed(6)}${data.elevation ? ' • Elev: ' + data.elevation.toFixed(0) + ' ft' : ''} • ${new Date().toLocaleString()}</div></div>
+<div class="header"><h1>📍 SiteScore™ v1.3.3 Report</h1><div style="font-size:18px">${data.project}</div><div style="font-size:12px;opacity:0.9">${c.lat.toFixed(6)}, ${c.lon.toFixed(6)}${data.elevation ? ' • Elev: ' + data.elevation.toFixed(0) + ' ft' : ''} • ${new Date().toLocaleString()}</div></div>
 ${mapImage ? `<div class="section map-section"><h2>🗺️ Site Map</h2><img class="map-img" src="${mapImage}" alt="Site Map"><div style="font-size:10px;color:#94a3b8;margin-top:8px">Layers: ${activeLayers.length ? activeLayers.join(', ') : 'Base map only'}</div></div>` : ''}
 <div class="section"><h2>🕳️ Karst Analysis (USGS 3DHP)</h2><div class="grid"><div class="item"><div class="label">Risk Score</div><div class="value" style="color:${k && k.score >= 8 ? '#f85149' : k && k.score >= 6 ? '#f0883e' : '#2ea043'}">${k ? k.score : '—'}/10</div></div><div class="item"><div class="label">Risk Level</div><div class="value">${k ? k.risk : '—'}</div></div><div class="item"><div class="label">Nearest Feature</div><div class="value">${k && k.nearest ? k.nearest.dist.toFixed(2) + ' mi' : 'None'}</div></div><div class="item"><div class="label">Sinks (10km)</div><div class="value">${k ? k.sinks.length : 0}</div></div><div class="item"><div class="label">Springs (10km)</div><div class="value">${k ? k.springs.length : 0}</div></div><div class="item"><div class="label">Karst Terrain</div><div class="value">${k && k.inKarstTerrain ? k.rockType || 'Yes' : 'No'}</div></div></div></div>
 ${eq ? `<div class="section"><h2>🌋 Seismic Risk (USGS Design Maps)</h2><div class="grid"><div class="item"><div class="label">PGA</div><div class="value" style="color:${eq.pga >= 0.40 ? '#f85149' : eq.pga >= 0.15 ? '#f0883e' : '#2ea043'}">${(eq.pga * 100).toFixed(1)}% g</div></div><div class="item"><div class="label">Score</div><div class="value">${scores.seismic}/10</div></div><div class="item"><div class="label">SDC</div><div class="value">${eq.sdc || '—'}</div></div><div class="item"><div class="label">Ss</div><div class="value">${eq.ss ? eq.ss.toFixed(2) + 'g' : '—'}</div></div><div class="item"><div class="label">S1</div><div class="value">${eq.s1 ? eq.s1.toFixed(2) + 'g' : '—'}</div></div><div class="item"><div class="label">Risk Category</div><div class="value">II</div></div></div></div>` : ''}
 ${w && (w.wuiClass || w.caFireSeverity) ? `<div class="section"><h2>🔥 Wildfire / WUI (USFS + CAL FIRE)</h2><div class="grid"><div class="item"><div class="label">WUI Class</div><div class="value" style="font-size:11px">${w.wuiClass ? w.wuiClass.replace(/_/g, ' ') : '—'}</div></div><div class="item"><div class="label">Fire Score</div><div class="value" style="color:${w.score >= 8 ? '#f85149' : w.score >= 6 ? '#f0883e' : '#2ea043'}">${w.score}/10</div></div><div class="item"><div class="label">CA Fire Hazard</div><div class="value" style="color:${w.caFireSeverity === 'Very High' ? '#f85149' : w.caFireSeverity === 'High' ? '#f0883e' : '#2ea043'}">${w.caFireSeverity || 'N/A'}</div></div></div></div>` : ''}
 ${data.subsidence && data.subsidence.hasData ? `<div class="section"><h2>📉 Ground Subsidence (CA DWR InSAR)</h2><div class="grid"><div class="item"><div class="label">Annual Rate</div><div class="value" style="color:${data.subsidence.score >= 8 ? '#f85149' : data.subsidence.score >= 6 ? '#f0883e' : data.subsidence.score >= 4 ? '#d29922' : '#2ea043'}">${data.subsidence.estimatedAnnualIn.toFixed(1)} in/yr</div></div><div class="item"><div class="label">Score</div><div class="value" style="color:${data.subsidence.score >= 8 ? '#f85149' : data.subsidence.score >= 6 ? '#f0883e' : '#2ea043'}">${data.subsidence.score}/10</div></div><div class="item"><div class="label">Risk Level</div><div class="value">${data.subsidence.risk}</div></div><div class="item"><div class="label">Total (2015+)</div><div class="value">${data.subsidence.totalDisplacementIn.toFixed(1)} in</div></div><div class="item"><div class="label">Data Source</div><div class="value" style="font-size:11px">TRE ALTAMIRA</div></div><div class="item"><div class="label">Coverage</div><div class="value" style="font-size:11px">2015-2024</div></div></div></div>` : ''}
+${data.liquefaction && data.liquefaction.inZone ? `<div class="section" style="background:#fff7ed;border:2px solid #f0883e"><h2>⚠️ California Liquefaction Zone (CGS)</h2><div style="padding:12px;background:white;border-radius:8px"><div style="font-weight:700;color:#f0883e;margin-bottom:8px">SITE IS WITHIN SEISMIC HAZARD ZONE OF REQUIRED INVESTIGATION</div><div style="font-size:13px;color:#475569;line-height:1.5"><strong>Authority:</strong> California Geological Survey (CGS)<br><strong>Legal Basis:</strong> Seismic Hazards Mapping Act (PRC §2690-2699.6)<br><strong>Requirement:</strong> Site-specific geotechnical investigation required before development permits can be issued. Investigation must address liquefaction potential per CGS Special Publication 117A.<br><strong>Action:</strong> Request geotechnical report from insured. Report must include liquefaction analysis with soil borings, SPT/CPT data, and groundwater assessment.</div></div></div>` : ''}
 <div class="section"><h2>🪨 Soil Survey (USDA SSURGO)</h2>${s ? `<div class="grid"><div class="item full"><div class="label">Map Unit</div><div class="value" style="font-size:13px">${s.mapunit || '—'}</div></div><div class="item"><div class="label">Drainage</div><div class="value" style="font-size:12px">${s.drainage || '—'}</div></div><div class="item"><div class="label">Hydro Group</div><div class="value">${s.hydro || '—'}</div></div><div class="item"><div class="label">Steel Corr.</div><div class="value" style="color:${s.corSteel === 'High' ? '#f85149' : '#2ea043'}">${s.corSteel || '—'}</div></div></div>` : '<p style="color:#64748b">No SSURGO data available</p>'}</div>
 ${a ? `<div class="section"><h2>🌊 Climate Intelligence (Athenium)</h2><div class="grid"><div class="item"><div class="label">Flash Flood</div><div class="value" style="color:${a.flash >= 7 ? '#f85149' : a.flash >= 5 ? '#d29922' : '#2ea043'}">${a.flash || '—'}/10</div></div><div class="item"><div class="label">River Flood</div><div class="value">${a.river || '—'}/10</div></div><div class="item"><div class="label">Wind</div><div class="value" style="color:${a.wind >= 8 ? '#f85149' : '#2ea043'}">${a.wind || '—'}/10</div></div><div class="item"><div class="label">Hail</div><div class="value">${a.hail || '—'}/10</div></div><div class="item"><div class="label">Wildfire</div><div class="value" style="color:${a.wildfire >= 7 ? '#f85149' : '#2ea043'}">${a.wildfire || '—'}/10</div></div><div class="item"><div class="label">FEMA Zone</div><div class="value">${a.fema || '—'}</div></div></div></div>` : ''}
 <div class="section"><h2>⚠️ Risk Flags (${flags.length})</h2>${flags.length ? flags.map(f => `<div class="flag ${f.severity}"><div class="flag-title">${f.severity === 'critical' ? '🚨' : f.severity === 'high' ? '⚠️' : '⚡'} ${f.title}</div><div class="flag-detail">${f.detail}</div></div>`).join('') : '<div class="flag" style="border-color:#2ea043;background:#f0fdf4"><div class="flag-title">✅ No Major Risk Flags</div><div class="flag-detail">Site meets standard underwriting criteria.</div></div>'}</div>
 <div class="section"><h2>🎯 Underwriting Recommendation</h2><div style="text-align:center;padding:20px;background:#f8fafc;border-radius:8px;font-size:22px;font-weight:800;color:${rec.indexOf('DECLINE') >= 0 ? '#f85149' : rec.indexOf('GEOTECH') >= 0 ? '#f0883e' : rec.indexOf('ENHANCED') >= 0 || rec.indexOf('CONDITIONS') >= 0 ? '#d29922' : '#2ea043'}">${rec}</div></div>
 <div class="section"><h2>📊 Score Breakdown</h2><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px"><div class="item"><div class="label">Karst 15%</div><div class="value">${scores.karst !== null ? scores.karst : '—'}</div></div><div class="item"><div class="label">Seismic 15%</div><div class="value">${scores.seismic !== null ? scores.seismic : '—'}</div></div><div class="item"><div class="label">Flood 20%</div><div class="value">${scores.flood !== null ? scores.flood : '—'}</div></div><div class="item"><div class="label">Fire 15%</div><div class="value">${scores.wildfire !== null ? scores.wildfire : '—'}</div></div><div class="item"><div class="label">Wind 15%</div><div class="value">${scores.wind !== null ? scores.wind : '—'}</div></div><div class="item"><div class="label">Soil 10%</div><div class="value">${scores.soil !== null ? scores.soil : '—'}</div></div><div class="item"><div class="label">Subsid 10%</div><div class="value">${scores.subsidence !== null ? scores.subsidence : '—'}</div></div></div></div>
-<div class="footer"><div>SiteScore™ v1.3.1 | Know Before You Bind | ${new Date().toLocaleString()}</div><div style="margin-top:8px">Data: USGS 3DHP, USDA SSURGO, USGS Design Maps, USFS WUI 2020, CAL FIRE FHSZ, CA DWR InSAR, Athenium Analytics</div><div style="margin-top:8px;font-style:italic">Pre-underwriting triage only. Does not replace site-specific geotechnical investigation.</div></div>
+<div class="footer"><div>SiteScoreâ"¢ v1.3.3 | Know Before You Bind | ${new Date().toLocaleString()}</div><div style="margin-top:8px">Data: USGS 3DHP, USDA SSURGO, USGS Design Maps, USFS WUI 2020, CAL FIRE FHSZ, CA DWR InSAR, CA CGS Seismic Hazard Zones, Athenium Analytics</div><div style="margin-top:8px;font-style:italic">Pre-underwriting triage only. Does not replace site-specific geotechnical investigation.</div></div>
 <div class="no-print" style="text-align:center;margin-top:30px"><button onclick="window.print()" style="padding:14px 32px;background:linear-gradient(135deg,#238636,#1f6feb);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">🖨️ Print / Save PDF</button></div>
 </body></html>`;
             
