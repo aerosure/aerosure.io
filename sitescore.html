@@ -1844,6 +1844,20 @@ Hail: 5/10"></textarea>
             
             data.athenium = parsed;
             
+            // Copy history and flood risk to top-level data for report access
+            if (parsed.history && Object.keys(parsed.history).length > 0) {
+                data.history = parsed.history;
+            }
+            if (parsed.hurricanes && parsed.hurricanes.length > 0) {
+                data.history = data.history || {};
+                data.history.hurricanes = parsed.hurricanes;
+            }
+            if (parsed.floodDetails && Object.keys(parsed.floodDetails).length > 0) {
+                data.floodRisk = parsed.floodDetails;
+                // Add elevation from main data if available
+                if (data.elevation) data.floodRisk.elevation = data.elevation;
+            }
+            
             // Update Athenium display
             document.getElementById('atheniumDisplay').style.display = 'block';
             let html = '';
