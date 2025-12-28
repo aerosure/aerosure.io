@@ -278,7 +278,7 @@
                         <div class="input-field"><label>Latitude</label><input type="text" id="lat" placeholder="35.9427"></div>
                         <div class="input-field"><label>Longitude</label><input type="text" id="lon" placeholder="-83.9510"></div>
                     </div>
-                    <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()"><span>âš¡</span> Analyze Site</button>
+                    <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()"><span>⚡</span> Analyze Site</button>
                     <div class="quick-locations">
                         <div class="quick-title">Test Locations</div>
                         <button class="quick-btn" onclick="setLocation('UT MFR Research',35.9427,-83.9510)"><span class="icon">🕳️</span><span class="name">Knoxville TN</span><span class="tag tag-critical">KARST</span></button>
@@ -1571,7 +1571,7 @@ Hail: 5/10"></textarea>
                 alert('Analysis failed: ' + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<span>âš¡</span> Analyze Site';
+                btn.innerHTML = '<span>⚡</span> Analyze Site';
                 document.getElementById('mapLoading').classList.remove('active');
             }
         }
