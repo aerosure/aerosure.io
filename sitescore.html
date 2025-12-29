@@ -886,14 +886,36 @@ Hail: 5/10"></textarea>
         }
 
         async function fetchWUI(lat, lon) {
+            const TIMEOUT = 3000; // 3 second timeout for WUI
+            
+            const fetchWithTimeout = async (url, ms) => {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), ms);
+                try {
+                    const res = await fetch(url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return await res.json();
+                } catch (e) {
+                    clearTimeout(timeoutId);
+                    console.warn('WUI fetch failed:', e.message);
+                    if (e.name === 'AbortError') {
+                        apiFailures.push({ api: 'WUI', error: 'Timeout' });
+                    } else {
+                        apiFailures.push({ api: 'WUI', error: e.message });
+                    }
+                    return null;
+                }
+            };
+            
             try {
                 const result = { wuiClass: null, housingDensity: null, vegPercent: null, caFireSeverity: null, inWUI: false, score: 0 };
                 
-                // Query USFS National WUI 2020
+                // Query USFS National WUI 2020 with timeout
                 const wuiUrl = API.USFS_WUI + '/query?geometry=' + lon + ',' + lat + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=WUICLASS2020,HUDEN2020,VEG2019PC&returnGeometry=false&f=json';
-                const wuiRes = await fetch(wuiUrl).then(r => r.json());
+                const wuiRes = await fetchWithTimeout(wuiUrl, TIMEOUT);
                 
-                if (wuiRes.features && wuiRes.features.length > 0) {
+                if (wuiRes && wuiRes.features && wuiRes.features.length > 0) {
                     const attrs = wuiRes.features[0].attributes;
                     result.wuiClass = attrs.WUICLASS2020;
                     result.housingDensity = attrs.HUDEN2020;
@@ -907,14 +929,14 @@ Hail: 5/10"></textarea>
                 if (lon >= -124.5 && lon <= -114 && lat >= 32.5 && lat <= 42) {
                     // Try SRA first
                     const sraUrl = API.CA_FHSZ_SRA + '/query?geometry=' + lon + ',' + lat + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=HAZ_CLASS&returnGeometry=false&f=json';
-                    const sraRes = await fetch(sraUrl).then(r => r.json());
-                    if (sraRes.features && sraRes.features.length > 0) {
+                    const sraRes = await fetchWithTimeout(sraUrl, TIMEOUT);
+                    if (sraRes && sraRes.features && sraRes.features.length > 0) {
                         result.caFireSeverity = sraRes.features[0].attributes.HAZ_CLASS;
                     } else {
                         // Try LRA
                         const lraUrl = API.CA_FHSZ_LRA + '/query?geometry=' + lon + ',' + lat + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=HAZ_CLASS&returnGeometry=false&f=json';
-                        const lraRes = await fetch(lraUrl).then(r => r.json());
-                        if (lraRes.features && lraRes.features.length > 0) {
+                        const lraRes = await fetchWithTimeout(lraUrl, TIMEOUT);
+                        if (lraRes && lraRes.features && lraRes.features.length > 0) {
                             result.caFireSeverity = lraRes.features[0].attributes.HAZ_CLASS;
                         }
                     }
