@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteScore™ User Guide | Legend & Methodology</title>
+    <link rel="icon" type="image/png" href="SiteScore_favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #080b10;
+            --bg-secondary: #0d1117;
+            --bg-tertiary: #161b22;
+            --bg-card: #0d1117;
+            --border-color: #30363d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --brand-primary: #2ea043;
+            --brand-secondary: #58a6ff;
+            --status-critical: #f85149;
+            --status-high: #f0883e;
+            --status-moderate: #d29922;
+            --status-low: #2ea043;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #238636 0%, #1f6feb 100%);
+            padding: 20px 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        
+        .header p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+        
+        .nav {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 40px;
+            display: flex;
+            gap: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 16px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .nav a:hover, .nav a.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--brand-primary);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 48px;
+        }
+        
+        .section h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 24px 0 12px;
+            color: var(--brand-secondary);
+        }
+        
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        /* Legend Cards */
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 16px;
+        }
+        
+        .legend-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        
+        .legend-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .legend-swatch {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 2px solid rgba(255,255,255,0.2);
+            flex-shrink: 0;
+        }
+        
+        .legend-swatch.line {
+            width: 40px;
+            height: 4px;
+            border-radius: 2px;
+        }
+        
+        .legend-swatch.dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+        
+        .legend-card-title {
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .legend-card-source {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        .legend-card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Score Table */
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        
+        .score-table th, .score-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .score-table th {
+            background: var(--bg-tertiary);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+        
+        .score-table td {
+            font-size: 13px;
+        }
+        
+        .score-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        
+        .score-badge.critical { background: rgba(248,81,73,0.15); color: var(--status-critical); }
+        .score-badge.high { background: rgba(240,136,62,0.15); color: var(--status-high); }
+        .score-badge.moderate { background: rgba(210,153,34,0.15); color: var(--status-moderate); }
+        .score-badge.low { background: rgba(46,160,67,0.15); color: var(--status-low); }
+        
+        /* Weight Chart */
+        .weight-chart {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 16px 0;
+        }
+        
+        .weight-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            text-align: center;
+            min-width: 100px;
+        }
+        
+        .weight-item .peril {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        
+        .weight-item .percent {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--brand-secondary);
+        }
+        
+        /* Info Box */
+        .info-box {
+            background: rgba(88,166,255,0.1);
+            border: 1px solid rgba(88,166,255,0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .info-box.warning {
+            background: rgba(248,81,73,0.1);
+            border-color: rgba(248,81,73,0.3);
+        }
+        
+        .info-box-title {
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .info-box p {
+            font-size: 13px;
+            margin: 0;
+        }
+        
+        /* Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: var(--brand-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+        
+        .back-btn:hover {
+            filter: brightness(1.1);
+        }
+        
+        /* Data Source List */
+        .source-list {
+            list-style: none;
+        }
+        
+        .source-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 16px;
+        }
+        
+        .source-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .source-name {
+            font-weight: 600;
+            min-width: 180px;
+            color: var(--text-primary);
+        }
+        
+        .source-desc {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            .legend-grid { grid-template-columns: 1fr; }
+            .nav { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📖 SiteScore™ User Guide</h1>
+        <p>Map Legend, Scoring Methodology & Data Sources</p>
+    </div>
+    
+    <nav class="nav">
+        <a href="#legend" class="active">🗺️ Map Legend</a>
+        <a href="#scoring">📊 Scoring</a>
+        <a href="#methodology">⚖️ Methodology</a>
+        <a href="#sources">📚 Data Sources</a>
+        <a href="#glossary">📝 Glossary</a>
+    </nav>
+    
+    <div class="container">
+        <a href="index.html" class="back-btn">← Back to SiteScore</a>
+        
+        <!-- MAP LEGEND SECTION -->
+        <section class="section" id="legend">
+            <h2>🗺️ Map Legend</h2>
+            <p>Understanding the colors and symbols displayed on the SiteScore map.</p>
+            
+            <h3>Site Markers</h3>
+            <div class="legend-grid">
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch dot" style="background: #f85149;"></div>
+                        <div>
+                            <div class="legend-card-title">Site Location</div>
+                            <div class="legend-card-source">Your analyzed location</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">The red pulsing dot marks the exact coordinates you're analyzing. Click anywhere on the map to set a new location.</div>
+                </div>
+                
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch dot" style="background: #a371f7;"></div>
+                        <div>
+                            <div class="legend-card-title">Sinkhole / Sink</div>
+                            <div class="legend-card-source">USGS 3D Hydrography (3DHP)</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">Purple dots indicate documented sinkholes or karst depressions. Proximity to sinks is a major factor in karst risk scoring.</div>
+                </div>
+                
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch dot" style="background: #58a6ff;"></div>
+                        <div>
+                            <div class="legend-card-title">Spring</div>
+                            <div class="legend-card-source">USGS 3D Hydrography (3DHP)</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">Blue dots indicate springs - groundwater discharge points that indicate subsurface karst conduit systems.</div>
+                </div>
+            </div>
+            
+            <h3>Line Features</h3>
+            <div class="legend-grid">
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch line" style="background: #58a6ff;"></div>
+                        <div>
+                            <div class="legend-card-title">Flowlines</div>
+                            <div class="legend-card-source">USGS 3D Hydrography (3DHP)</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">Blue lines show surface and subsurface water flow paths. In karst terrain, these may represent underground streams.</div>
+                </div>
+                
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch line" style="background: #4a7c4e; height: 2px;"></div>
+                        <div>
+                            <div class="legend-card-title">Contour Lines</div>
+                            <div class="legend-card-source">USGS 3DEP Elevation</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">Green/brown lines showing elevation contours at 25-foot intervals. Dense contours indicate steep terrain. Toggle under "USGS Overlays".</div>
+                </div>
+            </div>
+            
+            <h3>Area Overlays</h3>
+            <div class="legend-grid">
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch" style="background: #06b6d4; opacity: 0.6;"></div>
+                        <div>
+                            <div class="legend-card-title">Karst Terrain</div>
+                            <div class="legend-card-source">USGS Karst Map of US</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">Cyan/turquoise shaded areas indicate regions underlain by soluble carbonate rock (limestone, dolomite) prone to sinkhole formation. Sites in karst terrain receive a minimum risk score of 3.</div>
+                </div>
+                
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch" style="background: #1e40af; opacity: 0.7;"></div>
+                        <div>
+                            <div class="legend-card-title">FEMA Flood Zones</div>
+                            <div class="legend-card-source">FEMA National Flood Hazard Layer</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">Dark blue areas show Special Flood Hazard Areas (SFHA) - zones with 1% annual chance of flooding (100-year floodplain). Zone A, AE, V, VE require flood insurance for federally-backed mortgages.</div>
+                </div>
+                
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch" style="background: #f97316; opacity: 0.6;"></div>
+                        <div>
+                            <div class="legend-card-title">WUI (Wildland-Urban Interface)</div>
+                            <div class="legend-card-source">USFS WUI 2020</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">Orange shaded areas where structures intermix with or are adjacent to wildland vegetation. "Intermix" = structures scattered in wildland; "Interface" = structures adjacent to wildland.</div>
+                </div>
+                
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch" style="background: linear-gradient(to right, #fbbf24, #f97316, #dc2626);"></div>
+                        <div>
+                            <div class="legend-card-title">CA Fire Hazard Severity</div>
+                            <div class="legend-card-source">CAL FIRE FHSZ</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">California only. Yellow = Moderate, Orange = High, Red = Very High fire hazard severity. "Very High" zones require fire-resistant construction per California Building Code Chapter 7A.</div>
+                </div>
+                
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch" style="background: #dc2626; opacity: 0.7;"></div>
+                        <div>
+                            <div class="legend-card-title">CA Subsidence</div>
+                            <div class="legend-card-source">CA DWR InSAR Data</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">California only. Red shading indicates areas experiencing ground subsidence (sinking) due to groundwater extraction. Rates shown in inches/year. Severe subsidence can damage foundations and infrastructure.</div>
+                </div>
+                
+                <div class="legend-card">
+                    <div class="legend-card-header">
+                        <div class="legend-swatch" style="background: rgba(255,255,255,0.3);"></div>
+                        <div>
+                            <div class="legend-card-title">Hillshade</div>
+                            <div class="legend-card-source">USGS 3DEP Elevation</div>
+                        </div>
+                    </div>
+                    <div class="legend-card-desc">Grayscale terrain shading that highlights topography. Useful for identifying ridges, valleys, and drainage patterns. Toggle under "USGS Overlays".</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SCORING SECTION -->
+        <section class="section" id="scoring">
+            <h2>📊 Risk Scoring (0-10 Scale)</h2>
+            <p>All perils are scored on a 0-10 scale where <strong>higher = higher risk</strong>.</p>
+            
+            <table class="score-table">
+                <thead>
+                    <tr>
+                        <th>Score Range</th>
+                        <th>Risk Level</th>
+                        <th>Interpretation</th>
+                        <th>Recommended Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>8-10</strong></td>
+                        <td><span class="score-badge critical">EXTREME</span></td>
+                        <td>Severe risk exposure; site has significant hazard indicators</td>
+                        <td>Decline or require specialist evaluation + geotech report</td>
+                    </tr>
+                    <tr>
+                        <td><strong>6-7</strong></td>
+                        <td><span class="score-badge high">HIGH</span></td>
+                        <td>Elevated risk; notable hazard factors present</td>
+                        <td>Enhanced due diligence; consider geotech or site inspection</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4-5</strong></td>
+                        <td><span class="score-badge moderate">MODERATE</span></td>
+                        <td>Some risk factors present but manageable</td>
+                        <td>Standard underwriting with conditions as needed</td>
+                    </tr>
+                    <tr>
+                        <td><strong>1-3</strong></td>
+                        <td><span class="score-badge low">LOW</span></td>
+                        <td>Minimal risk indicators; favorable site conditions</td>
+                        <td>Proceed with standard underwriting</td>
+                    </tr>
+                    <tr>
+                        <td><strong>0</strong></td>
+                        <td><span class="score-badge low">MINIMAL</span></td>
+                        <td>No measurable risk from this peril</td>
+                        <td>No action required for this peril</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Individual Peril Scoring</h3>
+            
+            <div class="info-box">
+                <div class="info-box-title">🕳️ Karst Score</div>
+                <p>Based on distance to nearest documented sink/spring and density of karst features within 10 miles. Sites within karst terrain (carbonate rock) receive minimum score of 3 even without nearby features.</p>
+            </div>
+            
+            <table class="score-table">
+                <thead>
+                    <tr><th>Distance to Nearest Feature</th><th>Base Score</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>&lt; 0.5 miles</td><td>10</td></tr>
+                    <tr><td>0.5 - 1 mile</td><td>9</td></tr>
+                    <tr><td>1 - 2 miles</td><td>8</td></tr>
+                    <tr><td>2 - 3 miles</td><td>7</td></tr>
+                    <tr><td>3 - 4 miles</td><td>6</td></tr>
+                    <tr><td>4 - 5 miles</td><td>5</td></tr>
+                    <tr><td>5 - 7 miles</td><td>3</td></tr>
+                    <tr><td>&gt; 7 miles</td><td>1</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size:12px;color:var(--text-muted);">+1 if >10 features nearby, +2 if >20 features nearby</p>
+            
+            <div class="info-box">
+                <div class="info-box-title">🌋 Seismic Score</div>
+                <p>Based on USGS Peak Ground Acceleration (PGA) with 2% probability of exceedance in 50 years. Higher PGA = more expected ground shaking.</p>
+            </div>
+            
+            <table class="score-table">
+                <thead>
+                    <tr><th>PGA (% g)</th><th>Score</th><th>Context</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>≥ 60%</td><td>10</td><td>Extreme (coastal CA fault zones)</td></tr>
+                    <tr><td>50-60%</td><td>9</td><td>Very High</td></tr>
+                    <tr><td>40-50%</td><td>8</td><td>High (LA, SF metro areas)</td></tr>
+                    <tr><td>30-40%</td><td>7</td><td>Elevated</td></tr>
+                    <tr><td>20-30%</td><td>6</td><td>Moderate-High</td></tr>
+                    <tr><td>15-20%</td><td>5</td><td>Moderate (Pacific Northwest)</td></tr>
+                    <tr><td>10-15%</td><td>3</td><td>Low-Moderate</td></tr>
+                    <tr><td>5-10%</td><td>2</td><td>Low</td></tr>
+                    <tr><td>&lt; 5%</td><td>1</td><td>Minimal (stable interior)</td></tr>
+                </tbody>
+            </table>
+            
+            <div class="info-box">
+                <div class="info-box-title">🪨 Soil Score</div>
+                <p>Based on SSURGO soil survey data including drainage class, hydrologic group, and corrosivity. <strong>Critical:</strong> Disturbed soils (Udorthents, Dumps, Made Land) receive automatic high scores.</p>
+            </div>
+            
+            <div class="info-box warning">
+                <div class="info-box-title">⚠️ Disturbed Soil Detection</div>
+                <p><strong>Dump/Landfill:</strong> Score 10 - Potential debris, unknown fill material<br>
+                <strong>Udorthents:</strong> Score 8 - Recently disturbed, uncontrolled fill<br>
+                <strong>Made Land/Fill:</strong> Score 7 - Artificial fill material<br>
+                <strong>Urban Land:</strong> Score 6 - Heavily modified, unknown subsurface</p>
+            </div>
+        </section>
+        
+        <!-- METHODOLOGY SECTION -->
+        <section class="section" id="methodology">
+            <h2>⚖️ Overall Score Methodology</h2>
+            <p>The composite Site Risk Score is calculated as a weighted average of individual peril scores.</p>
+            
+            <h3>Weighting Formula</h3>
+            <div class="weight-chart">
+                <div class="weight-item">
+                    <div class="peril">Flood</div>
+                    <div class="percent">20%</div>
+                </div>
+                <div class="weight-item">
+                    <div class="peril">Karst</div>
+                    <div class="percent">15%</div>
+                </div>
+                <div class="weight-item">
+                    <div class="peril">Seismic</div>
+                    <div class="percent">15%</div>
+                </div>
+                <div class="weight-item">
+                    <div class="peril">Wildfire</div>
+                    <div class="percent">15%</div>
+                </div>
+                <div class="weight-item">
+                    <div class="peril">Wind</div>
+                    <div class="percent">15%</div>
+                </div>
+                <div class="weight-item">
+                    <div class="peril">Soil</div>
+                    <div class="percent">10%</div>
+                </div>
+                <div class="weight-item">
+                    <div class="peril">Subsidence</div>
+                    <div class="percent">10%</div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-box-title">📐 Calculation Notes</div>
+                <p>• Only perils with available data are included in the calculation<br>
+                • Weights are normalized when some data is unavailable<br>
+                • Flood and Wind scores require Athenium data input<br>
+                • Subsidence only applies to California locations</p>
+            </div>
+            
+            <h3>Recommendation Logic</h3>
+            <table class="score-table">
+                <thead>
+                    <tr><th>Condition</th><th>Recommendation</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2+ Critical flags</td><td><span class="score-badge critical">DECLINE / SPECIALIST</span></td></tr>
+                    <tr><td>1 Critical flag</td><td><span class="score-badge high">REQUEST GEOTECH</span></td></tr>
+                    <tr><td>2+ High flags</td><td><span class="score-badge moderate">ENHANCED DD</span></td></tr>
+                    <tr><td>1 High flag OR 3+ total flags</td><td><span class="score-badge moderate">STANDARD + CONDITIONS</span></td></tr>
+                    <tr><td>No significant flags</td><td><span class="score-badge low">PROCEED STANDARD</span></td></tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- DATA SOURCES SECTION -->
+        <section class="section" id="sources">
+            <h2>📚 Data Sources</h2>
+            <p>SiteScore aggregates data from authoritative government sources.</p>
+            
+            <ul class="source-list">
+                <li>
+                    <span class="source-name">USGS 3DHP</span>
+                    <span class="source-desc">3D Hydrography Program - Sinks, springs, and flowlines indicating karst features. Updated continuously.</span>
+                </li>
+                <li>
+                    <span class="source-name">USGS Karst Map</span>
+                    <span class="source-desc">National karst terrain boundaries showing areas underlain by soluble carbonate rock.</span>
+                </li>
+                <li>
+                    <span class="source-name">USGS Design Maps</span>
+                    <span class="source-desc">ASCE 7-16 seismic design parameters including PGA, spectral accelerations, and Site Design Category.</span>
+                </li>
+                <li>
+                    <span class="source-name">USGS 3DEP</span>
+                    <span class="source-desc">3D Elevation Program - Hillshade and contour data for terrain analysis.</span>
+                </li>
+                <li>
+                    <span class="source-name">USDA SSURGO</span>
+                    <span class="source-desc">Soil Survey Geographic Database - Detailed soil properties including drainage, hydrology, and corrosivity.</span>
+                </li>
+                <li>
+                    <span class="source-name">FEMA NFHL</span>
+                    <span class="source-desc">National Flood Hazard Layer - Official flood zone designations and Base Flood Elevations.</span>
+                </li>
+                <li>
+                    <span class="source-name">USFS WUI 2020</span>
+                    <span class="source-desc">Wildland-Urban Interface mapping showing intermix and interface zones nationwide.</span>
+                </li>
+                <li>
+                    <span class="source-name">CAL FIRE FHSZ</span>
+                    <span class="source-desc">California Fire Hazard Severity Zones - State and Local Responsibility Areas.</span>
+                </li>
+                <li>
+                    <span class="source-name">CA DWR InSAR</span>
+                    <span class="source-desc">California Dept. of Water Resources satellite-based ground subsidence monitoring.</span>
+                </li>
+                <li>
+                    <span class="source-name">CA CGS</span>
+                    <span class="source-desc">California Geological Survey - Seismic Hazard Zone maps including liquefaction zones.</span>
+                </li>
+                <li>
+                    <span class="source-name">Athenium Analytics</span>
+                    <span class="source-desc">Climate risk scores for flood, wind, hail, wildfire, and tornado (requires manual input).</span>
+                </li>
+            </ul>
+        </section>
+        
+        <!-- GLOSSARY SECTION -->
+        <section class="section" id="glossary">
+            <h2>📝 Glossary</h2>
+            
+            <table class="score-table">
+                <tbody>
+                    <tr>
+                        <td><strong>BFE</strong></td>
+                        <td>Base Flood Elevation - The elevation at which there is a 1% chance of flooding in any given year.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Freeboard</strong></td>
+                        <td>Height of a structure's lowest floor above the BFE. More freeboard = less flood risk.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Karst</strong></td>
+                        <td>Terrain formed by dissolution of soluble rocks (limestone, dolomite) characterized by sinkholes, caves, and underground drainage.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Liquefaction</strong></td>
+                        <td>Process where saturated soil loses strength during earthquake shaking, behaving like liquid.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PGA</strong></td>
+                        <td>Peak Ground Acceleration - Maximum ground acceleration expected during an earthquake, expressed as percentage of gravity (g).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SDC</strong></td>
+                        <td>Seismic Design Category (A-F) - Building code classification based on seismic risk and building use.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SFHA</strong></td>
+                        <td>Special Flood Hazard Area - FEMA-designated zone with 1% annual flood chance (100-year floodplain).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Subsidence</strong></td>
+                        <td>Gradual sinking of ground surface, often due to groundwater extraction or underground mining.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Udorthents</strong></td>
+                        <td>SSURGO soil classification indicating recently disturbed soils, often from construction fill or grading.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>WUI</strong></td>
+                        <td>Wildland-Urban Interface - Areas where structures and wildland vegetation meet or intermingle.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <div style="text-align: center; padding: 40px 0; border-top: 1px solid var(--border-color); margin-top: 40px;">
+            <p style="color: var(--text-muted); font-size: 12px;">
+                SiteScore™ v1.3.6 | aerosure LLC<br>
+                Pre-underwriting triage tool. Does not replace site-specific investigation.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Smooth scroll for nav links
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                // Update active state
+                document.querySelectorAll('.nav a').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Update active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.section');
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            document.querySelectorAll('.nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
