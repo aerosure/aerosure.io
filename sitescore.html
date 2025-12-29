@@ -353,17 +353,6 @@
                 <div class="map-info-row"><span class="map-info-label">CA Liquefaction</span><span class="map-info-value" id="infoLiquefaction">—</span></div>
                 <div class="map-info-row"><span class="map-info-label">Soil Type</span><span class="map-info-value" id="infoSoil">—</span></div>
             </div>
-            <div class="map-legend">
-                <div class="legend-title">Legend</div>
-                <div class="legend-item"><div class="legend-dot" style="background:#f85149"></div> Site</div>
-                <div class="legend-item"><div class="legend-dot" style="background:#a371f7"></div> Sink</div>
-                <div class="legend-item"><div class="legend-dot" style="background:#58a6ff"></div> Spring</div>
-                <div class="legend-item"><div class="legend-line" style="background:#58a6ff"></div> Flowline</div>
-                <div class="legend-item"><div class="legend-rect" style="background:#6366f1"></div> Karst Terrain</div>
-                <div class="legend-item"><div class="legend-rect" style="background:rgba(0,112,255,0.5)"></div> FEMA Flood</div>
-                <div class="legend-item"><div class="legend-rect" style="background:#f97316"></div> WUI Zone</div>
-                <div class="legend-item"><div class="legend-rect" style="background:#dc2626"></div> CA Subsidence</div>
-            </div>
         </div>
 
         <!-- RIGHT PANEL: Scoring -->
@@ -912,19 +901,22 @@ Hail: 5/10"></textarea>
             };
             
             try {
-                const result = { wuiClass: null, housingDensity: null, vegPercent: null, caFireSeverity: null, inWUI: false, score: 0 };
+                const result = { wuiClass: null, housingDensity: null, vegPercent: null, caFireSeverity: null, inWUI: false, score: 0, dataReceived: false };
                 
                 // Query USFS National WUI 2020 with timeout
                 const wuiUrl = API.USFS_WUI + '/query?geometry=' + lon + ',' + lat + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=WUICLASS2020,HUDEN2020,VEG2019PC&returnGeometry=false&f=json';
                 const wuiRes = await fetchWithTimeout(wuiUrl, TIMEOUT);
                 
-                if (wuiRes && wuiRes.features && wuiRes.features.length > 0) {
-                    const attrs = wuiRes.features[0].attributes;
-                    result.wuiClass = attrs.WUICLASS2020;
-                    result.housingDensity = attrs.HUDEN2020;
-                    result.vegPercent = attrs.VEG2019PC;
-                    if (result.wuiClass && (result.wuiClass.indexOf('Intermix') >= 0 || result.wuiClass.indexOf('Interface') >= 0)) {
-                        result.inWUI = true;
+                if (wuiRes && wuiRes.features) {
+                    result.dataReceived = true; // API responded successfully
+                    if (wuiRes.features.length > 0) {
+                        const attrs = wuiRes.features[0].attributes;
+                        result.wuiClass = attrs.WUICLASS2020;
+                        result.housingDensity = attrs.HUDEN2020;
+                        result.vegPercent = attrs.VEG2019PC;
+                        if (result.wuiClass && (result.wuiClass.indexOf('Intermix') >= 0 || result.wuiClass.indexOf('Interface') >= 0)) {
+                            result.inWUI = true;
+                        }
                     }
                 }
                 
@@ -1267,11 +1259,19 @@ Hail: 5/10"></textarea>
             }
             
             // WUI/Wildfire score
+            // Differentiate: API failed (null) vs API worked but low risk (0-1)
+            const wuiDataReceived = data.wui && data.wui.dataReceived;
             const wuiScore = (data.wui && data.wui.score > 0) ? data.wui.score : 0;
             const atheniumWildfire = (data.athenium && data.athenium.wildfire) ? data.athenium.wildfire : 0;
+            
             if (wuiScore > 0 || atheniumWildfire > 0) {
+                // Has actual risk score
                 data.scores.wildfire = Math.max(wuiScore, atheniumWildfire);
+            } else if (wuiDataReceived || atheniumWildfire === 0) {
+                // API worked, confirmed low/no wildfire risk
+                data.scores.wildfire = 0;
             } else {
+                // No data available (API failed)
                 data.scores.wildfire = null;
             }
             
