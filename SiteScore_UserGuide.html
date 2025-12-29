@@ -567,6 +567,31 @@
             </table>
             
             <div class="info-box">
+                <div class="info-box-title">🔥 Wildfire Score</div>
+                <p>Combines data from USFS WUI classification and California Fire Hazard Severity Zones. If Athenium wildfire data is provided, the <strong>higher</strong> of WUI/FHSZ vs Athenium is used.</p>
+            </div>
+            
+            <table class="score-table">
+                <thead>
+                    <tr><th>Source</th><th>Condition</th><th>Score</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>CA FHSZ</td><td>Very High Severity</td><td>10</td></tr>
+                    <tr><td>CA FHSZ</td><td>High Severity</td><td>8</td></tr>
+                    <tr><td>CA FHSZ</td><td>Moderate Severity</td><td>5</td></tr>
+                    <tr><td>WUI</td><td>High Density Intermix</td><td>9</td></tr>
+                    <tr><td>WUI</td><td>Medium Density Intermix</td><td>8</td></tr>
+                    <tr><td>WUI</td><td>Low Density Intermix</td><td>7</td></tr>
+                    <tr><td>WUI</td><td>High Density Interface</td><td>7</td></tr>
+                    <tr><td>WUI</td><td>Medium Density Interface</td><td>6</td></tr>
+                    <tr><td>WUI</td><td>Low Density Interface</td><td>5</td></tr>
+                    <tr><td>WUI</td><td>Vegetated (non-WUI)</td><td>3</td></tr>
+                    <tr><td>—</td><td>Non-WUI, No Vegetation</td><td>0</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size:12px;color:var(--text-muted);">+1 if in WUI with >75% vegetation cover</p>
+            
+            <div class="info-box">
                 <div class="info-box-title">🪨 Soil Score</div>
                 <p>Based on SSURGO soil survey data including drainage class, hydrologic group, and corrosivity. <strong>Critical:</strong> Disturbed soils (Udorthents, Dumps, Made Land) receive automatic high scores.</p>
             </div>
@@ -621,7 +646,8 @@
                 <div class="info-box-title">📐 Calculation Notes</div>
                 <p>• Only perils with available data are included in the calculation<br>
                 • Weights are normalized when some data is unavailable<br>
-                • Flood and Wind scores require Athenium data input<br>
+                • <strong>Flood and Wind</strong> scores require Athenium data input<br>
+                • <strong>Wildfire</strong> score uses WUI class or CA Fire Hazard Severity; if Athenium wildfire data is provided, the higher of the two is used<br>
                 • Subsidence only applies to California locations</p>
             </div>
             
