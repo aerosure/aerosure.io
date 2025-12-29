@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiteScore™ v1.3.6 | Know Before You Bind</title>
+    <title>SiteScore™ v1.3.7 | Know Before You Bind</title>
     <link rel="icon" type="image/png" href="SiteScore_favicon.png">
     <link rel="apple-touch-icon" href="SiteScore_favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -248,7 +248,7 @@
                 <img src="SiteScore_Logo.png" alt="SiteScore™" class="header-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                 <span class="logo-fallback" style="display:none;color:white;font-weight:700;font-size:18px">SiteScore™</span>
             </a>
-            <span class="version">v1.3.6</span>
+            <span class="version">v1.3.7</span>
         </div>
         <div class="header-scores">
             <div class="score-pill main"><div class="score-pill-value" id="headerScore">—</div><div class="score-pill-label">Score</div></div>
@@ -506,7 +506,7 @@ Hail: 5/10"></textarea>
         };
 
         // ============================================
-        // v1.3.6 SECURITY & RELIABILITY
+        // v1.3.7 SECURITY & RELIABILITY
         // ============================================
         const DEBUG = false;
         let apiFailures = [];
@@ -565,7 +565,7 @@ Hail: 5/10"></textarea>
                 // Add terrain
                 map.addSource('mapbox-dem', { type: 'raster-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512 });
                 map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
-                console.log('SiteScore v1.3.6: Map initialized');
+                console.log('SiteScore v1.3.7: Map initialized');
             });
 
             map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
@@ -1473,7 +1473,7 @@ Hail: 5/10"></textarea>
         }
 
         // ============================================
-        // FLOOD & HISTORY CARD UPDATES (v1.3.6)
+        // FLOOD & HISTORY CARD UPDATES (v1.3.7)
         // ============================================
         
         function updateFloodRiskCard(parsed) {
@@ -1643,7 +1643,7 @@ Hail: 5/10"></textarea>
             data.coordinates = { lat, lon };
             data.timestamp = new Date().toISOString();
             data.flags = [];
-            apiFailures = []; // v1.3.6: Reset API failure tracking
+            apiFailures = []; // v1.3.7: Reset API failure tracking
             
             const btn = document.getElementById('analyzeBtn');
             btn.disabled = true;
@@ -1719,7 +1719,7 @@ Hail: 5/10"></textarea>
                 updateMapInfo();
                 updateHeader();
                 updateScoreCard();
-                showApiStatus(); // v1.3.6: Show any API failures
+                showApiStatus(); // v1.3.7: Show any API failures
                 
             } catch (err) {
                 console.error('Analysis error:', err);
@@ -1943,7 +1943,7 @@ Hail: 5/10"></textarea>
                 fema: /fema.*?zone[:\s]*([A-Z0-9]+)/i
             };
             
-            // Flood detail patterns (v1.3.6)
+            // Flood detail patterns (v1.3.7)
             const floodPatterns = {
                 bfe: /base\s*flood\s*elevation[:\s]*(\d+(?:\.\d+)?)\s*(?:ft|feet)/i,
                 freeboard: /freeboard[:\s]*([-]?\d+(?:\.\d+)?)\s*(?:ft|feet)/i,
@@ -1951,7 +1951,7 @@ Hail: 5/10"></textarea>
                 inund500: /500[-\s]*(?:yr|year)\s*(?:inundation|depth|flood)[:\s]*(\d+(?:\.\d+)?)/i
             };
             
-            // Historical patterns (v1.3.6)
+            // Historical patterns (v1.3.7)
             const histPatterns = {
                 hailEvents: /hail\s*events[:\s]*(\d+)/i,
                 windEvents: /wind\s*events[:\s]*(\d+)/i,
@@ -1959,7 +1959,7 @@ Hail: 5/10"></textarea>
                 maxWind: /max(?:imum)?\s*wind[:\s]*(\d+(?:\.\d+)?)\s*(?:mph)/i
             };
             
-            // Hurricane pattern (v1.3.6)
+            // Hurricane pattern (v1.3.7)
             const hurricanePattern = /hurricane\s+(\w+)[:\s]*(\d+(?:\.\d+)?)\s*mph\s*\(([^)]+)\)/gi;
             
             const parsed = {};
@@ -2026,7 +2026,7 @@ Hail: 5/10"></textarea>
             }
             document.getElementById('atheniumParsed').innerHTML = html;
             
-            // Update new cards (v1.3.6)
+            // Update new cards (v1.3.7)
             updateFloodRiskCard(parsed);
             updateHistoryCard(parsed);
             
@@ -2179,7 +2179,7 @@ Hail: 5/10"></textarea>
 
 '<div class="header-compact">' +
 '<div class="header-left">' +
-'<h1>📍 SiteScore™ v1.3.6</h1>' +
+'<h1>📍 SiteScore™ v1.3.7</h1>' +
 '<div class="subtitle">' + data.project + '</div>' +
 '<div class="coords">' + c.lat.toFixed(6) + ', ' + c.lon.toFixed(6) + (data.elevation ? ' • Elev: ' + data.elevation.toFixed(0) + ' ft' : '') + ' • ' + new Date().toLocaleDateString() + '</div>' +
 '</div>' +
@@ -2254,12 +2254,29 @@ Hail: 5/10"></textarea>
 
 '<div class="section"><h2>🪨 Soil (SSURGO)</h2>' +
 (s && s.mapunit ? '<div style="font-size:10px;color:#64748b;margin-bottom:8px;text-align:center">' + s.mapunit + '</div>' : '') +
+(s && s.isDisturbed ? '<div style="background:' + (s.disturbedType === 'Dump/Landfill' ? '#fef2f2;border:2px solid #dc2626' : '#fff7ed;border:2px solid #f59e0b') + ';border-radius:8px;padding:12px;margin-bottom:12px">' +
+'<div style="font-weight:700;color:' + (s.disturbedType === 'Dump/Landfill' ? '#dc2626' : '#d97706') + ';font-size:12px;margin-bottom:6px">⚠️ ' + (s.disturbedType || 'DISTURBED SOIL DETECTED').toUpperCase() + '</div>' +
+'<div style="font-size:10px;color:#475569;line-height:1.5">' +
+(s.disturbedType === 'Dump/Landfill' ? 
+'<strong>Critical Finding:</strong> SSURGO classifies this site as containing dump or landfill material. This indicates the presence of uncontrolled fill consisting of soil mixed with trash, construction debris, or other waste materials. ' +
+'<br><br><strong>Construction Impact:</strong> Expect highly variable subsurface conditions, potential buried debris obstructing foundations, unknown hazardous materials, and unsuitable bearing capacity. Deep foundation systems (driven piles) are typically required. ' +
+'<br><br><strong>Underwriting Action:</strong> MANDATORY comprehensive geotechnical investigation with geophysical survey (GPR/EM) before binding. Request test boring logs and foundation recommendations.' :
+s.disturbedType === 'Disturbed Fill (Udorthents)' ?
+'<strong>Elevated Risk:</strong> Udorthents are recently disturbed soils where the natural soil profile has been removed or significantly altered by human activity. Common in areas of cut/fill operations, reclaimed land, or historic development. ' +
+'<br><br><strong>Construction Impact:</strong> Fill depth and composition are unknown without investigation. Settlement potential is elevated. Standard shallow foundations may not be suitable. ' +
+'<br><br><strong>Underwriting Action:</strong> Request geotechnical report addressing fill thickness, bearing capacity, and foundation recommendations before binding.' :
+s.disturbedType === 'Urban Modified' ?
+'<strong>Moderate Risk:</strong> Urban land classification indicates the natural soil has been significantly modified by development. Original soil properties are unreliable. ' +
+'<br><br><strong>Underwriting Action:</strong> Consider requesting geotech report for projects with significant foundation loads.' :
+'<strong>Notice:</strong> Artificial fill material detected. Original soil properties may not apply.') +
+'</div></div>' +
+'<div style="font-size:9px;color:#94a3b8;text-align:center;font-style:italic">Standard soil properties (drainage, hydro group, corrosion) not applicable for disturbed/fill soils</div>' : 
 '<div class="grid4">' +
 '<div class="item"><div class="label">Drainage</div><div class="value sm">' + (s && s.drainage ? s.drainage.substring(0, 12) : '—') + '</div></div>' +
 '<div class="item"><div class="label">Hydro</div><div class="value">' + (s ? s.hydro || '—' : '—') + '</div></div>' +
 '<div class="item"><div class="label">Steel Corr</div><div class="value" style="color:' + (s && s.corSteel === 'High' ? '#f85149' : '#2ea043') + '">' + (s ? s.corSteel || '—' : '—') + '</div></div>' +
 '<div class="item"><div class="label">Concrete</div><div class="value" style="color:' + (s && s.corConcrete === 'High' ? '#f85149' : '#2ea043') + '">' + (s ? s.corConcrete || '—' : '—') + '</div></div>' +
-'</div></div>' +
+'</div>') +
 '</div>' +
 
 (data.subsidence && data.subsidence.hasData ? '<div class="section"><h2>📉 CA Subsidence (DWR InSAR)</h2>' +
@@ -2278,7 +2295,7 @@ Hail: 5/10"></textarea>
 '</div></div>' : '') +
 
 '<div class="footer">' +
-'<div>SiteScore™ v1.3.6 | Know Before You Bind | ' + new Date().toLocaleString() + '</div>' +
+'<div>SiteScore™ v1.3.7 | Know Before You Bind | ' + new Date().toLocaleString() + '</div>' +
 '<div style="margin-top:4px">Data: USGS 3DHP, SSURGO, Design Maps • USFS WUI 2020 • CAL FIRE FHSZ • CA DWR InSAR • CA CGS • Athenium Analytics</div>' +
 '<div style="margin-top:4px;font-style:italic">Pre-underwriting triage only. Does not replace site-specific geotechnical investigation.</div>' +
 '</div>' +
