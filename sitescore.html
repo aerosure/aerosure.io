@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiteScore™ v1.3.4 | Know Before You Bind</title>
+    <title>SiteScore™ v1.3.5 | Know Before You Bind</title>
     <link rel="icon" type="image/png" href="SiteScore_favicon.png">
     <link rel="apple-touch-icon" href="SiteScore_favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -244,7 +244,7 @@
                 <img src="SiteScore_Logo.png" alt="SiteScore™" class="header-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                 <span class="logo-fallback" style="display:none;color:white;font-weight:700;font-size:18px">SiteScore™</span>
             </a>
-            <span class="version">v1.3.4</span>
+            <span class="version">v1.3.5</span>
         </div>
         <div class="header-scores">
             <div class="score-pill main"><div class="score-pill-value" id="headerScore">—</div><div class="score-pill-label">Score</div></div>
@@ -549,7 +549,7 @@ Hail: 5/10"></textarea>
                 // Add terrain
                 map.addSource('mapbox-dem', { type: 'raster-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512 });
                 map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
-                console.log('SiteScore v1.3.4: Map initialized');
+                console.log('SiteScore v1.3.5: Map initialized');
             });
 
             map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
@@ -1160,19 +1160,58 @@ Hail: 5/10"></textarea>
                 data.scores.seismic = null;
             }
             
-            // Soil score
+            // Soil score - enhanced with disturbed soil detection
             if (data.soil) {
                 let soilScore = 2;
                 const drainage = (data.soil.drainage || '').toLowerCase();
                 const hydro = (data.soil.hydro || '').toUpperCase();
-                if (drainage.indexOf('very poor') >= 0) soilScore += 4;
-                else if (drainage.indexOf('poor') >= 0) soilScore += 3;
-                else if (drainage.indexOf('somewhat poor') >= 0) soilScore += 2;
-                if (hydro === 'D') soilScore += 3;
-                else if (hydro === 'C') soilScore += 2;
-                else if (hydro === 'A') soilScore -= 1;
-                if (data.soil.corSteel === 'High') soilScore += 2;
-                if (data.soil.corConcrete === 'High') soilScore += 1;
+                const mapunit = (data.soil.mapunit || '').toLowerCase();
+                const component = (data.soil.component || '').toLowerCase();
+                
+                // CRITICAL: Detect disturbed/fill soils - these are RED FLAGS for Builder's Risk
+                // Udorthents = recently disturbed soils, often uncontrolled fill
+                // Dumps = landfill or dump sites
+                // Urban land = heavily modified, unknown subsurface
+                data.soil.isDisturbed = false;
+                data.soil.disturbedType = null;
+                
+                if (mapunit.indexOf('dump') >= 0 || component.indexOf('dump') >= 0) {
+                    soilScore = 10; // CRITICAL - potential landfill/debris
+                    data.soil.isDisturbed = true;
+                    data.soil.disturbedType = 'Dump/Landfill';
+                } else if (component.indexOf('udorthent') >= 0 || mapunit.indexOf('udorthent') >= 0) {
+                    soilScore = Math.max(soilScore, 8); // HIGH - disturbed/fill soil
+                    data.soil.isDisturbed = true;
+                    data.soil.disturbedType = 'Disturbed Fill (Udorthents)';
+                } else if (mapunit.indexOf('urban land') >= 0 || component.indexOf('urban') >= 0) {
+                    soilScore = Math.max(soilScore, 6); // ELEVATED - urban modified
+                    data.soil.isDisturbed = true;
+                    data.soil.disturbedType = 'Urban Modified';
+                } else if (mapunit.indexOf('fill') >= 0 || mapunit.indexOf('made land') >= 0) {
+                    soilScore = Math.max(soilScore, 7); // HIGH - artificial fill
+                    data.soil.isDisturbed = true;
+                    data.soil.disturbedType = 'Artificial Fill';
+                }
+                
+                // Flag if key soil properties are missing (common with disturbed soils)
+                const missingProps = (!data.soil.drainage && !data.soil.hydro && !data.soil.corSteel);
+                if (missingProps && !data.soil.isDisturbed) {
+                    soilScore = Math.max(soilScore, 5); // Unknown soil = elevated risk
+                    data.soil.propertiesMissing = true;
+                }
+                
+                // Standard soil property scoring (if not already maxed by disturbed detection)
+                if (!data.soil.isDisturbed) {
+                    if (drainage.indexOf('very poor') >= 0) soilScore += 4;
+                    else if (drainage.indexOf('poor') >= 0) soilScore += 3;
+                    else if (drainage.indexOf('somewhat poor') >= 0) soilScore += 2;
+                    if (hydro === 'D') soilScore += 3;
+                    else if (hydro === 'C') soilScore += 2;
+                    else if (hydro === 'A') soilScore -= 1;
+                    if (data.soil.corSteel === 'High') soilScore += 2;
+                    if (data.soil.corConcrete === 'High') soilScore += 1;
+                }
+                
                 data.scores.soil = Math.max(0, Math.min(10, soilScore));
             } else {
                 data.scores.soil = null;
@@ -1240,7 +1279,46 @@ Hail: 5/10"></textarea>
                 data.flags.push({ severity: 'high', title: 'HIGH Seismic Risk', detail: 'PGA ' + (eq.pga * 100).toFixed(1) + '% g. SDC ' + eq.sdc + '.' });
             }
             
-            // Soil flags
+            // Soil flags - ENHANCED for Builder's Risk
+            // CRITICAL: Disturbed/fill soil flags - these are major underwriting concerns
+            if (s && s.isDisturbed) {
+                if (s.disturbedType === 'Dump/Landfill') {
+                    data.flags.push({ 
+                        severity: 'critical', 
+                        title: 'CRITICAL: Dump/Landfill Site', 
+                        detail: 'SSURGO indicates dump or landfill soil. MANDATORY geotech investigation. Expect debris, settlement issues, and deep foundation requirements. Map unit: ' + s.mapunit 
+                    });
+                } else if (s.disturbedType === 'Disturbed Fill (Udorthents)') {
+                    data.flags.push({ 
+                        severity: 'critical', 
+                        title: 'CRITICAL: Disturbed Fill Soil (Udorthents)', 
+                        detail: 'Site has disturbed/uncontrolled fill soil. Common on reclaimed land, former creek beds, and developed sites. MANDATORY geotech report - expect deep foundations (piles), debris removal, and dewatering. Shallow foundations likely NOT suitable. Map unit: ' + s.mapunit 
+                    });
+                } else if (s.disturbedType === 'Artificial Fill') {
+                    data.flags.push({ 
+                        severity: 'high', 
+                        title: 'HIGH: Artificial Fill Site', 
+                        detail: 'SSURGO indicates man-made fill material. Geotechnical investigation strongly recommended. Fill depth and composition unknown. Map unit: ' + s.mapunit 
+                    });
+                } else if (s.disturbedType === 'Urban Modified') {
+                    data.flags.push({ 
+                        severity: 'moderate', 
+                        title: 'Urban Modified Soil', 
+                        detail: 'Heavily urbanized soil with unknown modification history. Consider geotech review for high-value construction. Map unit: ' + s.mapunit 
+                    });
+                }
+            }
+            
+            // Flag missing soil properties (indicates non-standard soil)
+            if (s && s.propertiesMissing) {
+                data.flags.push({ 
+                    severity: 'moderate', 
+                    title: 'Incomplete Soil Data', 
+                    detail: 'Key soil properties (drainage, hydro group, corrosivity) not available. May indicate disturbed or non-natural soil. Request geotech for foundation-critical construction.' 
+                });
+            }
+            
+            // Standard soil flags
             if (s && s.corSteel === 'High') {
                 data.flags.push({ severity: 'high', title: 'High Steel Corrosion', detail: 'Soil corrosivity to steel rated HIGH. Cathodic protection required.' });
             }
@@ -1255,9 +1333,30 @@ Hail: 5/10"></textarea>
                 data.flags.push({ severity: 'high', title: 'HIGH Flash Flood Risk', detail: 'Athenium flash flood score ' + a.flash + '/10.' });
             }
             
+            // Flood risk detail flags (from parsed Athenium flood data)
+            const fr = data.floodRisk || data.athenium?.floodDetails || {};
+            if (fr.elevation && fr.elevation < 15) {
+                data.flags.push({ severity: 'high', title: 'LOW Elevation Site', detail: 'Site elevation only ' + fr.elevation.toFixed(1) + ' ft. Coastal/tidal flood exposure. Verify BFE compliance and consider flood-resistant construction.' });
+            }
+            if (fr.freeboard !== undefined && fr.freeboard < 0) {
+                data.flags.push({ severity: 'critical', title: 'NEGATIVE Freeboard', detail: 'Site is ' + Math.abs(fr.freeboard).toFixed(1) + ' ft BELOW Base Flood Elevation. MANDATORY flood insurance. Consider elevating structure or flood-proofing.' });
+            } else if (fr.freeboard !== undefined && fr.freeboard < 2) {
+                data.flags.push({ severity: 'high', title: 'Minimal Freeboard', detail: 'Only ' + fr.freeboard.toFixed(1) + ' ft above BFE. Limited flood protection margin.' });
+            }
+            if (fr.distanceToWater && fr.distanceToWater < 500) {
+                data.flags.push({ severity: 'high', title: 'Proximity to Water', detail: 'Site is only ' + fr.distanceToWater.toFixed(0) + ' ft from flowing water. Elevated flood and erosion risk.' });
+            }
+            
             // Wind flags
             if (a && a.wind >= 8) {
                 data.flags.push({ severity: 'high', title: 'HIGH Wind Exposure', detail: 'Athenium wind score ' + a.wind + '/10. Verify tie-down protocols.' });
+            }
+            
+            // Hurricane Wind flag (separate from general wind - critical for coastal)
+            if (a && a.hurricaneWind >= 8) {
+                data.flags.push({ severity: 'critical', title: 'EXTREME Hurricane Wind Exposure', detail: 'Athenium hurricane wind score ' + a.hurricaneWind + '/10. Site in active hurricane corridor. Verify wind-resistant construction, impact-rated glazing, and secure material staging for Builder\'s Risk.' });
+            } else if (a && a.hurricaneWind >= 6) {
+                data.flags.push({ severity: 'high', title: 'HIGH Hurricane Wind Exposure', detail: 'Athenium hurricane wind score ' + a.hurricaneWind + '/10. Consider named storm deductible and wind mitigation requirements.' });
             }
             
             // Wildfire flags (from Athenium)
@@ -1325,7 +1424,7 @@ Hail: 5/10"></textarea>
         }
 
         // ============================================
-        // FLOOD & HISTORY CARD UPDATES (v1.3.4)
+        // FLOOD & HISTORY CARD UPDATES (v1.3.5)
         // ============================================
         
         function updateFloodRiskCard(parsed) {
@@ -1788,7 +1887,7 @@ Hail: 5/10"></textarea>
                 fema: /fema.*?zone[:\s]*([A-Z0-9]+)/i
             };
             
-            // Flood detail patterns (v1.3.4)
+            // Flood detail patterns (v1.3.5)
             const floodPatterns = {
                 bfe: /base\s*flood\s*elevation[:\s]*(\d+(?:\.\d+)?)\s*(?:ft|feet)/i,
                 freeboard: /freeboard[:\s]*([-]?\d+(?:\.\d+)?)\s*(?:ft|feet)/i,
@@ -1796,7 +1895,7 @@ Hail: 5/10"></textarea>
                 inund500: /500[-\s]*(?:yr|year)\s*(?:inundation|depth|flood)[:\s]*(\d+(?:\.\d+)?)/i
             };
             
-            // Historical patterns (v1.3.4)
+            // Historical patterns (v1.3.5)
             const histPatterns = {
                 hailEvents: /hail\s*events[:\s]*(\d+)/i,
                 windEvents: /wind\s*events[:\s]*(\d+)/i,
@@ -1804,7 +1903,7 @@ Hail: 5/10"></textarea>
                 maxWind: /max(?:imum)?\s*wind[:\s]*(\d+(?:\.\d+)?)\s*(?:mph)/i
             };
             
-            // Hurricane pattern (v1.3.4)
+            // Hurricane pattern (v1.3.5)
             const hurricanePattern = /hurricane\s+(\w+)[:\s]*(\d+(?:\.\d+)?)\s*mph\s*\(([^)]+)\)/gi;
             
             const parsed = {};
@@ -1871,7 +1970,7 @@ Hail: 5/10"></textarea>
             }
             document.getElementById('atheniumParsed').innerHTML = html;
             
-            // Update new cards (v1.3.4)
+            // Update new cards (v1.3.5)
             updateFloodRiskCard(parsed);
             updateHistoryCard(parsed);
             
@@ -2024,7 +2123,7 @@ Hail: 5/10"></textarea>
 
 '<div class="header-compact">' +
 '<div class="header-left">' +
-'<h1>📍 SiteScore™ v1.3.4</h1>' +
+'<h1>📍 SiteScore™ v1.3.5</h1>' +
 '<div class="subtitle">' + data.project + '</div>' +
 '<div class="coords">' + c.lat.toFixed(6) + ', ' + c.lon.toFixed(6) + (data.elevation ? ' • Elev: ' + data.elevation.toFixed(0) + ' ft' : '') + ' • ' + new Date().toLocaleDateString() + '</div>' +
 '</div>' +
@@ -2098,10 +2197,12 @@ Hail: 5/10"></textarea>
 '</div></div>' +
 
 '<div class="section"><h2>🪨 Soil (SSURGO)</h2>' +
-'<div class="grid">' +
+(s && s.mapunit ? '<div style="font-size:10px;color:#64748b;margin-bottom:8px;text-align:center">' + s.mapunit + '</div>' : '') +
+'<div class="grid4">' +
 '<div class="item"><div class="label">Drainage</div><div class="value sm">' + (s && s.drainage ? s.drainage.substring(0, 12) : '—') + '</div></div>' +
 '<div class="item"><div class="label">Hydro</div><div class="value">' + (s ? s.hydro || '—' : '—') + '</div></div>' +
 '<div class="item"><div class="label">Steel Corr</div><div class="value" style="color:' + (s && s.corSteel === 'High' ? '#f85149' : '#2ea043') + '">' + (s ? s.corSteel || '—' : '—') + '</div></div>' +
+'<div class="item"><div class="label">Concrete</div><div class="value" style="color:' + (s && s.corConcrete === 'High' ? '#f85149' : '#2ea043') + '">' + (s ? s.corConcrete || '—' : '—') + '</div></div>' +
 '</div></div>' +
 '</div>' +
 
@@ -2121,7 +2222,7 @@ Hail: 5/10"></textarea>
 '</div></div>' : '') +
 
 '<div class="footer">' +
-'<div>SiteScore™ v1.3.4 | Know Before You Bind | ' + new Date().toLocaleString() + '</div>' +
+'<div>SiteScore™ v1.3.5 | Know Before You Bind | ' + new Date().toLocaleString() + '</div>' +
 '<div style="margin-top:4px">Data: USGS 3DHP, SSURGO, Design Maps • USFS WUI 2020 • CAL FIRE FHSZ • CA DWR InSAR • CA CGS • Athenium Analytics</div>' +
 '<div style="margin-top:4px;font-style:italic">Pre-underwriting triage only. Does not replace site-specific geotechnical investigation.</div>' +
 '</div>' +
