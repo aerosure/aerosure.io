@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiteScore™ v1.3.5 | Know Before You Bind</title>
+    <title>SiteScore™ v1.3.6 | Know Before You Bind</title>
     <link rel="icon" type="image/png" href="SiteScore_favicon.png">
     <link rel="apple-touch-icon" href="SiteScore_favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
             --bg-primary:#080b10;--bg-secondary:#0d1117;--bg-tertiary:#161b22;--bg-card:#0d1117;--bg-elevated:#1c2433;
             --border-color:#30363d;--border-light:#484f58;--text-primary:#f0f6fc;--text-secondary:#8b949e;--text-muted:#6e7681;
             --brand-primary:#2ea043;--brand-secondary:#58a6ff;--brand-accent:#a371f7;
-            --status-critical:#f85149;--status-high:#f0883e;--status-moderate:#d29922;--status-low:#2ea043;--status-info:#58a6ff;
+            --status-critical:#f85149;--status-high:#f0883e;--status-moderate:#d29922;--status-low:#2ea043;--status-info:#58a6ff;--status-warning:#fbbf24;
             --gradient-brand:linear-gradient(135deg,#2ea043 0%,#58a6ff 100%);
             --gradient-header:linear-gradient(135deg,#238636 0%,#1f6feb 100%);
             --gradient-glow:radial-gradient(ellipse at center,rgba(46,160,67,0.15) 0%,transparent 70%);
@@ -62,6 +62,8 @@
         .analyze-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);transform:translateX(-100%);transition:transform 0.5s}
         .analyze-btn:hover::before{transform:translateX(100%)}
         .analyze-btn:disabled{opacity:0.6;cursor:not-allowed}
+        .api-status{font-size:9px;padding:6px 10px;background:var(--bg-tertiary);border-radius:6px;margin-top:8px;display:none;border-left:3px solid var(--status-warning)}
+        .api-status.visible{display:block}
         .analyze-btn .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -154,7 +156,7 @@
         .export-btn.secondary{background:var(--bg-primary);border:1px solid var(--border-color);color:var(--text-primary)}
 
         /* Map */
-        .map-container{position:relative;background:var(--bg-primary)}
+        .map-container{position:relative;background:var(--bg-primary);height:100%}
         #map{width:100%;height:100%}
         .map-loading{position:absolute;inset:0;background:rgba(8,11,16,0.9);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
         .map-loading.active{display:flex}
@@ -244,7 +246,7 @@
                 <img src="SiteScore_Logo.png" alt="SiteScore™" class="header-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                 <span class="logo-fallback" style="display:none;color:white;font-weight:700;font-size:18px">SiteScore™</span>
             </a>
-            <span class="version">v1.3.5</span>
+            <span class="version">v1.3.6</span>
         </div>
         <div class="header-scores">
             <div class="score-pill main"><div class="score-pill-value" id="headerScore">—</div><div class="score-pill-label">Score</div></div>
@@ -272,13 +274,14 @@
                     </div>
                     <div class="input-field">
                         <label>Project Name</label>
-                        <input type="text" id="projectName" placeholder="e.g., Norfolk State Science Building">
+                        <input type="text" id="projectName" maxlength="100" placeholder="e.g., Norfolk State Science Building">
                     </div>
                     <div class="coord-row">
                         <div class="input-field"><label>Latitude</label><input type="text" id="lat" placeholder="35.9427"></div>
                         <div class="input-field"><label>Longitude</label><input type="text" id="lon" placeholder="-83.9510"></div>
                     </div>
                     <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()"><span>⚡</span> Analyze Site</button>
+                    <div class="api-status" id="apiStatus"></div>
                     <div class="quick-locations">
                         <div class="quick-title">Test Locations</div>
                         <button class="quick-btn" onclick="setLocation('UT MFR Research',35.9427,-83.9510)"><span class="icon">🕳️</span><span class="name">Knoxville TN</span><span class="tag tag-critical">KARST</span></button>
@@ -511,6 +514,27 @@ Hail: 5/10"></textarea>
         };
 
         // ============================================
+        // v1.3.6 SECURITY & RELIABILITY
+        // ============================================
+        const DEBUG = false;
+        let apiFailures = [];
+        
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+        
+        function showApiStatus() {
+            const el = document.getElementById('apiStatus');
+            if (!el) return;
+            if (apiFailures.length === 0) { el.classList.remove('visible'); return; }
+            el.innerHTML = '⚠️ Partial data: ' + apiFailures.map(f => f.api).join(', ') + ' unavailable';
+            el.classList.add('visible');
+        }
+
+        // ============================================
         // STATE MANAGEMENT
         // ============================================
         let map, siteMarker = null, featureMarkers = [];
@@ -549,7 +573,7 @@ Hail: 5/10"></textarea>
                 // Add terrain
                 map.addSource('mapbox-dem', { type: 'raster-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512 });
                 map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
-                console.log('SiteScore v1.3.5: Map initialized');
+                console.log('SiteScore v1.3.6: Map initialized');
             });
 
             map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
@@ -1424,7 +1448,7 @@ Hail: 5/10"></textarea>
         }
 
         // ============================================
-        // FLOOD & HISTORY CARD UPDATES (v1.3.5)
+        // FLOOD & HISTORY CARD UPDATES (v1.3.6)
         // ============================================
         
         function updateFloodRiskCard(parsed) {
@@ -1560,6 +1584,9 @@ Hail: 5/10"></textarea>
             document.getElementById('projectName').value = name;
             document.getElementById('lat').value = lat;
             document.getElementById('lon').value = lon;
+            if (map) {
+                map.flyTo({ center: [lon, lat], zoom: 13 });
+            }
         }
 
         function updateLoadingStep(step, status) {
@@ -1591,12 +1618,15 @@ Hail: 5/10"></textarea>
             data.coordinates = { lat, lon };
             data.timestamp = new Date().toISOString();
             data.flags = [];
+            apiFailures = []; // v1.3.6: Reset API failure tracking
             
             const btn = document.getElementById('analyzeBtn');
             btn.disabled = true;
             btn.innerHTML = '<div class="spinner"></div> Analyzing...';
             document.getElementById('mapLoading').classList.add('active');
             document.getElementById('loadingSteps').innerHTML = '';
+            const apiStatusEl = document.getElementById('apiStatus');
+            if (apiStatusEl) apiStatusEl.classList.remove('visible');
             
             try {
                 // Step 1: Elevation
@@ -1664,6 +1694,7 @@ Hail: 5/10"></textarea>
                 updateMapInfo();
                 updateHeader();
                 updateScoreCard();
+                showApiStatus(); // v1.3.6: Show any API failures
                 
             } catch (err) {
                 console.error('Analysis error:', err);
@@ -1887,7 +1918,7 @@ Hail: 5/10"></textarea>
                 fema: /fema.*?zone[:\s]*([A-Z0-9]+)/i
             };
             
-            // Flood detail patterns (v1.3.5)
+            // Flood detail patterns (v1.3.6)
             const floodPatterns = {
                 bfe: /base\s*flood\s*elevation[:\s]*(\d+(?:\.\d+)?)\s*(?:ft|feet)/i,
                 freeboard: /freeboard[:\s]*([-]?\d+(?:\.\d+)?)\s*(?:ft|feet)/i,
@@ -1895,7 +1926,7 @@ Hail: 5/10"></textarea>
                 inund500: /500[-\s]*(?:yr|year)\s*(?:inundation|depth|flood)[:\s]*(\d+(?:\.\d+)?)/i
             };
             
-            // Historical patterns (v1.3.5)
+            // Historical patterns (v1.3.6)
             const histPatterns = {
                 hailEvents: /hail\s*events[:\s]*(\d+)/i,
                 windEvents: /wind\s*events[:\s]*(\d+)/i,
@@ -1903,7 +1934,7 @@ Hail: 5/10"></textarea>
                 maxWind: /max(?:imum)?\s*wind[:\s]*(\d+(?:\.\d+)?)\s*(?:mph)/i
             };
             
-            // Hurricane pattern (v1.3.5)
+            // Hurricane pattern (v1.3.6)
             const hurricanePattern = /hurricane\s+(\w+)[:\s]*(\d+(?:\.\d+)?)\s*mph\s*\(([^)]+)\)/gi;
             
             const parsed = {};
@@ -1970,7 +2001,7 @@ Hail: 5/10"></textarea>
             }
             document.getElementById('atheniumParsed').innerHTML = html;
             
-            // Update new cards (v1.3.5)
+            // Update new cards (v1.3.6)
             updateFloodRiskCard(parsed);
             updateHistoryCard(parsed);
             
@@ -2123,7 +2154,7 @@ Hail: 5/10"></textarea>
 
 '<div class="header-compact">' +
 '<div class="header-left">' +
-'<h1>📍 SiteScore™ v1.3.5</h1>' +
+'<h1>📍 SiteScore™ v1.3.6</h1>' +
 '<div class="subtitle">' + data.project + '</div>' +
 '<div class="coords">' + c.lat.toFixed(6) + ', ' + c.lon.toFixed(6) + (data.elevation ? ' • Elev: ' + data.elevation.toFixed(0) + ' ft' : '') + ' • ' + new Date().toLocaleDateString() + '</div>' +
 '</div>' +
@@ -2222,7 +2253,7 @@ Hail: 5/10"></textarea>
 '</div></div>' : '') +
 
 '<div class="footer">' +
-'<div>SiteScore™ v1.3.5 | Know Before You Bind | ' + new Date().toLocaleString() + '</div>' +
+'<div>SiteScore™ v1.3.6 | Know Before You Bind | ' + new Date().toLocaleString() + '</div>' +
 '<div style="margin-top:4px">Data: USGS 3DHP, SSURGO, Design Maps • USFS WUI 2020 • CAL FIRE FHSZ • CA DWR InSAR • CA CGS • Athenium Analytics</div>' +
 '<div style="margin-top:4px;font-style:italic">Pre-underwriting triage only. Does not replace site-specific geotechnical investigation.</div>' +
 '</div>' +
